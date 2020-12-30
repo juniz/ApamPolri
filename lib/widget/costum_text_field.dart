@@ -1,24 +1,25 @@
 import 'package:flutter/material.dart';
 
 class CostumTextField extends StatelessWidget {
-  CostumTextField({
-    this.icon,
-    this.hint,
-    this.obsecure = false,
-    this.validator,
-    this.onSaved
-  });
+  CostumTextField(
+      {this.icon,
+      this.hint,
+      this.obsecure = false,
+      this.validator,
+      this.onSaved});
   final FormFieldSetter<String> onSaved;
   final Icon icon;
   final String hint;
   final bool obsecure;
   final FormFieldValidator<String> validator;
+  FocusNode myFocusNode = new FocusNode();
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(left:20,right:20),
+      padding: EdgeInsets.only(left: 20, right: 20),
       child: TextFormField(
+        focusNode: myFocusNode,
         onSaved: onSaved,
         validator: validator,
         autofocus: true,
@@ -32,14 +33,17 @@ class CostumTextField extends StatelessWidget {
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(30),
             borderSide: BorderSide(
-              color: Theme.of(context).primaryColor,
+              color: Colors.black,
               width: 2,
             ),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.green),
           ),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(30),
             borderSide: BorderSide(
-              color: Theme.of(context).primaryColor,
+              color: Colors.black,
               width: 3,
             ),
           ),
@@ -47,8 +51,8 @@ class CostumTextField extends StatelessWidget {
             child: IconTheme(
               child: icon,
               data: IconThemeData(color: Theme.of(context).primaryColor),
-              ),
-              padding: EdgeInsets.only(left:30,right:10),
+            ),
+            padding: EdgeInsets.only(left: 30, right: 10),
           ),
         ),
       ),

@@ -10,75 +10,115 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final LoginController _loginController = Get.put(LoginController());
   final _formKey = GlobalKey<FormState>();
+  FocusNode myFocusNode1 = new FocusNode();
+  FocusNode myFocusNode2 = new FocusNode();
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      backgroundColor: Colors.black,
-      body: new SafeArea(
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SafeArea(
         child: SingleChildScrollView(
           child: Form(
             key: _formKey,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                new Center(
+                Center(
                   child: Image.asset(
-                    "assets/images/logo-app.png",
+                    "assets/images/new-logo.jpg",
                     width: 150.0,
                     height: 300.0,
                   ),
                 ),
-                new Center(
-                  child: Text("RS Bhayangkara Nganjuk",
-                      style: TextStyle(color: Colors.white, fontSize: 20)),
-                ),
-                new SizedBox(height: 20),
-                new Container(
-                    width: double.infinity,
-                    padding: EdgeInsets.only(left: 20, right: 10),
-                    child: Text(
-                      "Silahkan isikan nomor kartu berobat dan nomor KTP anda. Jika mengalami kesulitan silahkan hubungi petugas pengaduan di lobby Rumah Sakit",
-                      style: TextStyle(color: Colors.white),
-                      textAlign: TextAlign.center,
-                    )),
-                new SizedBox(height: 50),
-                new Container(
-                  width: double.infinity,
+                SizedBox(height: 20),
+                Container(
+                  margin: EdgeInsets.all(25),
+                  width: Get.width,
+                  height: Get.height / 3.5,
                   padding: EdgeInsets.only(left: 10, right: 10),
-                  child: TextFormField(
-                    controller: _loginController.emailTextController,
-                    maxLines: 1,
-                    validator: (value) =>
-                        value.trim().isEmpty ? 'Email required' : null,
-                    decoration: InputDecoration(
-                      labelText: "No. Kartu",
-                      fillColor: Colors.white,
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.green),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Material(
+                        elevation: 20.0,
+                        shadowColor: Colors.blue,
+                        child: TextFormField(
+                          focusNode: myFocusNode1,
+                          controller: _loginController.emailTextController,
+                          maxLines: 1,
+                          validator: (value) =>
+                              value.trim().isEmpty ? 'Email required' : null,
+                          decoration: InputDecoration(
+                            labelStyle: TextStyle(
+                              color: myFocusNode1.hasFocus
+                                  ? Colors.blue
+                                  : Colors.black,
+                            ),
+                            labelText: "No. Kartu",
+                            fillColor: Colors.black,
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.green),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: Colors.black, width: 2),
+                            ),
+                          ),
+                        ),
                       ),
+                      SizedBox(
+                        height: 30,
+                      ),
+                      Material(
+                        elevation: 20.0,
+                        shadowColor: Colors.blue,
+                        child: TextFormField(
+                          focusNode: myFocusNode2,
+                          controller: _loginController.passwordTextController,
+                          maxLines: 1,
+                          validator: (value) =>
+                              value.trim().isEmpty ? 'Password required' : null,
+                          decoration: InputDecoration(
+                            labelText: "No. KTP",
+                            fillColor: Colors.black,
+                            labelStyle: TextStyle(
+                                color: myFocusNode2.hasFocus
+                                    ? Colors.blue
+                                    : Colors.black),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.green),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: Colors.black, width: 2),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(20),
                     ),
+                    boxShadow: [
+                      BoxShadow(
+                        spreadRadius: 1,
+                        blurRadius: 5,
+                        offset: Offset(3, 4),
+                      ),
+                    ],
                   ),
                 ),
-                new SizedBox(height: 20),
-                new Container(
+                SizedBox(height: 20),
+                Container(
                   width: double.infinity,
                   padding: EdgeInsets.only(left: 10, right: 10),
-                  child: TextFormField(
-                    controller: _loginController.passwordTextController,
-                    maxLines: 1,
-                    validator: (value) =>
-                        value.trim().isEmpty ? 'Password required' : null,
-                    decoration: InputDecoration(
-                      labelText: "No. KTP",
-                      fillColor: Colors.white,
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.green),
-                      ),
-                    ),
-                  ),
                 ),
-                new SizedBox(height: 50),
-                new Row(
+                SizedBox(height: 50),
+                Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Container(
@@ -86,31 +126,31 @@ class _LoginPageState extends State<LoginPage> {
                       child: RaisedButton(
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(18.0),
-                            side: BorderSide(color: Colors.blue)),
+                            side: BorderSide(color: Colors.green)),
                         onPressed: () {
                           Navigator.pushNamed(context, '/home');
                         },
-                        color: Colors.blue,
-                        textColor: Colors.white,
+                        color: Colors.green,
+                        textColor: Colors.black,
                         child: Text("Batal", style: TextStyle(fontSize: 15)),
                       ),
                     ),
-                    new SizedBox(
+                    SizedBox(
                       width: 20,
                     ),
-                    new Container(
+                    Container(
                       width: 150.0,
                       child: RaisedButton(
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(18.0),
-                            side: BorderSide(color: Colors.blue)),
+                            side: BorderSide(color: Colors.green)),
                         onPressed: () {
                           if (_formKey.currentState.validate()) {
                             _loginController.apiLogin();
                           }
                         },
-                        color: Colors.blue,
-                        textColor: Colors.white,
+                        color: Colors.green,
+                        textColor: Colors.black,
                         child: Text("Sign In", style: TextStyle(fontSize: 15)),
                       ),
                     ),

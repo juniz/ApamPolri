@@ -43,6 +43,7 @@ class _MyTextFieldDatePicker extends State<MyTextFieldDatePicker> {
   TextEditingController _controllerDate;
   DateFormat _dateFormat;
   DateTime _selectedDate;
+  FocusNode myFocusNode = new FocusNode();
 
   @override
   void initState() {
@@ -70,6 +71,14 @@ class _MyTextFieldDatePicker extends State<MyTextFieldDatePicker> {
         prefixIcon: widget.prefixIcon,
         suffixIcon: widget.suffixIcon,
         labelText: widget.labelText,
+        labelStyle: TextStyle(
+            color: myFocusNode.hasFocus ? Colors.green : Colors.black),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.green),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.black),
+        ),
       ),
       onTap: () => _selectDate(context),
       readOnly: true,

@@ -18,7 +18,7 @@ class JadwalPraktek {
   });
 
   String nmDokter;
-  Jk jk;
+  String jk;
   String nmPoli;
   String jamMulai;
   String jamSelesai;
@@ -26,7 +26,7 @@ class JadwalPraktek {
 
   factory JadwalPraktek.fromJson(Map<String, dynamic> json) => JadwalPraktek(
         nmDokter: json["nm_dokter"],
-        jk: jkValues.map[json["jk"]],
+        jk: json["jk"],
         nmPoli: json["nm_poli"],
         jamMulai: json["jam_mulai"],
         jamSelesai: json["jam_selesai"],
