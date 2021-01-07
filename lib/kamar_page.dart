@@ -1,4 +1,5 @@
 import 'package:apam/controller/kamar_controller.dart';
+import 'package:apam/services/data_dummy.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -8,6 +9,7 @@ class KamarPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.green,
         title: Text("Ketersediaan Kamar"),
       ),
       body: Container(
@@ -16,9 +18,14 @@ class KamarPage extends StatelessWidget {
             Expanded(
               child: Obx(
                 () {
-                  if (kamarController.isLoading.value)
-                    return Center(child: CircularProgressIndicator());
-                  else {
+                  if (kamarController.kamarList.length < 1) {
+                    return Center(
+                      child: Text(
+                        'Pilih Rumah Sakit Terlebih Dahulu',
+                        style: TextStyle(color: Colors.black),
+                      ),
+                    );
+                  } else {
                     return ListView.separated(
                       itemCount: kamarController.kamarList.length,
                       itemBuilder: (context, index) {
@@ -39,6 +46,58 @@ class KamarPage extends StatelessWidget {
                     );
                   }
                 },
+              ),
+            ),
+          ],
+        ),
+      ),
+      bottomNavigationBar: Container(
+          height: 45.0,
+          color: Colors.green,
+          child: FlatButton.icon(
+            onPressed: () {
+              modalApi();
+            },
+            icon: Icon(Icons.home),
+            label: Text(
+              "Pilih Rumah Sakit",
+              style: TextStyle(color: Colors.white),
+            ),
+          )),
+    );
+  }
+
+  modalApi() async {
+    //await kamarController.fetchapi();
+    return Get.bottomSheet(
+      Container(
+        color: Colors.white,
+        child: Column(
+          children: <Widget>[
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ListView.separated(
+                  itemCount: DataDummy.dummy.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      leading: Icon(Icons.person),
+                      title: Text(
+                        DataDummy.dummy[index].nama,
+                        style: TextStyle(color: Colors.black),
+                      ),
+                      onTap: () async {
+                        // kamarController.selectedApi.value =
+                        //     _jadwalDokterController.apiList[index].api;
+                        kamarController.fetchKamar();
+                        Get.back();
+                      },
+                    );
+                  },
+                  separatorBuilder: (BuildContext context, int index) {
+                    return Divider();
+                  },
+                ),
               ),
             ),
           ],

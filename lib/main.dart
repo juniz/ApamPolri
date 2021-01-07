@@ -15,11 +15,12 @@ void main() async {
       getPages: RouterPage.route,
       theme: ThemeData(
         brightness: Brightness.light,
-        primaryColor: Colors.white,
+        primaryColor: Colors.black,
+        //backgroundColor: Colors.white,
       ),
       darkTheme: ThemeData(
         brightness: Brightness.dark,
-        primaryColor: Colors.black,
+        primaryColor: Colors.white,
       ),
       initialRoute: '/',
     ),

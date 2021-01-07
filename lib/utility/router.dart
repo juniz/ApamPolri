@@ -6,7 +6,9 @@ import 'package:apam/jadwal_dokter_page.dart';
 import 'package:apam/kamar_page.dart';
 import 'package:apam/login.dart';
 import 'package:apam/panduan.dart';
+import 'package:apam/riwayat_page.dart';
 import 'package:apam/splashscreen_view.dart';
+
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
@@ -51,6 +53,10 @@ class RouterPage {
     GetPage(
       name: '/homecare',
       page: () => HomeCarePage(),
+    ),
+    GetPage(
+      name: '/riwayat',
+      page: () => RiwayatPage(),
     ),
   ];
 }

@@ -1,3 +1,4 @@
+import 'package:apam/models/sign_in_model.dart';
 import 'package:apam/services/url.dart';
 import 'package:http/http.dart' as http;
 
@@ -12,10 +13,10 @@ class Request {
   Future<http.Response> post() {
     return http
         .post(urlBase + url, body: body, headers: headers, encoding: encoding)
-        .timeout(Duration(minutes: 1));
+        .timeout(Duration(seconds: 5));
   }
 
   Future<http.Response> get() {
-    return http.get(urlBase + url).timeout(Duration(minutes: 1));
+    return http.get(urlBase + url).timeout(Duration(seconds: 5));
   }
 }

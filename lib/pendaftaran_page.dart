@@ -1,11 +1,11 @@
+import 'package:apam/services/data_dummy.dart';
+import 'package:apam/widget/alert_dialog.dart';
 import 'package:apam/widget/datepicker.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
-import 'package:searchable_dropdown/searchable_dropdown.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'controller/pendaftaran_controller.dart';
-import 'controller/login_controller.dart';
 
 class PendaftaranPage extends StatefulWidget {
   @override
@@ -38,7 +38,7 @@ class _PendaftaranPageState extends State<PendaftaranPage> {
               labelText: "Pilih Tanggal",
               prefixIcon: Icon(Icons.date_range),
               suffixIcon: Icon(Icons.arrow_drop_down),
-              lastDate: DateTime.now().add(Duration(days: 366)),
+              lastDate: DateTime.now().add(Duration(days: 7)),
               firstDate: DateTime.now(),
               initialDate: DateTime.now().add(Duration(days: 1)),
               dateFormat: DateFormat('dd-MM-yyyy'),
@@ -88,27 +88,7 @@ class _PendaftaranPageState extends State<PendaftaranPage> {
                 if (_pendaftaranController.selectedApi.value != "") {
                   modalPoli();
                 } else {
-                  Get.dialog(
-                    AlertDialog(
-                      title: Text('Rumah Sakit Masih Kosong'),
-                      content: SizedBox(
-                        width: 100,
-                        height: 100,
-                        child: LottieBuilder.asset(
-                            "assets/animation/warning-sign.json"),
-                      ),
-                      actions: [
-                        FlatButton(
-                          color: Colors.redAccent,
-                          onPressed: () {
-                            Get.back();
-                          },
-                          child: Text('Close'),
-                        )
-                      ],
-                      elevation: 20.0,
-                    ),
-                  );
+                  PopUpDialog.dialogAnimation('Data Sebelumnya Masih Kosong !');
                 }
               },
             ),
@@ -134,18 +114,33 @@ class _PendaftaranPageState extends State<PendaftaranPage> {
                 ),
               ),
               onTap: () async {
-                modalDokter();
+                if (_pendaftaranController.selectedApi.value != "" &&
+                    _pendaftaranController.poliklinik.text != "") {
+                  modalDokter();
+                } else {
+                  PopUpDialog.dialogAnimation('Data Sebelumnya Masih Kosong !');
+                }
               },
             ),
           ),
+          SizedBox(
+            height: 20,
+          ),
+          SizedBox(
+            width: Get.width / 1.1,
+            height: 50,
+            child: RaisedButton.icon(
+                onPressed: () {
+                  _pendaftaranController.postPendaftaran();
+                },
+                color: Colors.green,
+                icon: Icon(Icons.person_add),
+                label: Text(
+                  'Daftar',
+                  style: TextStyle(fontSize: 18),
+                )),
+          )
         ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.green,
-        child: Icon(Icons.save),
-        onPressed: () async {
-          _pendaftaranController.postPendaftaran();
-        },
       ),
     );
   }
@@ -208,7 +203,7 @@ class _PendaftaranPageState extends State<PendaftaranPage> {
   }
 
   modalApi() async {
-    await _pendaftaranController.fetchapi();
+    //await _pendaftaranController.fetchapi();
     return Get.bottomSheet(
       Container(
         color: Colors.white,
@@ -218,19 +213,21 @@ class _PendaftaranPageState extends State<PendaftaranPage> {
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: ListView.separated(
-                  itemCount: _pendaftaranController.apiList.length,
+                  itemCount: DataDummy.dummy.length,
                   itemBuilder: (context, index) {
                     return ListTile(
                       leading: Icon(Icons.person),
                       title: Text(
-                        _pendaftaranController.apiList[index].nama,
+                        DataDummy.dummy[index].nama,
                         style: TextStyle(color: Colors.black),
                       ),
                       onTap: () async {
                         _pendaftaranController.selectedApi.value =
-                            _pendaftaranController.apiList[index].api;
+                            DataDummy.dummy[index].api;
                         _pendaftaranController.api.text =
-                            _pendaftaranController.apiList[index].nama;
+                            DataDummy.dummy[index].nama;
+                        _pendaftaranController.poliklinik.text = "";
+                        _pendaftaranController.dokter.text = "";
                         Get.back();
                       },
                     );
@@ -271,6 +268,7 @@ class _PendaftaranPageState extends State<PendaftaranPage> {
                             _pendaftaranController.dokterList[index].nmDokter;
                         _pendaftaranController.kdDokter.value =
                             _pendaftaranController.dokterList[index].kdDokter;
+
                         Get.back();
                       },
                     );
