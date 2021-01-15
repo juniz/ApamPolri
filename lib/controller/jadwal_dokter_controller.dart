@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:apam/models/detail_dokter_model.dart';
 import 'package:apam/models/jadwal_dokter_controller.dart';
 import 'package:apam/models/jadwal_praktek.dart';
 import 'package:apam/models/rsb_api_model.dart';
@@ -16,6 +17,8 @@ class JadwalDokterController extends GetxController {
   final tanggal = DokterController(tgl: DateTime.now()).obs;
   final dokter = DokterController(data: List<JadwalPraktek>()).obs;
   var jadwalDokter = List<JadwalPraktek>().obs;
+  var detailDokter = List<DetailDokter>().obs;
+  var kdDokter = "".obs;
   var isLoading = true.obs;
   var apiList = List<DataApi>().obs;
   var selectedApi = "".obs;
@@ -77,6 +80,31 @@ class JadwalDokterController extends GetxController {
         .timeout(Duration(minutes: 2));
     apiList.value = rsbApiFromJson(response.body).data;
     Get.back();
+  }
+
+  Future<List<DetailDokter>> fetchDetail() async {
+    try {
+      Future.delayed(
+        Duration.zero,
+        () => Get.dialog(Center(child: CircularProgressIndicator()),
+            barrierDismissible: false),
+      );
+      http.Response response = await http.post(
+        urlBase,
+        body: {'action': 'detaildokter', 'kd_dokter': kdDokter.value},
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        encoding: Encoding.getByName("utf-8"),
+      );
+      var data = detailDokterFromJson(response.body);
+      detailDokter.value = data;
+      Get.back();
+    } on Exception catch (e) {
+      Get.back();
+      PopUpDialog.dialogWidget('Tidak Dapat Terhubung dengan Server');
+    }
   }
 
   @override

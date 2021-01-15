@@ -51,7 +51,12 @@ class _JadwalDokterPageState extends State<JadwalDokterPage> {
                           ),
                           subtitle: Text(
                               'Jam Buka : ${_jadwalDokterController.jadwalDokter[index].jamMulai}\nJam Tutup : ${_jadwalDokterController.jadwalDokter[index].jamSelesai}'),
-                          onTap: () async {},
+                          onTap: () async {
+                            _jadwalDokterController.kdDokter.value =
+                                _jadwalDokterController
+                                    .jadwalDokter[index].kdDokter;
+                            modalDetailDokter();
+                          },
                         );
                       },
                       separatorBuilder: (BuildContext context, int index) {
@@ -112,6 +117,55 @@ class _JadwalDokterPageState extends State<JadwalDokterPage> {
                             DataDummy.dummy[index].api;
                         _jadwalDokterController.fetchDokter();
                         Get.back();
+                      },
+                    );
+                  },
+                  separatorBuilder: (BuildContext context, int index) {
+                    return Divider();
+                  },
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  modalDetailDokter() async {
+    await _jadwalDokterController.fetchDetail();
+    return Get.bottomSheet(
+      Container(
+        color: Colors.white,
+        child: Column(
+          children: <Widget>[
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ListView.separated(
+                  itemCount: _jadwalDokterController.detailDokter.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      isThreeLine: true,
+                      leading: Icon(Icons.calendar_today),
+                      title: Text(
+                          '${_jadwalDokterController.detailDokter.value[index].nmPoli}'),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                              'Hari       :  ${_jadwalDokterController.detailDokter.value[index].hariKerja}'),
+                          Text(
+                              'Mulai     :  ${_jadwalDokterController.detailDokter.value[index].jamMulai}'),
+                          Text(
+                              'Selesai  :  ${_jadwalDokterController.detailDokter.value[index].jamSelesai}'),
+                        ],
+                      ),
+                      onTap: () async {
+                        // _jadwalDokterController.selectedApi.value =
+                        //     DataDummy.dummy[index].api;
+                        // _jadwalDokterController.fetchDokter();
+                        // Get.back();
                       },
                     );
                   },

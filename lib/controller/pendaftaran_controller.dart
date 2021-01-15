@@ -46,46 +46,56 @@ class PendaftaranController extends GetxController {
 
   // ignore: missing_return
   Future<List<Poliklinik>> fetchPoli() async {
-    Future.delayed(
-        Duration.zero,
-        () => Get.dialog(Center(child: CircularProgressIndicator()),
-            barrierDismissible: false));
-    var response = await http.post(
-      selectedApi + urlPoli,
-      headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/x-www-form-urlencoded"
-      },
-      body: {
-        'tanggal':
-            DateFormat('dd-MM-yyyy').format(tanggal.value.date).toString()
-      },
-    ).timeout(Duration(minutes: 2));
-    poliList = poliklinikFromJson(response.body);
-    Get.back();
+    try {
+      Future.delayed(
+          Duration.zero,
+          () => Get.dialog(Center(child: CircularProgressIndicator()),
+              barrierDismissible: false));
+      var response = await http.post(
+        selectedApi + urlPoli,
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: {
+          'tanggal':
+              DateFormat('dd-MM-yyyy').format(tanggal.value.date).toString()
+        },
+      ).timeout(Duration(minutes: 2));
+      poliList = poliklinikFromJson(response.body);
+      Get.back();
+    } on Exception catch (e) {
+      Get.back();
+      PopUpDialog.dialogWidget('Pastikan Anda Terhubung Internet');
+    }
   }
 
   // ignore: missing_return
   Future<List<JadwalDokter>> fetchDokter() async {
-    Future.delayed(
-      Duration.zero,
-      () => Get.dialog(Center(child: CircularProgressIndicator()),
-          barrierDismissible: false),
-    );
-    var response = await http.post(
-      urlBase + urlDok,
-      headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/x-www-form-urlencoded"
-      },
-      body: {
-        'tanggal':
-            DateFormat('dd-MM-yyyy').format(tanggal.value.date).toString(),
-        'kd_poli': kdPoli.value.kdPoli
-      },
-    ).timeout(Duration(minutes: 2));
-    dokterList = jadwalDokterFromJson(response.body);
-    Get.back();
+    try {
+      Future.delayed(
+        Duration.zero,
+        () => Get.dialog(Center(child: CircularProgressIndicator()),
+            barrierDismissible: false),
+      );
+      var response = await http.post(
+        urlBase + urlDok,
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: {
+          'tanggal':
+              DateFormat('dd-MM-yyyy').format(tanggal.value.date).toString(),
+          'kd_poli': kdPoli.value.kdPoli
+        },
+      ).timeout(Duration(minutes: 2));
+      dokterList = jadwalDokterFromJson(response.body);
+      Get.back();
+    } on Exception catch (e) {
+      Get.back();
+      PopUpDialog.dialogWidget('Pastikan Anda Terhubung Internet');
+    }
   }
 
   Future<List<DataApi>> fetchapi() async {
@@ -101,65 +111,88 @@ class PendaftaranController extends GetxController {
     Get.back();
   }
 
-  void postPendaftaran() async {
-    if (api.text == "" && dokter.text == "" && poliklinik.text == "") {
+  void konfirmasi() async {
+    if (api.text == "" || dokter.text == "" || poliklinik.text == "") {
       PopUpDialog.dialogAnimation('Data Masih Ada Yang Kosong !');
     } else {
-      Get.dialog(
-          AlertDialog(
-            //title: Text('Mohon Tunggu Sebentar'),
-            content: SizedBox(
-              width: 100,
-              height: 100,
-              child: Center(
-                child: CircularProgressIndicator(),
-              ),
-            ),
-            elevation: 20.0,
-          ),
-          barrierDismissible: false);
-      var response = await http
-          .post(
-            "http://10.0.2.2/api-rsbnganjuk/public/index.php/pendaftaran",
-            body: {
-              'nrp': nrp.value.toString(),
-              'poli': kdPoli.value.kdPoli.toString(),
-              'dokter': kdDokter.value.toString(),
-              'tgl': tanggal.value.date.toString()
-            },
-            headers: {
-              'Connection': 'Keep-alive',
-              'Keep-alive': 'timeout=5, max=100',
-              "Accept": "application/json",
-            },
-            encoding: Encoding.getByName("utf-8"),
-          )
-          .timeout(Duration(minutes: 2));
-      var data = jsonDecode(response.body);
-      if (response.statusCode == 200) {
-        print('berhasil');
-        Get.back();
+      await PopUpDialog.dialogKonfirmasiPendaftaran(tanggal.value.date,
+          api.text, poliklinik.text, dokter.text, postPendaftaran());
+    }
+  }
+
+  void postPendaftaran() async {
+    if (api.text == "" || dokter.text == "" || poliklinik.text == "") {
+      PopUpDialog.dialogAnimation('Data Masih Ada Yang Kosong !');
+    } else {
+      try {
         Get.dialog(
-          AlertDialog(
-            title: Text('Data Berhasil Disimpan'),
-            content: SizedBox(
-              width: 150,
-              height: 150,
-              child: Center(
-                child: LottieBuilder.asset('assets/animation/plane.json'),
+            AlertDialog(
+              //title: Text('Mohon Tunggu Sebentar'),
+              content: SizedBox(
+                width: 100,
+                height: 100,
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ),
               ),
+              elevation: 20.0,
             ),
-            elevation: 20.0,
-          ),
-          barrierDismissible: false,
+            barrierDismissible: false);
+        var response = await http.post(
+          urlBase,
+          body: {
+            'action': 'daftar',
+            'no_rkm_medis': nrp.value,
+            'kd_poli': kdPoli.value.kdPoli,
+            'kd_dokter': kdDokter.value,
+            'tanggal':
+                DateFormat('yyyy-MM-dd').format(tanggal.value.date).toString(),
+            'kd_pj': 'A01'
+          },
+          headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/x-www-form-urlencoded"
+          },
+          encoding: Encoding.getByName("utf-8"),
         );
-        Future.delayed(Duration(seconds: 2), () {
+        var data = jsonDecode(response.body);
+        if (response.statusCode == 200) {
+          if (data["state"] == 'success') {
+            Get.back();
+            Get.dialog(
+              AlertDialog(
+                title: Text('Data Berhasil Disimpan'),
+                content: SizedBox(
+                  width: 150,
+                  height: 150,
+                  child: Center(
+                    child: LottieBuilder.asset('assets/animation/plane.json'),
+                  ),
+                ),
+                elevation: 20.0,
+              ),
+              barrierDismissible: false,
+            );
+            Future.delayed(Duration(seconds: 2), () {
+              Get.back();
+              Get.toNamed('/dashboard');
+            });
+          } else if (data["state"] == 'limit') {
+            Get.back();
+            PopUpDialog.dialogAnimation(
+                'Kuota Poli Pada Tanggal Tersebut Penuh');
+          } else {
+            Get.back();
+            PopUpDialog.dialogAnimation(
+                'Anda Sudah Mendaftar pada Poli Tersebut');
+          }
+        } else {
           Get.back();
-          Get.toNamed('/dashboard');
-        });
-      } else {
+          PopUpDialog.dialogAnimation('Data Gagal Disimpan');
+        }
+      } on Exception catch (e) {
         Get.back();
-        PopUpDialog.dialogAnimation('Data Gagal Disimpan');
+        PopUpDialog.dialogWidget('Ada Kesalahan Pada Sistem');
       }
     }
   }

@@ -21,7 +21,7 @@ class _DashboardPageState extends State<DashboardPage> {
         //   title: Text("RS Bhayangkara Nganjuk"),
         //   leading: Image.asset("assets/images/logo-app.png"),
         // ),
-        body: Container(child: DashboardController.to.currentPage),
+        body: SafeArea(child: DashboardController.to.currentPage),
         // Container(
         //   color: Colors.white10,
         //   child: SingleChildScrollView(

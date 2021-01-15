@@ -55,20 +55,6 @@ class HomePage extends StatelessWidget {
                 child: Text("Sign In", style: TextStyle(fontSize: 20)),
               ),
             ),
-            // SizedBox(
-            //   width: 350,
-            //   child: RaisedButton(
-            //     shape: RoundedRectangleBorder(
-            //         borderRadius: BorderRadius.circular(18.0),
-            //         side: BorderSide(color: Colors.white)),
-            //     onPressed: () {
-            //       Navigator.pushNamed(context, '/panduan');
-            //     },
-            //     color: Colors.green,
-            //     textColor: Colors.black,
-            //     child: Text("Panduan", style: TextStyle(fontSize: 15)),
-            //   ),
-            // ),
           ],
         ),
       ),

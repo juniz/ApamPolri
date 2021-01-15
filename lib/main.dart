@@ -1,4 +1,3 @@
-import 'package:apam/home_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:apam/utility/router.dart';
@@ -16,6 +15,7 @@ void main() async {
       theme: ThemeData(
         brightness: Brightness.light,
         primaryColor: Colors.black,
+        fontFamily: 'roboto',
         //backgroundColor: Colors.white,
       ),
       darkTheme: ThemeData(

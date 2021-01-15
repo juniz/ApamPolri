@@ -1,4 +1,5 @@
 import 'package:apam/dashboard.dart';
+import 'package:apam/detail_klinik_page.dart';
 import 'package:apam/home_care_page.dart';
 import 'package:apam/home_view.dart';
 import 'package:apam/pendaftaran_page.dart';
@@ -57,6 +58,10 @@ class RouterPage {
     GetPage(
       name: '/riwayat',
       page: () => RiwayatPage(),
+    ),
+    GetPage(
+      name: '/detailklinik',
+      page: () => DetailKlinik(),
     ),
   ];
 }
