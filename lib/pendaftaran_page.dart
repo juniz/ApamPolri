@@ -6,6 +6,7 @@ import 'package:lottie/lottie.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'controller/pendaftaran_controller.dart';
+import 'package:apam/models/booking_model.dart';
 
 class PendaftaranPage extends StatefulWidget {
   @override
@@ -20,127 +21,252 @@ class _PendaftaranPageState extends State<PendaftaranPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // appBar: AppBar(
-      //   title: Text('Pendaftaran'),
-      //   backgroundColor: Colors.green,
-      // ),
-      body: Column(
-        children: [
-          Container(
-            width: Get.width,
-            height: Get.height / 4,
-            color: Colors.green,
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Pendaftaran Umum'),
+          backgroundColor: Colors.green,
+          bottom: TabBar(
+            tabs: [
+              Tab(
+                text: 'Daftar',
+              ),
+              Tab(text: 'Riwayat'),
+            ],
           ),
-          Container(
-            margin: EdgeInsets.all(20),
-            child: MyTextFieldDatePicker(
-              labelText: "Pilih Tanggal",
-              prefixIcon: Icon(Icons.date_range),
-              suffixIcon: Icon(Icons.arrow_drop_down),
-              lastDate: DateTime.now().add(Duration(days: 7)),
-              firstDate: DateTime.now(),
-              initialDate: DateTime.now().add(Duration(days: 1)),
-              dateFormat: DateFormat('dd-MM-yyyy'),
-              onDateChanged: (selectedDate) {
-                // Do something with the selected date
-                _pendaftaranController.tanggal.value.date = selectedDate;
-                _pendaftaranController.clearInput();
-              },
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.all(20),
-            child: TextField(
-              controller: _pendaftaranController.api,
-              readOnly: true,
-              decoration: InputDecoration(
-                labelText: "Pilih Rumah Sakit",
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.home),
-                suffixIcon: Icon(Icons.arrow_drop_down),
-                labelStyle: TextStyle(
-                    color: myFocusNode1.hasFocus ? Colors.green : Colors.black),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.green),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black),
+        ),
+        body: TabBarView(children: [
+          Column(
+            children: [
+              // Container(
+              //   width: Get.width,
+              //   height: Get.height / 4,
+              //   color: Colors.green,
+              // ),
+              Container(
+                margin: EdgeInsets.all(20),
+                child: MyTextFieldDatePicker(
+                  labelText: "Pilih Tanggal",
+                  prefixIcon: Icon(Icons.date_range),
+                  suffixIcon: Icon(Icons.arrow_drop_down),
+                  lastDate: DateTime.now().add(Duration(days: 7)),
+                  firstDate: DateTime.now(),
+                  initialDate: DateTime.now().add(Duration(days: 1)),
+                  dateFormat: DateFormat('dd-MM-yyyy'),
+                  onDateChanged: (selectedDate) {
+                    // Do something with the selected date
+                    _pendaftaranController.tanggal.value.date = selectedDate;
+                    _pendaftaranController.clearInput();
+                  },
                 ),
               ),
-              onTap: () async {
-                modalApi();
-              },
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.all(20),
-            child: TextField(
-              controller: _pendaftaranController.poliklinik,
-              readOnly: true,
-              decoration: InputDecoration(
-                labelText: "Pilih Poliklinik",
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.home),
-                suffixIcon: Icon(Icons.arrow_drop_down),
-              ),
-              onTap: () async {
-                if (_pendaftaranController.selectedApi.value != "") {
-                  modalPoli();
-                } else {
-                  PopUpDialog.dialogAnimation('Data Sebelumnya Masih Kosong !');
-                }
-              },
-            ),
-          ),
-          //_homeVisiteController.dokterList != null ? listDokter(context) : '',
-          Container(
-            margin: EdgeInsets.all(20),
-            child: TextField(
-              controller: _pendaftaranController.dokter,
-              readOnly: true,
-              decoration: InputDecoration(
-                labelText: "Pilih Dokter",
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.person),
-                suffixIcon: Icon(Icons.arrow_drop_down),
-                labelStyle: TextStyle(
-                    color: myFocusNode1.hasFocus ? Colors.green : Colors.black),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.green),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black),
+              Container(
+                margin: EdgeInsets.all(20),
+                child: TextField(
+                  controller: _pendaftaranController.api,
+                  readOnly: true,
+                  decoration: InputDecoration(
+                    labelText: "Pilih Rumah Sakit",
+                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.home),
+                    suffixIcon: Icon(Icons.arrow_drop_down),
+                    labelStyle: TextStyle(
+                        color: myFocusNode1.hasFocus
+                            ? Colors.green
+                            : Colors.black),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.green),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.black),
+                    ),
+                  ),
+                  onTap: () async {
+                    modalApi();
+                  },
                 ),
               ),
-              onTap: () async {
-                if (_pendaftaranController.selectedApi.value != "" &&
-                    _pendaftaranController.poliklinik.text != "") {
-                  modalDokter();
-                } else {
-                  PopUpDialog.dialogAnimation('Data Sebelumnya Masih Kosong !');
-                }
-              },
+              Container(
+                margin: EdgeInsets.all(20),
+                child: TextField(
+                  controller: _pendaftaranController.poliklinik,
+                  readOnly: true,
+                  decoration: InputDecoration(
+                    labelText: "Pilih Poliklinik",
+                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.home),
+                    suffixIcon: Icon(Icons.arrow_drop_down),
+                    labelStyle: TextStyle(
+                        color: myFocusNode1.hasFocus
+                            ? Colors.green
+                            : Colors.black),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.green),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.black),
+                    ),
+                  ),
+                  onTap: () async {
+                    if (_pendaftaranController.selectedApi.value != "") {
+                      modalPoli();
+                    } else {
+                      PopUpDialog.dialogAnimation(
+                          'Data Sebelumnya Masih Kosong !');
+                    }
+                  },
+                ),
+              ),
+              //_homeVisiteController.dokterList != null ? listDokter(context) : '',
+              Container(
+                margin: EdgeInsets.all(20),
+                child: TextField(
+                  controller: _pendaftaranController.dokter,
+                  readOnly: true,
+                  decoration: InputDecoration(
+                    labelText: "Pilih Dokter",
+                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.person),
+                    suffixIcon: Icon(Icons.arrow_drop_down),
+                    labelStyle: TextStyle(
+                        color: myFocusNode1.hasFocus
+                            ? Colors.green
+                            : Colors.black),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.green),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.black),
+                    ),
+                  ),
+                  onTap: () async {
+                    if (_pendaftaranController.selectedApi.value != "" &&
+                        _pendaftaranController.poliklinik.text != "") {
+                      modalDokter();
+                    } else {
+                      PopUpDialog.dialogAnimation(
+                          'Data Sebelumnya Masih Kosong !');
+                    }
+                  },
+                ),
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              SizedBox(
+                width: Get.width / 1.1,
+                height: 50,
+                child: RaisedButton.icon(
+                    onPressed: () {
+                      _pendaftaranController.postPendaftaran();
+                    },
+                    color: Colors.green,
+                    icon: Icon(Icons.person_add, color: Colors.white),
+                    label: Text(
+                      'Daftar',
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.white,
+                      ),
+                    )),
+              )
+            ],
+          ),
+          Container(
+            width: 350,
+            height: Get.height / 2.8,
+            padding: const EdgeInsets.all(4.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(4),
+                  child: Text(
+                    "Booking Pendaftaran",
+                    textAlign: TextAlign.left,
+                    style: TextStyle(fontSize: 20),
+                  ),
+                ),
+                Divider(
+                  thickness: 1.5,
+                ),
+                Flexible(
+                  child: Obx(
+                    () {
+                      if (_pendaftaranController.isLoading.value)
+                        return Center(child: CircularProgressIndicator());
+                      else
+                        return RefreshIndicator(
+                          onRefresh: () async {
+                            _pendaftaranController.fetchBooking();
+                          },
+                          child: ListView.separated(
+                              shrinkWrap: true,
+                              physics: const BouncingScrollPhysics(
+                                  parent: AlwaysScrollableScrollPhysics()),
+                              itemBuilder: (context, index) {
+                                return ListTile(
+                                  trailing: Icon(Icons.arrow_drop_down),
+                                  title: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      Text(
+                                        '${DateFormat('dd-MM-yyyy').format(_pendaftaranController.bookList[index].tanggalPeriksa)}/${_pendaftaranController.bookList[index].status}',
+                                        style: TextStyle(
+                                            color: Colors.black, fontSize: 12),
+                                      ),
+                                      Text(
+                                        '${_pendaftaranController.bookList[index].nmPoli}',
+                                        style: TextStyle(
+                                            color: Colors.black, fontSize: 15),
+                                      ),
+                                      Text(
+                                        '${_pendaftaranController.bookList[index].nmDokter}',
+                                        style: TextStyle(
+                                            color: Colors.black, fontSize: 15),
+                                      ),
+                                    ],
+                                  ),
+                                  onTap: () {
+                                    modalDetailBooking(
+                                        _pendaftaranController.bookList[index]);
+                                  },
+                                );
+                              },
+                              separatorBuilder: (context, index) {
+                                return Padding(
+                                  padding: const EdgeInsets.only(left: 12.0),
+                                  child: Divider(
+                                    thickness: 1.5,
+                                  ),
+                                );
+                              },
+                              itemCount:
+                                  _pendaftaranController.bookList.length),
+                        );
+                    },
+                  ),
+                ),
+              ],
+            ),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.all(
+                Radius.circular(10),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  blurRadius: 5,
+                  offset: Offset(2, 3),
+                ),
+              ],
             ),
           ),
-          SizedBox(
-            height: 20,
-          ),
-          SizedBox(
-            width: Get.width / 1.1,
-            height: 50,
-            child: RaisedButton.icon(
-                onPressed: () {
-                  _pendaftaranController.postPendaftaran();
-                },
-                color: Colors.green,
-                icon: Icon(Icons.person_add),
-                label: Text(
-                  'Daftar',
-                  style: TextStyle(fontSize: 18),
-                )),
-          )
-        ],
+        ]),
       ),
     );
   }
@@ -280,6 +406,67 @@ class _PendaftaranPageState extends State<PendaftaranPage> {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  modalDetailBooking(Booking data) async {
+    return Get.bottomSheet(
+      Container(
+        width: 200,
+        color: Colors.white,
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Container(
+                height: 40,
+                color: Colors.green,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(right: 15.0),
+                      child: GestureDetector(
+                        child: Icon(Icons.close),
+                        onTap: () => Get.back(),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              ListTile(
+                leading: Icon(Icons.calendar_today),
+                title: Text(
+                    'Tanggal Daftar : ${DateFormat('dd-MM-yyyy').format(data.tanggalBooking)}'),
+              ),
+              ListTile(
+                leading: Icon(Icons.calendar_today),
+                title: Text(
+                    'Tanggal Periksa : ${DateFormat('dd-MM-yyyy').format(data.tanggalPeriksa)}'),
+              ),
+              ListTile(
+                leading: Icon(Icons.all_inbox),
+                title: Text('Status : ${data.status}'),
+              ),
+              ListTile(
+                leading: Icon(Icons.home),
+                title: Text('Klinik : ${data.nmPoli}'),
+              ),
+              ListTile(
+                leading: Icon(Icons.person),
+                title: Text('Dokter : ${data.nmDokter}'),
+              ),
+              ListTile(
+                leading: Icon(Icons.wallet_membership),
+                title: Text('Nomor Antrian : ${data.noReg}'),
+              ),
+              ListTile(
+                leading: Icon(Icons.payment),
+                title: Text('Cara Bayar : ${data.pngJawab}'),
+              ),
+            ],
+          ),
         ),
       ),
     );

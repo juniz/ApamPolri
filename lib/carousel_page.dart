@@ -76,6 +76,7 @@ class _CarouselPageState extends State<CarouselPage> {
               items: _carouselController.articleList
                   .map(
                     (item) => Container(
+                      width: Get.width,
                       //color: Colors.red,
                       child: Container(
                         margin: EdgeInsets.all(5.0),
@@ -120,6 +121,7 @@ class _CarouselPageState extends State<CarouselPage> {
                   )
                   .toList(),
               options: CarouselOptions(
+                  viewportFraction: 0.9,
                   autoPlay: true,
                   enlargeCenterPage: true,
                   aspectRatio: 2.0,

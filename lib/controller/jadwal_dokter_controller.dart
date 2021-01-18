@@ -56,30 +56,34 @@ class JadwalDokterController extends GetxController {
       print('Timeout Error: $e');
 
       PopUpDialog.dialogWidget('Waktu Koneksi Habis');
+      Get.back();
     } on SocketException catch (e) {
       print('Socket Error: $e');
 
       PopUpDialog.dialogWidget('Tidak Dapat Terhubung Internet');
+      Get.back();
     } on Error catch (e) {
       print('General Error: $e');
-
-      PopUpDialog.dialogWidget('Terjadi Kesalahan');
-    } finally {
       Get.back();
+      // PopUpDialog.dialogWidget('Terjadi Kesalahan');
     }
   }
 
   Future<List<DataApi>> fetchapi() async {
-    Future.delayed(
-      Duration.zero,
-      () => Get.dialog(Center(child: CircularProgressIndicator()),
-          barrierDismissible: false),
-    );
-    var response = await http
-        .get("http://10.0.2.2/rest-polri/public/index.php/rsb")
-        .timeout(Duration(minutes: 2));
-    apiList.value = rsbApiFromJson(response.body).data;
-    Get.back();
+    try {
+      Future.delayed(
+        Duration.zero,
+        () => Get.dialog(Center(child: CircularProgressIndicator()),
+            barrierDismissible: false),
+      );
+      var response = await http
+          .get("http://10.0.2.2/rest-polri/public/index.php/rsb")
+          .timeout(Duration(minutes: 2));
+      apiList.value = rsbApiFromJson(response.body).data;
+      Get.back();
+    } on Exception catch (e) {
+      Get.back();
+    }
   }
 
   Future<List<DetailDokter>> fetchDetail() async {
@@ -103,7 +107,7 @@ class JadwalDokterController extends GetxController {
       Get.back();
     } on Exception catch (e) {
       Get.back();
-      PopUpDialog.dialogWidget('Tidak Dapat Terhubung dengan Server');
+      // PopUpDialog.dialogWidget('Tidak Dapat Terhubung dengan Server');
     }
   }
 

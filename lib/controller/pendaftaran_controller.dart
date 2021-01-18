@@ -10,6 +10,7 @@ import 'package:get_storage/get_storage.dart';
 import 'dart:convert';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
+import 'package:apam/models/booking_model.dart';
 
 class Tanggal {
   DateTime date;
@@ -28,6 +29,7 @@ class PendaftaranController extends GetxController {
   var isLoading = true.obs;
   final tanggal = Tanggal(date: DateTime.now()).obs;
   final kdPoli = Poliklinik(kdPoli: "").obs;
+  var bookList = List<Booking>().obs;
   TextEditingController poliklinik;
   TextEditingController dokter;
   TextEditingController api;
@@ -41,6 +43,7 @@ class PendaftaranController extends GetxController {
     poliklinik = TextEditingController();
     dokter = TextEditingController();
     api = TextEditingController();
+    fetchBooking();
     super.onInit();
   }
 
@@ -194,6 +197,27 @@ class PendaftaranController extends GetxController {
         Get.back();
         PopUpDialog.dialogWidget('Ada Kesalahan Pada Sistem');
       }
+    }
+  }
+
+  Future<List<Booking>> fetchBooking() async {
+    try {
+      isLoading(true);
+      var response = await http.post(urlBase,
+          headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/x-www-form-urlencoded"
+          },
+          body: {'action': 'booking', 'no_rkm_medis': nrp.value},
+          encoding: Encoding.getByName("utf-8"));
+      var data = bookingFromJson(response.body);
+      if (data != null) {
+        bookList.value = data;
+        isLoading(false);
+      }
+    } on Exception catch (e) {
+      print(e);
+      isLoading(false);
     }
   }
 

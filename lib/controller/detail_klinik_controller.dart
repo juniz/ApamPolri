@@ -44,7 +44,7 @@ class DetailKlinikController extends GetxController {
       Get.back();
     } on Exception catch (e) {
       Get.back();
-      PopUpDialog.dialogWidget('Tidak Dapat Terhubung dengan Server');
+      // PopUpDialog.dialogWidget('Tidak Dapat Terhubung dengan Server');
     }
   }
 }

@@ -4,6 +4,7 @@ import 'package:apam/models/booking_model.dart';
 import 'package:apam/widget/menu_item.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:flutter_open_whatsapp/flutter_open_whatsapp.dart';
 import 'package:intl/intl.dart';
 
 class MenuPage extends StatelessWidget {
@@ -25,144 +26,218 @@ class MenuPage extends StatelessWidget {
                 color: Color(0xffECF0F5),
                 child: CarouselPage(),
               ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Wrap(
-                  children: <Widget>[
-                    MenuItem(
-                      title: 'Pendaftaran',
-                      url: '/pendaftaran',
-                      image: 'assets/icons/icons8-plus-96.png',
-                      round: 20,
-                    ),
-                    MenuItem(
-                      title: 'Jadwal Dokter',
-                      url: '/jadwalDokter',
-                      image: 'assets/icons/icons-planner.png',
-                      round: 20,
-                    ),
-                    MenuItem(
-                      title: 'Kamar',
-                      url: '/kamar',
-                      image: 'assets/icons/icons-bed.png',
-                      round: 20,
-                    ),
-                    MenuItem(
-                      title: 'Home Care',
-                      url: '/homecare',
-                      image: 'assets/icons/icons-hospital.png',
-                      round: 20,
-                    ),
-                    MenuItem(
-                      title: 'Riwayat',
-                      url: '/riwayat',
-                      image: 'assets/icons/history.png',
-                      round: 20,
-                    ),
-                    MenuItem(
-                      title: 'Hubungi Kami',
-                      wa: '628113130690',
-                      image: 'assets/icons/icons-whatsapp.png',
-                      round: 20,
-                    ),
-                  ],
-                ),
-              ),
-              // Container(
-              //   width: 350,
-              //   height: Get.height / 2.8,
-              //   padding: const EdgeInsets.all(4.0),
-              //   child: Column(
-              //     mainAxisAlignment: MainAxisAlignment.start,
-              //     crossAxisAlignment: CrossAxisAlignment.start,
-              //     children: [
-              //       Padding(
-              //         padding: const EdgeInsets.all(4),
-              //         child: Text("Booking Pendaftaran", textAlign: TextAlign.left),
+              // Padding(
+              //   padding: const EdgeInsets.all(8.0),
+              //   child: Wrap(
+              //     children: <Widget>[
+              //       MenuItem(
+              //         title: 'Pendaftaran',
+              //         url: '/pendaftaran',
+              //         image: 'assets/icons/icons8-plus-96.png',
+              //         round: 20,
               //       ),
-              //       Divider(
-              //         thickness: 1.5,
+              //       MenuItem(
+              //         title: 'Jadwal Dokter',
+              //         url: '/jadwalDokter',
+              //         image: 'assets/icons/icons-planner.png',
+              //         round: 20,
               //       ),
-              //       Flexible(
-              //         child: Obx(
-              //           () {
-              //             if (dasboardController.isLoading.value)
-              //               return Center(child: CircularProgressIndicator());
-              //             else
-              //               return RefreshIndicator(
-              //                 onRefresh: () async {
-              //                   dasboardController.fetchBooking();
-              //                 },
-              //                 child: ListView.separated(
-              //                     //shrinkWrap: true,
-              //                     physics: const BouncingScrollPhysics(
-              //                         parent: AlwaysScrollableScrollPhysics()),
-              //                     itemBuilder: (context, index) {
-              //                       return ListTile(
-              //                         trailing: Icon(Icons.arrow_drop_down),
-              //                         title: Column(
-              //                           crossAxisAlignment:
-              //                               CrossAxisAlignment.start,
-              //                           mainAxisAlignment: MainAxisAlignment.center,
-              //                           children: <Widget>[
-              //                             Text(
-              //                               '${DateFormat('dd-MM-yyyy').format(dasboardController.bookList[index].tanggalPeriksa)}/${dasboardController.bookList[index].status}',
-              //                               style: TextStyle(
-              //                                   color: Colors.black, fontSize: 12),
-              //                             ),
-              //                             Text(
-              //                               '${dasboardController.bookList[index].nmPoli}',
-              //                               style: TextStyle(
-              //                                   color: Colors.black, fontSize: 15),
-              //                             ),
-              //                             Text(
-              //                               '${dasboardController.bookList[index].nmDokter}',
-              //                               style: TextStyle(
-              //                                   color: Colors.black, fontSize: 15),
-              //                             ),
-              //                           ],
-              //                         ),
-              //                         onTap: () {
-              //                           modalDetailBooking(
-              //                               dasboardController.bookList[index]);
-              //                         },
-              //                       );
-              //                     },
-              //                     separatorBuilder: (context, index) {
-              //                       return Padding(
-              //                         padding: const EdgeInsets.only(left: 12.0),
-              //                         child: Divider(
-              //                           thickness: 1.5,
-              //                         ),
-              //                       );
-              //                     },
-              //                     itemCount: dasboardController.bookList.length),
-              //               );
-              //           },
-              //         ),
+              //       MenuItem(
+              //         title: 'Kamar',
+              //         url: '/kamar',
+              //         image: 'assets/icons/icons-bed.png',
+              //         round: 20,
               //       ),
-              //     ],
-              //   ),
-              //   decoration: BoxDecoration(
-              //     color: Colors.white,
-              //     borderRadius: BorderRadius.all(
-              //       Radius.circular(10),
-              //     ),
-              //     boxShadow: [
-              //       BoxShadow(
-              //         blurRadius: 5,
-              //         offset: Offset(2, 3),
+              //       MenuItem(
+              //         title: 'Home Care',
+              //         url: '/homecare',
+              //         image: 'assets/icons/icons-hospital.png',
+              //         round: 20,
+              //       ),
+              //       MenuItem(
+              //         title: 'Riwayat',
+              //         url: '/riwayat',
+              //         image: 'assets/icons/history.png',
+              //         round: 20,
+              //       ),
+              //       MenuItem(
+              //         title: 'Hubungi Kami',
+              //         wa: '628113130690',
+              //         image: 'assets/icons/icons-whatsapp.png',
+              //         round: 20,
               //       ),
               //     ],
               //   ),
               // ),
+              SizedBox(
+                height: 20,
+              ),
+              Container(
+                width: Get.width,
+                height: 60,
+                child: ListView(
+                  physics: BouncingScrollPhysics(),
+                  scrollDirection: Axis.horizontal,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: RaisedButton(
+                        color: Colors.green,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20)),
+                        onPressed: () {
+                          Get.toNamed('/pendaftaran');
+                        },
+                        child: Row(
+                          children: <Widget>[
+                            Icon(
+                              Icons.bookmark,
+                              color: Colors.white,
+                            ),
+                            SizedBox(
+                              width: 5,
+                            ),
+                            Text(
+                              "Pendaftaran",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: 17,
+                                  color: Colors.white),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: RaisedButton(
+                        color: Colors.green,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20)),
+                        onPressed: () {
+                          Get.toNamed('/homecare');
+                        },
+                        child: Row(
+                          children: <Widget>[
+                            Icon(
+                              Icons.home_work,
+                              color: Colors.white,
+                            ),
+                            SizedBox(
+                              width: 5,
+                            ),
+                            Text(
+                              "Home Care",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: 17,
+                                  color: Colors.white),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: RaisedButton(
+                        color: Colors.green,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20)),
+                        onPressed: () {
+                          Get.toNamed('/jadwalDokter');
+                        },
+                        child: Row(
+                          children: <Widget>[
+                            Icon(
+                              Icons.calendar_today,
+                              color: Colors.white,
+                            ),
+                            SizedBox(
+                              width: 5,
+                            ),
+                            Text(
+                              "Jadwal Dokter",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: 17,
+                                  color: Colors.white),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: RaisedButton(
+                        color: Colors.green,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20)),
+                        onPressed: () {
+                          Get.toNamed('/kamar');
+                        },
+                        child: Row(
+                          children: <Widget>[
+                            Icon(
+                              Icons.single_bed,
+                              color: Colors.white,
+                            ),
+                            SizedBox(
+                              width: 5,
+                            ),
+                            Text(
+                              "Kamar",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: 17,
+                                  color: Colors.white),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: RaisedButton(
+                        color: Colors.green,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20)),
+                        onPressed: () {
+                          FlutterOpenWhatsapp.sendSingleMessage(
+                              "628113130690", "Hello");
+                        },
+                        child: Row(
+                          children: <Widget>[
+                            Icon(
+                              Icons.call,
+                              color: Colors.white,
+                            ),
+                            SizedBox(
+                              width: 5,
+                            ),
+                            Text(
+                              "Hubungi Kami",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: 17,
+                                  color: Colors.white),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: 20,
+              ),
               Padding(
                 padding: const EdgeInsets.only(left: 17),
                 child: Text(
                   "Daftar Poliklinik",
                   style: TextStyle(
                     fontSize: 20,
-                    fontWeight: FontWeight.w400,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
@@ -170,7 +245,7 @@ class MenuPage extends StatelessWidget {
                 height: 20,
               ),
               Container(
-                height: 400,
+                height: 300,
                 child: SingleChildScrollView(
                   // physics: BouncingScrollPhysics(),
                   scrollDirection: Axis.vertical,
@@ -210,9 +285,9 @@ class MenuPage extends StatelessWidget {
                                                       fit: BoxFit.cover)),
                                             ),
                                           ),
-                                          // SizedBox(
-                                          //   width: 15,
-                                          // ),
+                                          SizedBox(
+                                            width: 15,
+                                          ),
                                           Expanded(
                                             flex: 3,
                                             child: Text(
@@ -232,6 +307,9 @@ class MenuPage extends StatelessWidget {
                                     dasboardController.kdPoli.value =
                                         dasboardController
                                             .klinikList.value[index].kdPoli;
+                                    dasboardController.nmPoli.value =
+                                        dasboardController
+                                            .klinikList.value[index].nmPoli;
                                     await dasboardController.fetchJadwal();
                                     Get.toNamed('/detailklinik');
                                   },
@@ -247,67 +325,6 @@ class MenuPage extends StatelessWidget {
                 height: 20,
               ),
             ]),
-      ),
-    );
-  }
-
-  modalDetailBooking(Booking data) async {
-    return Get.bottomSheet(
-      Container(
-        width: 200,
-        color: Colors.white,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Container(
-                height: 40,
-                color: Colors.green,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(right: 15.0),
-                      child: GestureDetector(
-                        child: Icon(Icons.close),
-                        onTap: () => Get.back(),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              ListTile(
-                leading: Icon(Icons.calendar_today),
-                title: Text(
-                    'Tanggal Daftar : ${DateFormat('dd-MM-yyyy').format(data.tanggalBooking)}'),
-              ),
-              ListTile(
-                leading: Icon(Icons.calendar_today),
-                title: Text(
-                    'Tanggal Periksa : ${DateFormat('dd-MM-yyyy').format(data.tanggalPeriksa)}'),
-              ),
-              ListTile(
-                leading: Icon(Icons.all_inbox),
-                title: Text('Status : ${data.status}'),
-              ),
-              ListTile(
-                leading: Icon(Icons.home),
-                title: Text('Klinik : ${data.nmPoli}'),
-              ),
-              ListTile(
-                leading: Icon(Icons.person),
-                title: Text('Dokter : ${data.nmDokter}'),
-              ),
-              ListTile(
-                leading: Icon(Icons.wallet_membership),
-                title: Text('Nomor Antrian : ${data.noReg}'),
-              ),
-              ListTile(
-                leading: Icon(Icons.payment),
-                title: Text('Cara Bayar : ${data.pngJawab}'),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }

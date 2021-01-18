@@ -51,7 +51,7 @@ class DetailKlinik extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Poliklinik",
+                        dashboardController.nmPoli.value,
                         style: TextStyle(
                           fontSize: 25,
                           fontWeight: FontWeight.w600,
@@ -118,8 +118,8 @@ class DetailKlinik extends StatelessWidget {
                                               dashboardController.detailKlinik
                                                   .value[index].nmDokter,
                                               style: TextStyle(
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.w800,
+                                                fontSize: 17,
+                                                fontWeight: FontWeight.w600,
                                               ),
                                             ),
                                             Text(

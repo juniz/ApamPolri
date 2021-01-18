@@ -25,6 +25,7 @@ class DashboardController extends GetxController {
   var detailKlinik = List<DetailKlinik>().obs;
   var isLoading = true.obs;
   var kdPoli = "".obs;
+  var nmPoli = "".obs;
 
   @override
   void onInit() {
@@ -46,15 +47,15 @@ class DashboardController extends GetxController {
             "Accept": "application/json",
             "Content-Type": "application/x-www-form-urlencoded"
           },
-          body: {'action': 'lastbooking', 'no_rkm_medis': rkm.value},
+          body: {'action': 'booking', 'no_rkm_medis': rkm.value},
           encoding: Encoding.getByName("utf-8"));
       var data = bookingFromJson(response.body);
       if (data != null) {
         bookList.value = data;
+        isLoading(false);
       }
-    } finally {
-      isLoading(false);
-      return bookList;
+    } catch (e) {
+      print(e);
     }
   }
 
@@ -101,7 +102,7 @@ class DashboardController extends GetxController {
       Get.back();
     } on Exception catch (e) {
       Get.back();
-      PopUpDialog.dialogWidget('Tidak Dapat Terhubung dengan Server');
+      // PopUpDialog.dialogWidget('Tidak Dapat Terhubung dengan Server');
     }
   }
 }

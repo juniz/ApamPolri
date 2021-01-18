@@ -174,7 +174,7 @@ class HomeCareController extends GetxController {
         }
       } on Exception catch (e) {
         Get.back();
-        PopUpDialog.dialogWidget('Pastikan Anda Terhubung Internet');
+        // PopUpDialog.dialogWidget('Pastikan Anda Terhubung Internet');
       }
     }
   }
