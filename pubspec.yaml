@@ -23,6 +23,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  awesome_dialog: ^1.3.1
+  carousel_slider: ^2.3.1
   cupertino_icons: ^1.0.0
   dio: ^3.0.10
   dropdown_search: ^0.4.8
@@ -38,7 +40,6 @@ dependencies:
   lottie: ^0.7.0+1
   meta: ^1.1.8
   searchable_dropdown: ^1.1.3
-  carousel_slider: ^2.3.1
 
 flutter_icons:
   android: true
@@ -74,7 +75,6 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-
   fonts:
     - family: roboto
       fonts:

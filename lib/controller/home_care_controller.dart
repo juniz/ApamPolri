@@ -22,7 +22,7 @@ class HomeCareController extends GetxController {
   List<dynamic> poliList = List<Poliklinik>().obs;
   List<JadwalDokter> dokterList = List<JadwalDokter>().obs;
   List<DataApi> apiList = List<DataApi>().obs;
-
+  var isSucces = false.obs;
   var kdDokter = "".obs;
   var nrp = "".obs;
   var selectedApi = "".obs;
@@ -119,6 +119,7 @@ class HomeCareController extends GetxController {
       PopUpDialog.dialogAnimation('Data Masih Ada Yang Kosong !');
     } else {
       try {
+        // isSucces(false);
         PopUpDialog.dialogCircular();
 
         var response = await http
@@ -163,6 +164,7 @@ class HomeCareController extends GetxController {
               Get.toNamed('/dashboard');
             },
           );
+          // isSucces(true);
         } else if (data["message"] == "Duplicate") {
           Get.back();
           PopUpDialog.dialogWidget(
