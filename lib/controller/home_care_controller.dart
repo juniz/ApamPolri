@@ -10,6 +10,7 @@ import 'package:get_storage/get_storage.dart';
 import 'dart:convert';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
+import 'package:apam/models/riwayat_homecare_model.dart';
 
 class Tanggal {
   DateTime date;
@@ -28,6 +29,7 @@ class HomeCareController extends GetxController {
   var isLoading = true.obs;
   final tanggal = Tanggal(date: DateTime.now()).obs;
   final kdPoli = Poliklinik(kdPoli: "").obs;
+  var homecareList = List<RiwayatHomeCare>().obs;
   TextEditingController poliklinik;
   TextEditingController dokter;
   TextEditingController api;
@@ -41,6 +43,7 @@ class HomeCareController extends GetxController {
     poliklinik = TextEditingController();
     dokter = TextEditingController();
     api = TextEditingController();
+    fetchHomecare();
     super.onInit();
   }
 
@@ -87,7 +90,7 @@ class HomeCareController extends GetxController {
         body: {
           'tanggal':
               DateFormat('dd-MM-yyyy').format(tanggal.value.date).toString(),
-          'kd_poli': 'HC'
+          'kd_poli': 'U000'
         },
       );
       dokterList = jadwalDokterFromJson(response.body);
@@ -123,7 +126,7 @@ class HomeCareController extends GetxController {
               "https://api.rsbhayangkaranganjuk.com/api-rsb/public/index.php/homecare",
               body: {
                 'nrp': nrp.value.toString(),
-                'poli': 'HC',
+                'poli': 'U000',
                 'dokter': kdDokter.value.toString(),
                 'tgl': tanggal.value.date.toString()
               },
@@ -176,6 +179,27 @@ class HomeCareController extends GetxController {
         Get.back();
         // PopUpDialog.dialogWidget('Pastikan Anda Terhubung Internet');
       }
+    }
+  }
+
+  Future<List<RiwayatHomeCare>> fetchHomecare() async {
+    try {
+      isLoading(true);
+      var response = await http.post(urlBase,
+          headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/x-www-form-urlencoded"
+          },
+          body: {'action': 'riwayathomecare', 'no_rkm_medis': nrp.value},
+          encoding: Encoding.getByName("utf-8"));
+      var data = riwayatHomeCareFromJson(response.body);
+      if (data != null) {
+        homecareList.value = data;
+        isLoading(false);
+      }
+    } on Exception catch (e) {
+      print(e);
+      isLoading(false);
     }
   }
 

@@ -14,110 +14,117 @@ class ProfilePage extends StatelessWidget {
       color: Colors.white10,
       child: Column(
         children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.only(top: 55),
-            child: Obx(() {
-              if (profileController.isLoading.value)
-                return Center(child: CircularProgressIndicator());
-              else
-                return Column(
-                  children: [
-                    Material(
-                      shape: CircleBorder(),
-                      elevation: 18,
-                      child: CircleAvatar(
-                        maxRadius: 70,
-                        backgroundImage: AssetImage('assets/images/P.png'),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    ListTile(
-                      title: Padding(
-                        padding: const EdgeInsets.all(4.0),
-                        child: Text(
-                          'NRP :',
-                          style: TextStyle(color: Colors.black87, fontSize: 15),
+          Container(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 55),
+              child: Obx(() {
+                if (profileController.isLoading.value)
+                  return Center(child: CircularProgressIndicator());
+                else
+                  return Column(
+                    children: [
+                      Material(
+                        shape: CircleBorder(),
+                        elevation: 18,
+                        child: CircleAvatar(
+                          maxRadius: 70,
+                          backgroundImage: AssetImage('assets/images/P.png'),
                         ),
                       ),
-                      subtitle: Padding(
-                        padding: const EdgeInsets.all(4.0),
-                        child: Text(
-                          profileController.profil.value.noRkmMedis,
-                          style: TextStyle(color: Colors.black, fontSize: 18),
-                        ),
+                      SizedBox(
+                        height: 20,
                       ),
-                      leading: Icon(Icons.account_box_outlined),
-                    ),
-                    Divider(
-                      color: Colors.black54,
-                    ),
-                    ListTile(
-                      title: Padding(
-                        padding: const EdgeInsets.all(4.0),
-                        child: Text(
-                          'Nama :',
-                          style: TextStyle(color: Colors.black87, fontSize: 15),
-                        ),
-                      ),
-                      subtitle: Padding(
-                        padding: const EdgeInsets.all(4.0),
-                        child: Text(
-                          profileController.profil.value.nmPasien,
-                          style: TextStyle(color: Colors.black, fontSize: 18),
-                        ),
-                      ),
-                      leading: Icon(Icons.person),
-                    ),
-                    Divider(
-                      color: Colors.black54,
-                    ),
-                    ListTile(
-                      title: Padding(
-                        padding: const EdgeInsets.all(4.0),
-                        child: Text(
-                          'Tanggal Lahir :',
-                          style: TextStyle(color: Colors.black87, fontSize: 15),
-                        ),
-                      ),
-                      subtitle: Padding(
-                        padding: const EdgeInsets.all(4.0),
-                        child: Text(
-                          DateFormat('dd-MM-yyyy')
-                              .format(profileController.profil.value.tglLahir)
-                              .toString(),
-                          style: TextStyle(color: Colors.black, fontSize: 18),
-                        ),
-                      ),
-                      leading: Icon(Icons.calendar_today),
-                    ),
-                    Divider(
-                      color: Colors.black54,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: ListTile(
-                        title: Text(
-                          'Alamat :',
-                          style: TextStyle(color: Colors.black87, fontSize: 15),
+                      ListTile(
+                        title: Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: Text(
+                            'NRP :',
+                            style:
+                                TextStyle(color: Colors.black87, fontSize: 15),
+                          ),
                         ),
                         subtitle: Padding(
                           padding: const EdgeInsets.all(4.0),
                           child: Text(
-                            profileController.profil.value.alamat,
+                            profileController.profil.value.noRkmMedis,
                             style: TextStyle(color: Colors.black, fontSize: 18),
                           ),
                         ),
-                        leading: Icon(Icons.home),
+                        leading: Icon(Icons.account_box_outlined),
                       ),
-                    ),
-                    Divider(
-                      color: Colors.black54,
-                    ),
-                  ],
-                );
-            }),
+                      Divider(
+                        color: Colors.black54,
+                      ),
+                      ListTile(
+                        title: Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: Text(
+                            'Nama :',
+                            style:
+                                TextStyle(color: Colors.black87, fontSize: 15),
+                          ),
+                        ),
+                        subtitle: Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: Text(
+                            profileController.profil.value.nmPasien,
+                            style: TextStyle(color: Colors.black, fontSize: 18),
+                          ),
+                        ),
+                        leading: Icon(Icons.person),
+                      ),
+                      Divider(
+                        color: Colors.black54,
+                      ),
+                      ListTile(
+                        title: Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: Text(
+                            'Tanggal Lahir :',
+                            style:
+                                TextStyle(color: Colors.black87, fontSize: 15),
+                          ),
+                        ),
+                        subtitle: Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: Text(
+                            DateFormat('dd-MM-yyyy')
+                                .format(profileController.profil.value.tglLahir)
+                                .toString(),
+                            style: TextStyle(color: Colors.black, fontSize: 18),
+                          ),
+                        ),
+                        leading: Icon(Icons.calendar_today),
+                      ),
+                      Divider(
+                        color: Colors.black54,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: ListTile(
+                          title: Text(
+                            'Alamat :',
+                            style:
+                                TextStyle(color: Colors.black87, fontSize: 15),
+                          ),
+                          subtitle: Padding(
+                            padding: const EdgeInsets.all(4.0),
+                            child: Text(
+                              profileController.profil.value.alamat,
+                              style:
+                                  TextStyle(color: Colors.black, fontSize: 18),
+                            ),
+                          ),
+                          leading: Icon(Icons.home),
+                        ),
+                      ),
+                      Divider(
+                        color: Colors.black54,
+                      ),
+                    ],
+                  );
+              }),
+            ),
           ),
           RaisedButton(
             onPressed: () {

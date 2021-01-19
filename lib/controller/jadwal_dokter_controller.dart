@@ -48,6 +48,7 @@ class JadwalDokterController extends GetxController {
       var data = jadwalPraktekFromJson(response.body);
       if (data != null) {
         jadwalDokter.value = data;
+        Get.back();
       } else {
         Get.back();
         PopUpDialog.dialogWidget('Data Kosong');

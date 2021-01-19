@@ -129,7 +129,99 @@ class _HomeCarePageState extends State<HomeCarePage> {
               )
             ],
           ),
-          Container(),
+          Container(
+            width: 350,
+            height: Get.height / 2.8,
+            padding: const EdgeInsets.all(4.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(4),
+                  child: Text(
+                    "Booking Pendaftaran",
+                    textAlign: TextAlign.left,
+                    style: TextStyle(fontSize: 20),
+                  ),
+                ),
+                Divider(
+                  thickness: 1.5,
+                ),
+                Flexible(
+                  child: Obx(
+                    () {
+                      if (_homecareController.isLoading.value)
+                        return Center(child: CircularProgressIndicator());
+                      else
+                        return RefreshIndicator(
+                          onRefresh: () async {
+                            _homecareController.fetchHomecare();
+                          },
+                          child: ListView.separated(
+                              shrinkWrap: true,
+                              physics: const BouncingScrollPhysics(
+                                  parent: AlwaysScrollableScrollPhysics()),
+                              itemBuilder: (context, index) {
+                                return ListTile(
+                                  trailing: Icon(Icons.arrow_drop_down),
+                                  title: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      Text(
+                                        '${DateFormat('dd-MM-yyyy').format(_homecareController.homecareList[index].tgl)}',
+                                        style: TextStyle(
+                                            color: Colors.black, fontSize: 12),
+                                      ),
+                                      Text(
+                                        '${_homecareController.homecareList[index].nmPoli}',
+                                        style: TextStyle(
+                                            color: Colors.black, fontSize: 15),
+                                      ),
+                                      Text(
+                                        '${_homecareController.homecareList[index].nmDokter}',
+                                        style: TextStyle(
+                                            color: Colors.black, fontSize: 15),
+                                      ),
+                                    ],
+                                  ),
+                                  onTap: () {
+                                    // modalDetailBooking(
+                                    //     _pendaftaranController.bookList[index]);
+                                  },
+                                );
+                              },
+                              separatorBuilder: (context, index) {
+                                return Padding(
+                                  padding: const EdgeInsets.only(left: 12.0),
+                                  child: Divider(
+                                    thickness: 1.5,
+                                  ),
+                                );
+                              },
+                              itemCount:
+                                  _homecareController.homecareList.length),
+                        );
+                    },
+                  ),
+                ),
+              ],
+            ),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.all(
+                Radius.circular(10),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  blurRadius: 5,
+                  offset: Offset(2, 3),
+                ),
+              ],
+            ),
+          ),
         ]),
       ),
     );

@@ -13,11 +13,13 @@ import 'package:http/http.dart' as http;
 class LoginController extends GetxController {
   TextEditingController emailTextController;
   TextEditingController passwordTextController;
+  TextEditingController rumkitController;
 
   @override
   void onInit() {
     emailTextController = TextEditingController();
     passwordTextController = TextEditingController();
+    rumkitController = TextEditingController();
     super.onInit();
   }
 
@@ -71,6 +73,7 @@ class LoginController extends GetxController {
   void onClose() {
     emailTextController?.dispose();
     passwordTextController?.dispose();
+    rumkitController?.dispose();
     super.onClose();
   }
 }

@@ -9,7 +9,7 @@ import 'package:apam/login.dart';
 import 'package:apam/panduan.dart';
 import 'package:apam/riwayat_page.dart';
 import 'package:apam/splashscreen_view.dart';
-
+import 'package:apam/onboarding_page.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
@@ -21,7 +21,7 @@ class RouterPage {
           GetStorage box = GetStorage();
           return box.hasData('no_rkm_medis')
               ? DashboardPage()
-              : SplashScreenPage();
+              : OnboardingPage();
         }),
     GetPage(
       name: '/login',
