@@ -14,6 +14,8 @@ class KamarController extends GetxController {
   var kamarList = List<Kamar>().obs;
   var isLoading = true.obs;
   var apiList = List<DataApi>().obs;
+  var selectedApi = "".obs;
+  var hasil = "".obs;
 
   @override
   void onInit() {
@@ -35,35 +37,40 @@ class KamarController extends GetxController {
   }
 
   void fetchKamar() async {
-    try {
-      isLoading(true);
-      http.Response response = await http.post(
-        urlBase,
-        body: {'action': 'kamar'},
-        headers: {
-          "Accept": "application/json",
-          "Content-Type": "application/x-www-form-urlencoded"
-        },
-        encoding: Encoding.getByName("utf-8"),
-      );
-      var data = kamarFromJson(response.body);
-      if (data != null) {
-        kamarList.value = data;
+    if (selectedApi.value.contains('Nganjuk')) {
+      hasil.value = 'available';
+      try {
+        isLoading(true);
+        http.Response response = await http.post(
+          urlBase,
+          body: {'action': 'kamar'},
+          headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/x-www-form-urlencoded"
+          },
+          encoding: Encoding.getByName("utf-8"),
+        );
+        var data = kamarFromJson(response.body);
+        if (data != null) {
+          kamarList.value = data;
+        }
+      } on TimeoutException catch (e) {
+        print('Timeout Error: $e');
+
+        PopUpDialog.dialogWidget('Waktu Koneksi Habis');
+      } on SocketException catch (e) {
+        print('Socket Error: $e');
+
+        PopUpDialog.dialogWidget('Tidak Dapat Terhubung Internet');
+      } on Error catch (e) {
+        print('General Error: $e');
+
+        PopUpDialog.dialogWidget('Terjadi Kesalahan');
+      } finally {
+        isLoading(false);
       }
-    } on TimeoutException catch (e) {
-      print('Timeout Error: $e');
-
-      PopUpDialog.dialogWidget('Waktu Koneksi Habis');
-    } on SocketException catch (e) {
-      print('Socket Error: $e');
-
-      PopUpDialog.dialogWidget('Tidak Dapat Terhubung Internet');
-    } on Error catch (e) {
-      print('General Error: $e');
-
-      PopUpDialog.dialogWidget('Terjadi Kesalahan');
-    } finally {
-      isLoading(false);
+    } else {
+      hasil.value = 'notavailable';
     }
   }
 }

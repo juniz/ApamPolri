@@ -22,6 +22,7 @@ class JadwalDokterController extends GetxController {
   var isLoading = true.obs;
   var apiList = List<DataApi>().obs;
   var selectedApi = "".obs;
+  var hasil = "".obs;
 
   @override
   void onInit() async {
@@ -30,43 +31,48 @@ class JadwalDokterController extends GetxController {
   }
 
   void fetchDokter() async {
-    try {
-      Future.delayed(
-        Duration.zero,
-        () => Get.dialog(Center(child: CircularProgressIndicator()),
-            barrierDismissible: false),
-      );
-      http.Response response = await http.post(
-        urlBase,
-        body: {'action': 'dokter', 'tanggal': tanggal.value.tgl.toString()},
-        headers: {
-          "Accept": "application/json",
-          "Content-Type": "application/x-www-form-urlencoded"
-        },
-        encoding: Encoding.getByName("utf-8"),
-      );
-      var data = jadwalPraktekFromJson(response.body);
-      if (data != null) {
-        jadwalDokter.value = data;
+    if (selectedApi.value.contains('Nganjuk')) {
+      hasil.value = 'available';
+      try {
+        Future.delayed(
+          Duration.zero,
+          () => Get.dialog(Center(child: CircularProgressIndicator()),
+              barrierDismissible: false),
+        );
+        http.Response response = await http.post(
+          urlBase,
+          body: {'action': 'dokter', 'tanggal': tanggal.value.tgl.toString()},
+          headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/x-www-form-urlencoded"
+          },
+          encoding: Encoding.getByName("utf-8"),
+        );
+        var data = jadwalPraktekFromJson(response.body);
+        if (data != null) {
+          jadwalDokter.value = data;
+          Get.back();
+        } else {
+          Get.back();
+          PopUpDialog.dialogWidget('Data Kosong');
+        }
+      } on TimeoutException catch (e) {
+        print('Timeout Error: $e');
+
+        PopUpDialog.dialogWidget('Waktu Koneksi Habis');
         Get.back();
-      } else {
+      } on SocketException catch (e) {
+        print('Socket Error: $e');
+
+        PopUpDialog.dialogWidget('Tidak Dapat Terhubung Internet');
         Get.back();
-        PopUpDialog.dialogWidget('Data Kosong');
+      } on Error catch (e) {
+        print('General Error: $e');
+        Get.back();
+        // PopUpDialog.dialogWidget('Terjadi Kesalahan');
       }
-    } on TimeoutException catch (e) {
-      print('Timeout Error: $e');
-
-      PopUpDialog.dialogWidget('Waktu Koneksi Habis');
-      Get.back();
-    } on SocketException catch (e) {
-      print('Socket Error: $e');
-
-      PopUpDialog.dialogWidget('Tidak Dapat Terhubung Internet');
-      Get.back();
-    } on Error catch (e) {
-      print('General Error: $e');
-      Get.back();
-      // PopUpDialog.dialogWidget('Terjadi Kesalahan');
+    } else {
+      hasil.value = "notavailable";
     }
   }
 

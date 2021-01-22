@@ -14,6 +14,7 @@ class LoginController extends GetxController {
   TextEditingController emailTextController;
   TextEditingController passwordTextController;
   TextEditingController rumkitController;
+  var hasil = "".obs;
 
   @override
   void onInit() {
@@ -23,50 +24,59 @@ class LoginController extends GetxController {
     super.onInit();
   }
 
-  void apiLogin() async {
-    Get.dialog(Center(child: CircularProgressIndicator()),
-        barrierDismissible: false);
+  Future apiLogin() async {
+    if (rumkitController.text.contains('Nganjuk')) {
+      Get.dialog(Center(child: CircularProgressIndicator()),
+          barrierDismissible: false);
 
-    try {
-      http.Response response = await http.post(
-        urlBase + urlLogin,
-        body: {
-          'no_rkm_medis': emailTextController.text,
-          'no_ktp': passwordTextController.text
-        },
-        headers: {
-          "Accept": "application/json",
-          "Content-Type": "application/x-www-form-urlencoded"
-        },
-        encoding: Encoding.getByName("utf-8"),
-      );
-      var res = jsonDecode(response.body);
-      if (response.statusCode == 200) {
-        if (res['state'] == 'valid') {
-          LocalData.savePref('no_rkm_medis', res['no_rkm_medis']);
-          Get.back();
-          Get.offAllNamed("/dashboard");
-        } else {
-          Get.back();
-          PopUpDialog.dialogWidget('NRP Tidak Ditemukan');
+      try {
+        http.Response response = await http.post(
+          urlBase + urlLogin,
+          body: {
+            'no_rkm_medis': emailTextController.text,
+            'no_ktp': passwordTextController.text
+          },
+          headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/x-www-form-urlencoded"
+          },
+          encoding: Encoding.getByName("utf-8"),
+        );
+        var res = jsonDecode(response.body);
+        if (response.statusCode == 200) {
+          if (res['state'] == 'valid') {
+            LocalData.savePref('no_rkm_medis', res['no_rkm_medis']);
+            Get.back();
+            hasil.value = 'valid';
+          } else {
+            Get.back();
+
+            hasil.value = 'invalid';
+            clearForm();
+          }
         }
-      } else {
+      } on TimeoutException catch (e) {
+        print('Timeout Error: $e');
         Get.back();
-        PopUpDialog.dialogWidget('Terjadi Kesalahan');
+        hasil.value = 'timeout';
+      } on SocketException catch (e) {
+        print('Socket Error: $e');
+        Get.back();
+        hasil.value = 'socket';
+      } on Error catch (e) {
+        print('General Error: $e');
+        Get.back();
+        hasil.value = 'catch';
       }
-    } on TimeoutException catch (e) {
-      print('Timeout Error: $e');
-      Get.back();
-      PopUpDialog.dialogWidget('Waktu Koneksi Habis');
-    } on SocketException catch (e) {
-      print('Socket Error: $e');
-      Get.back();
-      PopUpDialog.dialogWidget('Tidak Dapat Terhubung Internet');
-    } on Error catch (e) {
-      print('General Error: $e');
-      Get.back();
-      PopUpDialog.dialogWidget('Terjadi Kesalahan');
+    } else {
+      hasil.value = 'notavailable';
     }
+  }
+
+  void clearForm() {
+    emailTextController.text = "";
+    passwordTextController.text = "";
+    rumkitController.text = "";
   }
 
   @override

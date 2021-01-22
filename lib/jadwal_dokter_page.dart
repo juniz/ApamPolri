@@ -26,10 +26,18 @@ class _JadwalDokterPageState extends State<JadwalDokterPage> {
           children: <Widget>[
             Expanded(
               child: Obx(() {
-                if (_jadwalDokterController.jadwalDokter.length < 1) {
+                if (_jadwalDokterController.selectedApi.value == "") {
                   return Center(
                     child: Text(
                       'Pilih Rumah Sakit Terlebih Dahulu',
+                      style: TextStyle(color: Colors.black),
+                    ),
+                  );
+                } else if (_jadwalDokterController.hasil.value ==
+                    'notavailable') {
+                  return Center(
+                    child: Text(
+                      'Layanan ${_jadwalDokterController.selectedApi.value} Belum Tersedia',
                       style: TextStyle(color: Colors.black),
                     ),
                   );
@@ -107,14 +115,14 @@ class _JadwalDokterPageState extends State<JadwalDokterPage> {
                   itemCount: DataDummy.dummy.length,
                   itemBuilder: (context, index) {
                     return ListTile(
-                      leading: Icon(Icons.person),
+                      leading: Icon(Icons.home),
                       title: Text(
                         DataDummy.dummy[index].nama,
                         style: TextStyle(color: Colors.black),
                       ),
                       onTap: () async {
                         _jadwalDokterController.selectedApi.value =
-                            DataDummy.dummy[index].api;
+                            DataDummy.dummy[index].nama;
                         _jadwalDokterController.fetchDokter();
                         Get.back();
                       },
@@ -147,7 +155,7 @@ class _JadwalDokterPageState extends State<JadwalDokterPage> {
                   itemBuilder: (context, index) {
                     return ListTile(
                       isThreeLine: true,
-                      leading: Icon(Icons.calendar_today),
+                      leading: Icon(Icons.event),
                       title: Text(
                           '${_jadwalDokterController.detailDokter.value[index].nmPoli}'),
                       subtitle: Column(

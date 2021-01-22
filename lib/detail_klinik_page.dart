@@ -66,73 +66,70 @@ class DetailKlinik extends StatelessWidget {
                           physics: BouncingScrollPhysics(),
                           itemCount: dashboardController.detailKlinik.length,
                           itemBuilder: (context, index) {
-                            return Expanded(
+                            return Container(
+                              margin: EdgeInsets.only(bottom: 10),
+                              width: MediaQuery.of(context).size.width,
+                              decoration: BoxDecoration(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(20)),
+                                  color: Color(0xffECF0F5)),
                               child: Container(
-                                margin: EdgeInsets.only(bottom: 10),
-                                width: MediaQuery.of(context).size.width,
-                                decoration: BoxDecoration(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(20)),
-                                    color: Color(0xffECF0F5)),
-                                child: Container(
-                                  padding: EdgeInsets.all(10),
-                                  child: Row(
-                                    children: <Widget>[
-                                      Flexible(
-                                        flex: 1,
-                                        child: Container(
-                                          width: 70,
-                                          height: 60,
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(10)),
-                                            color: Color(0xffD5E0FA),
-                                          ),
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: <Widget>[
-                                              Text(
-                                                dashboardController.detailKlinik
-                                                    .value[index].hariKerja,
-                                                style: TextStyle(
-                                                    color: Color(0xff3479C0),
-                                                    fontSize: 17,
-                                                    fontWeight:
-                                                        FontWeight.w800),
-                                              ),
-                                            ],
-                                          ),
+                                padding: EdgeInsets.all(10),
+                                child: Row(
+                                  children: <Widget>[
+                                    Flexible(
+                                      flex: 1,
+                                      child: Container(
+                                        width: 70,
+                                        height: 60,
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(10)),
+                                          color: Color(0xffD5E0FA),
                                         ),
-                                      ),
-                                      SizedBox(
-                                        width: 10,
-                                      ),
-                                      Flexible(
-                                        flex: 3,
                                         child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
                                           children: <Widget>[
                                             Text(
                                               dashboardController.detailKlinik
-                                                  .value[index].nmDokter,
+                                                  .value[index].hariKerja,
                                               style: TextStyle(
-                                                fontSize: 17,
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                            ),
-                                            Text(
-                                              "${dashboardController.detailKlinik.value[index].jamMulai} s/d ${dashboardController.detailKlinik.value[index].jamSelesai}",
-                                              style: TextStyle(
+                                                  color: Color(0xff3479C0),
                                                   fontSize: 17,
-                                                  fontWeight: FontWeight.w600),
-                                            )
+                                                  fontWeight: FontWeight.w800),
+                                            ),
                                           ],
                                         ),
-                                      )
-                                    ],
-                                  ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Flexible(
+                                      flex: 3,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          Text(
+                                            dashboardController.detailKlinik
+                                                .value[index].nmDokter,
+                                            style: TextStyle(
+                                              fontSize: 17,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                          Text(
+                                            "${dashboardController.detailKlinik.value[index].jamMulai} s/d ${dashboardController.detailKlinik.value[index].jamSelesai}",
+                                            style: TextStyle(
+                                                fontSize: 17,
+                                                fontWeight: FontWeight.w600),
+                                          )
+                                        ],
+                                      ),
+                                    )
+                                  ],
                                 ),
                               ),
                             );

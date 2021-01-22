@@ -22,7 +22,7 @@ class PendaftaranController extends GetxController {
   List<dynamic> poliList = List<Poliklinik>().obs;
   List<JadwalDokter> dokterList = List<JadwalDokter>().obs;
   List<DataApi> apiList = List<DataApi>().obs;
-
+  var hasil = "".obs;
   var kdDokter = "".obs;
   var nrp = "".obs;
   var selectedApi = "".obs;
@@ -123,80 +123,84 @@ class PendaftaranController extends GetxController {
     }
   }
 
-  void postPendaftaran() async {
-    if (api.text == "" || dokter.text == "" || poliklinik.text == "") {
-      PopUpDialog.dialogAnimation('Data Masih Ada Yang Kosong !');
-    } else {
-      try {
-        Get.dialog(
-            AlertDialog(
-              //title: Text('Mohon Tunggu Sebentar'),
-              content: SizedBox(
-                width: 100,
-                height: 100,
-                child: Center(
-                  child: CircularProgressIndicator(),
-                ),
-              ),
-              elevation: 20.0,
-            ),
-            barrierDismissible: false);
-        var response = await http.post(
-          urlBase,
-          body: {
-            'action': 'daftar',
-            'no_rkm_medis': nrp.value,
-            'kd_poli': kdPoli.value.kdPoli,
-            'kd_dokter': kdDokter.value,
-            'tanggal':
-                DateFormat('yyyy-MM-dd').format(tanggal.value.date).toString(),
-            'kd_pj': 'A01'
-          },
-          headers: {
-            "Accept": "application/json",
-            "Content-Type": "application/x-www-form-urlencoded"
-          },
-          encoding: Encoding.getByName("utf-8"),
-        );
-        var data = jsonDecode(response.body);
-        if (response.statusCode == 200) {
-          if (data["state"] == 'success') {
-            Get.back();
-            Get.dialog(
+  Future postPendaftaran() async {
+    if (api.text.contains('Nganjuk')) {
+      if (api.text == "" || dokter.text == "" || poliklinik.text == "") {
+        PopUpDialog.dialogAnimation('Data Masih Ada Yang Kosong !');
+      } else {
+        try {
+          Get.dialog(
               AlertDialog(
-                title: Text('Data Berhasil Disimpan'),
+                //title: Text('Mohon Tunggu Sebentar'),
                 content: SizedBox(
-                  width: 150,
-                  height: 150,
+                  width: 100,
+                  height: 100,
                   child: Center(
-                    child: LottieBuilder.asset('assets/animation/plane.json'),
+                    child: CircularProgressIndicator(),
                   ),
                 ),
                 elevation: 20.0,
               ),
-              barrierDismissible: false,
-            );
-            Future.delayed(Duration(seconds: 2), () {
+              barrierDismissible: false);
+          var response = await http.post(
+            urlBase,
+            body: {
+              'action': 'daftar',
+              'no_rkm_medis': nrp.value,
+              'kd_poli': kdPoli.value.kdPoli,
+              'kd_dokter': kdDokter.value,
+              'tanggal': DateFormat('yyyy-MM-dd')
+                  .format(tanggal.value.date)
+                  .toString(),
+              'kd_pj': 'A01'
+            },
+            headers: {
+              "Accept": "application/json",
+              "Content-Type": "application/x-www-form-urlencoded"
+            },
+            encoding: Encoding.getByName("utf-8"),
+          );
+          var data = jsonDecode(response.body);
+          if (response.statusCode == 200) {
+            if (data["state"] == 'success') {
               Get.back();
-              Get.toNamed('/dashboard');
-            });
-          } else if (data["state"] == 'limit') {
-            Get.back();
-            PopUpDialog.dialogAnimation(
-                'Kuota Poli Pada Tanggal Tersebut Penuh');
+              hasil.value = 'success';
+              // Get.dialog(
+              //   AlertDialog(
+              //     title: Text('Data Berhasil Disimpan'),
+              //     content: SizedBox(
+              //       width: 150,
+              //       height: 150,
+              //       child: Center(
+              //         child: LottieBuilder.asset('assets/animation/plane.json'),
+              //       ),
+              //     ),
+              //     elevation: 20.0,
+              //   ),
+              //   barrierDismissible: false,
+              // );
+              // Future.delayed(Duration(seconds: 2), () {
+              //   Get.back();
+              //   Get.toNamed('/dashboard');
+              // });
+            } else if (data["state"] == 'limit') {
+              Get.back();
+              hasil.value = 'limit';
+            } else {
+              Get.back();
+              hasil.value = 'duplicate';
+            }
           } else {
             Get.back();
-            PopUpDialog.dialogAnimation(
-                'Anda Sudah Mendaftar pada Poli Tersebut');
+            hasil.value = 'fail';
           }
-        } else {
+        } on Exception catch (e) {
           Get.back();
-          PopUpDialog.dialogAnimation('Data Gagal Disimpan');
+          hasil.value = 'notconnect';
         }
-      } on Exception catch (e) {
-        Get.back();
-        PopUpDialog.dialogWidget('Ada Kesalahan Pada Sistem');
       }
+    } else {
+      hasil.value = 'notavailable';
     }
   }
 

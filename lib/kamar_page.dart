@@ -18,10 +18,17 @@ class KamarPage extends StatelessWidget {
             Expanded(
               child: Obx(
                 () {
-                  if (kamarController.kamarList.length < 1) {
+                  if (kamarController.selectedApi.value == "") {
                     return Center(
                       child: Text(
                         'Pilih Rumah Sakit Terlebih Dahulu',
+                        style: TextStyle(color: Colors.black),
+                      ),
+                    );
+                  } else if (kamarController.hasil.value == 'notavailable') {
+                    return Center(
+                      child: Text(
+                        'Layanan ${kamarController.selectedApi.value} Belum Tersedia',
                         style: TextStyle(color: Colors.black),
                       ),
                     );
@@ -30,7 +37,7 @@ class KamarPage extends StatelessWidget {
                       itemCount: kamarController.kamarList.length,
                       itemBuilder: (context, index) {
                         return ListTile(
-                          leading: Icon(Icons.home_filled),
+                          leading: Icon(Icons.king_bed),
                           title: Text(
                             '${kamarController.kamarList[index].kelas}\nTersedia : ${kamarController.kamarList[index].kosong}',
                             style: TextStyle(color: Colors.black),
@@ -81,14 +88,14 @@ class KamarPage extends StatelessWidget {
                   itemCount: DataDummy.dummy.length,
                   itemBuilder: (context, index) {
                     return ListTile(
-                      leading: Icon(Icons.person),
+                      leading: Icon(Icons.home),
                       title: Text(
                         DataDummy.dummy[index].nama,
                         style: TextStyle(color: Colors.black),
                       ),
                       onTap: () async {
-                        // kamarController.selectedApi.value =
-                        //     _jadwalDokterController.apiList[index].api;
+                        kamarController.selectedApi.value =
+                            DataDummy.dummy[index].nama;
                         kamarController.fetchKamar();
                         Get.back();
                       },

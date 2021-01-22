@@ -245,7 +245,7 @@ class MenuPage extends StatelessWidget {
                 height: 20,
               ),
               Container(
-                height: 300,
+                height: 400,
                 child: SingleChildScrollView(
                   // physics: BouncingScrollPhysics(),
                   scrollDirection: Axis.vertical,

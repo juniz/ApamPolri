@@ -10,6 +10,20 @@ import 'package:flutter/material.dart';
 
 class AwesomeDialogScreen extends StatefulWidget {
   static const routeName = '/AwesomeDialogScreen';
+  static void showAlertDialogOnOkCallback(String title, String msg,
+      DialogType dialogType, BuildContext context, VoidCallback onOkPress) {
+    AwesomeDialog(
+      context: context,
+      animType: AnimType.TOPSLIDE,
+      dialogType: dialogType,
+      title: title,
+      desc: msg,
+      btnOkIcon: Icons.check_circle,
+      btnOkColor: Colors.green.shade900,
+      btnOkOnPress: onOkPress,
+    ).show();
+  }
+
   @override
   _AwesomeDialogScreenState createState() => _AwesomeDialogScreenState();
 }

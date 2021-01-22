@@ -2,6 +2,8 @@ import 'package:apam/controller/login_controller.dart';
 import 'package:apam/services/data_dummy.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:apam/widget/awesome_dialog_screen.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -149,9 +151,49 @@ class _LoginPageState extends State<LoginPage> {
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(18.0),
                             side: BorderSide(color: Colors.green)),
-                        onPressed: () {
+                        onPressed: () async {
                           if (_formKey.currentState.validate()) {
-                            _loginController.apiLogin();
+                            await _loginController.apiLogin();
+                            if (_loginController.hasil.value == 'valid') {
+                              Get.offAllNamed("/dashboard");
+                            } else if (_loginController.hasil.value ==
+                                'invalid') {
+                              return AwesomeDialog(
+                                      context: context,
+                                      dialogType: DialogType.ERROR,
+                                      animType: AnimType.RIGHSLIDE,
+                                      headerAnimationLoop: false,
+                                      title: 'Error',
+                                      desc: 'Nomor NRP atau KTP Salah',
+                                      btnOkOnPress: () {},
+                                      btnOkColor: Colors.red)
+                                  .show();
+                            } else if (_loginController.hasil.value ==
+                                'notavailable') {
+                              return AwesomeDialog(
+                                      context: context,
+                                      dialogType: DialogType.ERROR,
+                                      animType: AnimType.RIGHSLIDE,
+                                      headerAnimationLoop: false,
+                                      title: 'Error',
+                                      desc:
+                                          'Layanan ${_loginController.rumkitController.text} Belum Tersedia\nSilahkan Pilih Rumkit Yang Lain',
+                                      btnOkOnPress: () {},
+                                      btnOkColor: Colors.red)
+                                  .show();
+                            } else {
+                              return AwesomeDialog(
+                                      context: context,
+                                      dialogType: DialogType.ERROR,
+                                      animType: AnimType.RIGHSLIDE,
+                                      headerAnimationLoop: false,
+                                      title: 'Error',
+                                      desc:
+                                          'Tidak Bisa Terhubung Dengan Internet',
+                                      btnOkOnPress: () {},
+                                      btnOkColor: Colors.red)
+                                  .show();
+                            }
                           }
                         },
                         color: Colors.green,
@@ -187,7 +229,7 @@ class _LoginPageState extends State<LoginPage> {
                   itemCount: DataDummy.dummy.length,
                   itemBuilder: (context, index) {
                     return ListTile(
-                      leading: Icon(Icons.person),
+                      leading: Icon(Icons.home),
                       title: Text(
                         DataDummy.dummy[index].nama,
                         style: TextStyle(color: Colors.black),

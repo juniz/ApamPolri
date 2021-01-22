@@ -25,7 +25,7 @@ class CarouselPageController extends GetxController {
     try {
       isLoading(true);
       var request = await http.get(
-          'http://newsapi.org/v2/top-headlines?country=id&category=science&apiKey=199bdb149a8641e5b36d7153b2d68f0a&pageSize=5');
+          'http://newsapi.org/v2/top-headlines?country=id&category=health&apiKey=199bdb149a8641e5b36d7153b2d68f0a&pageSize=5');
       var data = articleFromJson(request.body).articles;
 
       articleList = data;

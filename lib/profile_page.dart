@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:apam/widget/awesome_dialog_screen.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({Key key}) : super(key: key);
@@ -128,36 +130,17 @@ class ProfilePage extends StatelessWidget {
           ),
           RaisedButton(
             onPressed: () {
-              Get.dialog(
-                AlertDialog(
-                  title: Text(
-                    'Apakah Anda Yakin ?',
-                  ),
-                  content: SizedBox(
-                    width: 100,
-                    height: 100,
-                    child: LottieBuilder.asset(
-                        "assets/animation/warning-sign.json"),
-                  ),
-                  actions: [
-                    FlatButton(
-                      color: Colors.green,
-                      onPressed: () {
-                        profileController.logout();
-                      },
-                      child: Text('Ya'),
-                    ),
-                    FlatButton(
-                      color: Colors.red,
-                      onPressed: () {
-                        Get.back();
-                      },
-                      child: Text('Tidak'),
-                    )
-                  ],
-                  elevation: 20.0,
-                ),
-              );
+              AwesomeDialog(
+                  context: context,
+                  dialogType: DialogType.WARNING,
+                  headerAnimationLoop: false,
+                  animType: AnimType.TOPSLIDE,
+                  title: 'Log Out',
+                  desc: 'Apakah Anda Ingin Log Out Aplikasi',
+                  btnCancelOnPress: () {},
+                  btnOkOnPress: () {
+                    profileController.logout();
+                  }).show();
             },
             child: Text(
               'Log Out',

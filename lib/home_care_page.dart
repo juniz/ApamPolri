@@ -82,6 +82,7 @@ class _HomeCarePageState extends State<HomeCarePage> {
                   ),
                   onTap: () async {
                     modalApi();
+                    _homecareController.dokter.text = "";
                   },
                 ),
               ),
@@ -118,8 +119,81 @@ class _HomeCarePageState extends State<HomeCarePage> {
                 width: Get.width / 1.1,
                 height: 50,
                 child: RaisedButton.icon(
-                  onPressed: () {
-                    _homecareController.postPendaftaran();
+                  onPressed: () async {
+                    await _homecareController.postPendaftaran();
+                    if (_homecareController.succses.value == 'Sukses') {
+                      return AwesomeDialog(
+                          context: context,
+                          animType: AnimType.LEFTSLIDE,
+                          headerAnimationLoop: false,
+                          dialogType: DialogType.SUCCES,
+                          title: 'Succes',
+                          desc: 'Data Anda Telah Terdaftar pada Home Care',
+                          btnOkIcon: Icons.check_circle,
+                          onDissmissCallback: () {
+                            debugPrint('Dialog Dissmiss from callback');
+                          }).show();
+                    } else if (_homecareController.succses.value ==
+                        'Duplicate') {
+                      return AwesomeDialog(
+                              context: context,
+                              dialogType: DialogType.ERROR,
+                              animType: AnimType.RIGHSLIDE,
+                              headerAnimationLoop: false,
+                              title: 'Error',
+                              desc:
+                                  'Anda Sudah Terdaftar Pada Tanggal Tersebut',
+                              btnOkOnPress: () {},
+                              btnOkColor: Colors.red)
+                          .show();
+                    } else if (_homecareController.succses.value == 'Full') {
+                      return AwesomeDialog(
+                              context: context,
+                              dialogType: DialogType.ERROR,
+                              animType: AnimType.RIGHSLIDE,
+                              headerAnimationLoop: false,
+                              title: 'Error',
+                              desc:
+                                  'Kuota Sudah Penuh Pada Tanggal ${DateFormat('dd-MM-yyyy').format(_homecareController.tanggal.value.date)}',
+                              btnOkOnPress: () {},
+                              btnOkColor: Colors.red)
+                          .show();
+                    } else if (_homecareController.succses.value == 'Fail') {
+                      return AwesomeDialog(
+                              context: context,
+                              dialogType: DialogType.ERROR,
+                              animType: AnimType.RIGHSLIDE,
+                              headerAnimationLoop: false,
+                              title: 'Error',
+                              desc: 'Data Gagal Disimpan',
+                              btnOkOnPress: () {},
+                              btnOkColor: Colors.red)
+                          .show();
+                    } else if (_homecareController.succses.value ==
+                        'notavailable') {
+                      return AwesomeDialog(
+                              context: context,
+                              dialogType: DialogType.ERROR,
+                              animType: AnimType.RIGHSLIDE,
+                              headerAnimationLoop: false,
+                              title: 'Error',
+                              desc:
+                                  'Layanan ${_homecareController.api.text} Masih Belum Tersedia',
+                              btnOkOnPress: () {},
+                              btnOkColor: Colors.red)
+                          .show();
+                    } else {
+                      return AwesomeDialog(
+                              context: context,
+                              dialogType: DialogType.ERROR,
+                              animType: AnimType.RIGHSLIDE,
+                              headerAnimationLoop: false,
+                              title: 'Error',
+                              desc: 'Tidak Dapat Terhubung Dengan Internet',
+                              btnOkOnPress: () {},
+                              btnOkColor: Colors.red)
+                          .show();
+                    }
                   },
                   color: Colors.green,
                   icon: Icon(Icons.person_add, color: Colors.white),
@@ -325,43 +399,57 @@ class _HomeCarePageState extends State<HomeCarePage> {
   }
 
   modalDokter() async {
-    await _homecareController.fetchDokter();
-    return Get.bottomSheet(
-      Container(
-        color: Colors.white,
-        child: Column(
-          children: <Widget>[
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: ListView.separated(
-                  itemCount: _homecareController.dokterList.length,
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      leading: Icon(Icons.person),
-                      title: Text(
-                        _homecareController.dokterList[index].nmDokter,
-                        style: TextStyle(color: Colors.black),
-                      ),
-                      onTap: () async {
-                        _homecareController.dokter.text =
-                            _homecareController.dokterList[index].nmDokter;
-                        _homecareController.kdDokter.value =
-                            _homecareController.dokterList[index].kdDokter;
-                        Get.back();
-                      },
-                    );
-                  },
-                  separatorBuilder: (BuildContext context, int index) {
-                    return Divider();
-                  },
+    if (_homecareController.api.text.contains('Nganjuk')) {
+      await _homecareController.fetchDokter();
+      return Get.bottomSheet(
+        Container(
+          color: Colors.white,
+          child: Column(
+            children: <Widget>[
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ListView.separated(
+                    itemCount: _homecareController.dokterList.length,
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        leading: Icon(Icons.person),
+                        title: Text(
+                          _homecareController.dokterList[index].nmDokter,
+                          style: TextStyle(color: Colors.black),
+                        ),
+                        onTap: () async {
+                          _homecareController.dokter.text =
+                              _homecareController.dokterList[index].nmDokter;
+                          _homecareController.kdDokter.value =
+                              _homecareController.dokterList[index].kdDokter;
+                          Get.back();
+                        },
+                      );
+                    },
+                    separatorBuilder: (BuildContext context, int index) {
+                      return Divider();
+                    },
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    } else {
+      return Get.bottomSheet(
+        Container(
+          color: Colors.white,
+          child: Center(
+            child: Text(
+              'Layanan Belum Tersedia',
+              style: TextStyle(fontSize: 25, fontWeight: FontWeight.w600),
+            ),
+          ),
+        ),
+      );
+    }
   }
 
   Widget listDokter(BuildContext context) {
