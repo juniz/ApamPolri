@@ -1,7 +1,9 @@
 import 'package:apam/carousel_page.dart';
 import 'package:apam/controller/dasboard_controller.dart';
 import 'package:apam/models/booking_model.dart';
+import 'package:apam/services/data_dummy.dart';
 import 'package:apam/widget/menu_item.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_open_whatsapp/flutter_open_whatsapp.dart';
@@ -70,7 +72,7 @@ class MenuPage extends StatelessWidget {
               //   ),
               // ),
               SizedBox(
-                height: 20,
+                height: 10,
               ),
               Container(
                 width: Get.width,
@@ -91,7 +93,7 @@ class MenuPage extends StatelessWidget {
                         child: Row(
                           children: <Widget>[
                             Icon(
-                              Icons.bookmark,
+                              Icons.book,
                               color: Colors.white,
                             ),
                             SizedBox(
@@ -149,7 +151,7 @@ class MenuPage extends StatelessWidget {
                         child: Row(
                           children: <Widget>[
                             Icon(
-                              Icons.calendar_today,
+                              Icons.event_available,
                               color: Colors.white,
                             ),
                             SizedBox(
@@ -202,8 +204,7 @@ class MenuPage extends StatelessWidget {
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20)),
                         onPressed: () {
-                          FlutterOpenWhatsapp.sendSingleMessage(
-                              "628113130690", "Hello");
+                          modalApi(context);
                         },
                         child: Row(
                           children: <Widget>[
@@ -229,25 +230,32 @@ class MenuPage extends StatelessWidget {
                 ),
               ),
               SizedBox(
-                height: 20,
+                height: 10,
               ),
-              Padding(
-                padding: const EdgeInsets.only(left: 17),
-                child: Text(
-                  "Daftar Poliklinik",
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
+              Material(
+                elevation: 5,
+                child: Container(
+                  width: Get.width,
+                  height: 40,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 17, top: 10),
+                    child: Text(
+                      "Daftar Poliklinik",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ),
                 ),
               ),
               SizedBox(
-                height: 20,
+                height: 10,
               ),
               Container(
                 height: 400,
                 child: SingleChildScrollView(
-                  // physics: BouncingScrollPhysics(),
+                  physics: BouncingScrollPhysics(),
                   scrollDirection: Axis.vertical,
                   child: Column(
                     children: <Widget>[
@@ -257,7 +265,7 @@ class MenuPage extends StatelessWidget {
                             itemCount: dasboardController.klinikList.length,
                             itemBuilder: (context, index) {
                               return Container(
-                                margin: EdgeInsets.only(left: 20, right: 20),
+                                margin: EdgeInsets.only(right: 20, left: 20),
                                 child: InkWell(
                                   child: Container(
                                     margin: EdgeInsets.only(bottom: 15),
@@ -268,7 +276,7 @@ class MenuPage extends StatelessWidget {
                                       color: Color(0xffECF0F5),
                                     ),
                                     child: Container(
-                                      padding: EdgeInsets.all(7),
+                                      // padding: EdgeInsets.only(left: 20),
                                       child: Row(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.center,
@@ -276,13 +284,13 @@ class MenuPage extends StatelessWidget {
                                           Expanded(
                                             flex: 1,
                                             child: Container(
-                                              width: 70,
-                                              height: 90,
+                                              width: 50,
+                                              height: 50,
                                               decoration: BoxDecoration(
                                                   image: DecorationImage(
                                                       image: AssetImage(
-                                                          'assets/icons/category2.png'),
-                                                      fit: BoxFit.cover)),
+                                                          'assets/icons/hospital-flat.png'),
+                                                      fit: BoxFit.fitHeight)),
                                             ),
                                           ),
                                           SizedBox(
@@ -294,7 +302,7 @@ class MenuPage extends StatelessWidget {
                                               dasboardController.klinikList
                                                   .value[index].nmPoli,
                                               style: TextStyle(
-                                                fontSize: 18,
+                                                fontSize: 15,
                                                 fontWeight: FontWeight.w600,
                                               ),
                                             ),
@@ -322,9 +330,64 @@ class MenuPage extends StatelessWidget {
                 ),
               ),
               SizedBox(
-                height: 20,
+                height: 30,
               ),
             ]),
+      ),
+    );
+  }
+
+  modalApi(BuildContext context) async {
+    //await _pendaftaranController.fetchapi();
+    return Get.bottomSheet(
+      Container(
+        color: Colors.white,
+        child: Column(
+          children: <Widget>[
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ListView.separated(
+                  itemCount: DataDummy.dummy.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      leading: Icon(Icons.home),
+                      title: Text(
+                        DataDummy.dummy[index].nama,
+                        style: TextStyle(color: Colors.black),
+                      ),
+                      onTap: () async {
+                        if (DataDummy.dummy[index].nama.contains('Nganjuk')) {
+                          Get.back();
+                          FlutterOpenWhatsapp.sendSingleMessage(
+                              "628113130690", "Hello");
+                        } else {
+                          // Get.back();
+                          return AwesomeDialog(
+                                  context: context,
+                                  dialogType: DialogType.ERROR,
+                                  animType: AnimType.RIGHSLIDE,
+                                  headerAnimationLoop: false,
+                                  title: 'Error',
+                                  desc:
+                                      'Layanan ${DataDummy.dummy[index].nama} Belum Tersedia\nSilahkan Pilih Rumkit Yang Lain',
+                                  btnOkOnPress: () {
+                                    Get.back();
+                                  },
+                                  btnOkColor: Colors.red)
+                              .show();
+                        }
+                      },
+                    );
+                  },
+                  separatorBuilder: (BuildContext context, int index) {
+                    return Divider();
+                  },
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -195,6 +195,9 @@ class _HomeCarePageState extends State<HomeCarePage> {
                           .show();
                     }
                   },
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
                   color: Colors.green,
                   icon: Icon(Icons.person_add, color: Colors.white),
                   label: Text(
@@ -216,7 +219,7 @@ class _HomeCarePageState extends State<HomeCarePage> {
                 Padding(
                   padding: const EdgeInsets.all(4),
                   child: Text(
-                    "Booking Pendaftaran",
+                    "Booking Home Care",
                     textAlign: TextAlign.left,
                     style: TextStyle(fontSize: 20),
                   ),

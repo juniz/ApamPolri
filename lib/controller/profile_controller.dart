@@ -62,6 +62,6 @@ class ProfileController extends GetxController {
 
   void logout() async {
     await LocalData.delPref('no_rkm_medis');
-    Get.offAllNamed('/login');
+    Get.offAllNamed("/login");
   }
 }

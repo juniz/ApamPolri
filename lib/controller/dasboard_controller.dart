@@ -26,6 +26,7 @@ class DashboardController extends GetxController {
   var isLoading = true.obs;
   var kdPoli = "".obs;
   var nmPoli = "".obs;
+  var rumkit = "".obs;
 
   @override
   void onInit() {

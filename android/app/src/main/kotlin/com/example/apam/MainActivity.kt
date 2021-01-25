@@ -1,4 +1,4 @@
-package com.example.apam
+package com.bhayangkara.akpol
 
 import io.flutter.embedding.android.FlutterActivity
 

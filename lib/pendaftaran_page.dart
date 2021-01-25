@@ -257,6 +257,9 @@ class _PendaftaranPageState extends State<PendaftaranPage> {
                       }
                     },
                     color: Colors.green,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
                     icon: Icon(Icons.person_add, color: Colors.white),
                     label: Text(
                       'Daftar',

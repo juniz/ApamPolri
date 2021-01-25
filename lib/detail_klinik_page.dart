@@ -57,9 +57,9 @@ class DetailKlinik extends StatelessWidget {
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      SizedBox(
-                        height: 20,
-                      ),
+                      // SizedBox(
+                      //   height: 10,
+                      // ),
                       Obx(
                         () => ListView.builder(
                           shrinkWrap: true,
