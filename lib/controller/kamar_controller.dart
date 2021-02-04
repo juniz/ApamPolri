@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:apam/services/token_service.dart';
 import 'package:get/get.dart';
 import 'package:apam/models/kamar_model.dart';
 import 'package:apam/models/rsb_api_model.dart';
@@ -8,18 +9,22 @@ import 'package:apam/services/url.dart';
 import 'package:apam/widget/alert_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/state_manager.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 
 class KamarController extends GetxController {
-  var kamarList = List<Kamar>().obs;
+  GetStorage box = GetStorage();
+  var kamarList = List<KamarList>().obs;
   var isLoading = true.obs;
   var apiList = List<DataApi>().obs;
   var selectedApi = "".obs;
   var hasil = "".obs;
+  var token = "".obs;
 
   @override
   void onInit() {
     //fetchKamar();
+    token.value = box.read('token');
     super.onInit();
   }
 
@@ -41,18 +46,28 @@ class KamarController extends GetxController {
       hasil.value = 'available';
       try {
         isLoading(true);
-        http.Response response = await http.post(
-          urlBase,
-          body: {'action': 'kamar'},
+        http.Response response = await http.get(
+          'https://webapps.rsbhayangkaranganjuk.com/api-rsbnganjuk/api/v1/kamar',
           headers: {
             "Accept": "application/json",
-            "Content-Type": "application/x-www-form-urlencoded"
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Authorization": "Bearer " + token.value
           },
-          encoding: Encoding.getByName("utf-8"),
         );
-        var data = kamarFromJson(response.body);
-        if (data != null) {
+
+        if (response.statusCode == 200) {
+          var data = kamarFromJson(response.body).data;
           kamarList.value = data;
+        } else if (response.statusCode == 404) {
+          hasil.value = '404';
+        } else if (response.statusCode == 401) {
+          token.value = await TokenServices(
+                  'https://webapps.rsbhayangkaranganjuk.com/api-rsbnganjuk/api/v1/token',
+                  'yudo',
+                  'qwerty123')
+              .getToken();
+          await box.write('token', token.value);
+          fetchKamar();
         }
       } on TimeoutException catch (e) {
         print('Timeout Error: $e');

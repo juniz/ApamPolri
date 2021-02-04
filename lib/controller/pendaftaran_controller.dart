@@ -1,5 +1,6 @@
 import 'package:apam/models/jadwal_dokter_model.dart';
 import 'package:apam/models/rsb_api_model.dart';
+import 'package:apam/services/token_service.dart';
 import 'package:apam/widget/alert_dialog.dart';
 import 'package:http/http.dart' as http;
 import 'package:apam/models/poloklinik_model.dart';
@@ -19,8 +20,9 @@ class Tanggal {
 }
 
 class PendaftaranController extends GetxController {
-  List<dynamic> poliList = List<Poliklinik>().obs;
-  List<JadwalDokter> dokterList = List<JadwalDokter>().obs;
+  GetStorage box = GetStorage();
+  var poliList = List<PoliklinikList>().obs;
+  List<JadwalDokterList> dokterList = List<JadwalDokterList>().obs;
   List<DataApi> apiList = List<DataApi>().obs;
   var hasil = "".obs;
   var kdDokter = "".obs;
@@ -28,17 +30,18 @@ class PendaftaranController extends GetxController {
   var selectedApi = "".obs;
   var isLoading = true.obs;
   final tanggal = Tanggal(date: DateTime.now()).obs;
-  final kdPoli = Poliklinik(kdPoli: "").obs;
-  var bookList = List<Booking>().obs;
+  final kdPoli = PoliklinikList(kdPoli: "").obs;
+  var bookList = List<BookingList>().obs;
   TextEditingController poliklinik;
   TextEditingController dokter;
   TextEditingController api;
+  var token = "".obs;
 
   DateTime picked;
 
   @override
   void onInit() {
-    GetStorage box = GetStorage();
+    token.value = box.read('token');
     nrp.value = box.read('no_rkm_medis');
     poliklinik = TextEditingController();
     dokter = TextEditingController();
@@ -48,25 +51,41 @@ class PendaftaranController extends GetxController {
   }
 
   // ignore: missing_return
-  Future<List<Poliklinik>> fetchPoli() async {
+  Future fetchPoli() async {
+    Future.delayed(
+        Duration.zero,
+        () => Get.dialog(Center(child: CircularProgressIndicator()),
+            barrierDismissible: false));
     try {
-      Future.delayed(
-          Duration.zero,
-          () => Get.dialog(Center(child: CircularProgressIndicator()),
-              barrierDismissible: false));
-      var response = await http.post(
-        selectedApi + urlPoli,
+      // var year = DateFormat('yyyy').format(tanggal.value.date);
+      // var month = DateFormat('MM').format(tanggal.value.date);
+      // var day = DateFormat('dd').format(tanggal.value.date);
+      var date = DateTime.parse(tanggal.value.date.toString());
+      http.Response response = await http.get(
+        'https://webapps.rsbhayangkaranganjuk.com/api-rsbnganjuk/api/v1/jadwalklinik/${date.year}/${date.month}/${date.day}',
         headers: {
           "Accept": "application/json",
-          "Content-Type": "application/x-www-form-urlencoded"
+          "Content-Type": "application/x-www-form-urlencoded",
+          "Authorization": "Bearer " + token.value
         },
-        body: {
-          'tanggal':
-              DateFormat('dd-MM-yyyy').format(tanggal.value.date).toString()
-        },
-      ).timeout(Duration(minutes: 2));
-      poliList = poliklinikFromJson(response.body);
-      Get.back();
+      );
+      if (response.statusCode == 200) {
+        poliList.value = poliklinikFromJson(response.body).data;
+        Get.back();
+      } else if (response.statusCode == 401) {
+        token.value = await TokenServices(
+                'https://webapps.rsbhayangkaranganjuk.com/api-rsbnganjuk/api/v1/token',
+                'yudo',
+                'qwerty123')
+            .getToken();
+        await box.write('token', token.value);
+        Get.back();
+        fetchPoli();
+      } else if (response.statusCode == 404) {
+        Get.back();
+        PopUpDialog.dialogWidget(
+            'Data Dokter Tidak Ditemukan Pilih Tanggal Lainnya');
+      }
     } on Exception catch (e) {
       Get.back();
       PopUpDialog.dialogWidget('Pastikan Anda Terhubung Internet');
@@ -81,20 +100,34 @@ class PendaftaranController extends GetxController {
         () => Get.dialog(Center(child: CircularProgressIndicator()),
             barrierDismissible: false),
       );
-      var response = await http.post(
-        urlBase + urlDok,
+      var year = DateFormat('yyyy').format(tanggal.value.date);
+      var month = DateFormat('MM').format(tanggal.value.date);
+      var day = DateFormat('dd').format(tanggal.value.date);
+      var date = DateTime.parse(tanggal.value.date.toString());
+      var response = await http.get(
+        'https://webapps.rsbhayangkaranganjuk.com/api-rsbnganjuk/api/v1/jadwaldokter/${year}/${month}/${day}/${kdPoli.value.kdPoli}',
         headers: {
           "Accept": "application/json",
-          "Content-Type": "application/x-www-form-urlencoded"
+          "Content-Type": "application/x-www-form-urlencoded",
+          "Authorization": "Bearer " + token.value
         },
-        body: {
-          'tanggal':
-              DateFormat('dd-MM-yyyy').format(tanggal.value.date).toString(),
-          'kd_poli': kdPoli.value.kdPoli
-        },
-      ).timeout(Duration(minutes: 2));
-      dokterList = jadwalDokterFromJson(response.body);
-      Get.back();
+      );
+      if (response.statusCode == 200) {
+        dokterList = jadwalDokterFromJson(response.body).data;
+        Get.back();
+      } else if (response.statusCode == 401) {
+        token.value = await TokenServices(
+                'https://webapps.rsbhayangkaranganjuk.com/api-rsbnganjuk/api/v1/token',
+                'yudo',
+                'qwerty123')
+            .getToken();
+        await box.write('token', token.value);
+        Get.back();
+        fetchDokter();
+      } else if (response.statusCode == 404) {
+        Get.back();
+        PopUpDialog.dialogWidget('Data Dokter Tidak Ditemukan');
+      }
     } on Exception catch (e) {
       Get.back();
       PopUpDialog.dialogWidget('Pastikan Anda Terhubung Internet');
@@ -143,9 +176,8 @@ class PendaftaranController extends GetxController {
               ),
               barrierDismissible: false);
           var response = await http.post(
-            urlBase,
+            'https://webapps.rsbhayangkaranganjuk.com/api-rsbnganjuk/api/v1/booking',
             body: {
-              'action': 'daftar',
               'no_rkm_medis': nrp.value,
               'kd_poli': kdPoli.value.kdPoli,
               'kd_dokter': kdDokter.value,
@@ -156,72 +188,74 @@ class PendaftaranController extends GetxController {
             },
             headers: {
               "Accept": "application/json",
-              "Content-Type": "application/x-www-form-urlencoded"
+              "Content-Type": "application/x-www-form-urlencoded",
+              "Authorization": "Bearer " + token.value
             },
             encoding: Encoding.getByName("utf-8"),
           );
           var data = jsonDecode(response.body);
           if (response.statusCode == 200) {
-            if (data["state"] == 'success') {
-              Get.back();
-              hasil.value = 'success';
-              // Get.dialog(
-              //   AlertDialog(
-              //     title: Text('Data Berhasil Disimpan'),
-              //     content: SizedBox(
-              //       width: 150,
-              //       height: 150,
-              //       child: Center(
-              //         child: LottieBuilder.asset('assets/animation/plane.json'),
-              //       ),
-              //     ),
-              //     elevation: 20.0,
-              //   ),
-              //   barrierDismissible: false,
-              // );
-              // Future.delayed(Duration(seconds: 2), () {
-              //   Get.back();
-              //   Get.toNamed('/dashboard');
-              // });
-            } else if (data["state"] == 'limit') {
-              Get.back();
-              hasil.value = 'limit';
-            } else {
-              Get.back();
-              hasil.value = 'duplicate';
-            }
-          } else {
+            hasil.value = 'success';
             Get.back();
-            hasil.value = 'fail';
+          } else if (response.statusCode == 404) {
+            if (data["message"] == 'Limit') {
+              hasil.value = 'limit';
+              Get.back();
+            } else {
+              hasil.value = 'duplicate';
+              Get.back();
+            }
+          } else if (response.statusCode == 401) {
+            token.value = await TokenServices(
+                    'https://webapps.rsbhayangkaranganjuk.com/api-rsbnganjuk/api/v1/token',
+                    'yudo',
+                    'qwerty123')
+                .getToken();
+            await box.write('token', token.value);
+            Get.back();
+            postPendaftaran();
           }
         } on Exception catch (e) {
-          Get.back();
-          hasil.value = 'notconnect';
+          hasil.value = 'noconnection';
         }
       }
     } else {
-      hasil.value = 'notavailable';
+      hasil.value = 'noavailable';
     }
   }
 
   Future<List<Booking>> fetchBooking() async {
     try {
       isLoading(true);
-      var response = await http.post(urlBase,
-          headers: {
-            "Accept": "application/json",
-            "Content-Type": "application/x-www-form-urlencoded"
-          },
-          body: {'action': 'booking', 'no_rkm_medis': nrp.value},
-          encoding: Encoding.getByName("utf-8"));
-      var data = bookingFromJson(response.body);
-      if (data != null) {
+      var response = await http.get(
+        'https://webapps.rsbhayangkaranganjuk.com/api-rsbnganjuk/api/v1/booking/${nrp.value}',
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/x-www-form-urlencoded",
+          "Authorization": "Bearer " + token.value
+        },
+      );
+
+      if (response.statusCode == 200) {
+        var data = bookingFromJson(response.body).data;
         bookList.value = data;
         isLoading(false);
+      } else if (response.statusCode == 401) {
+        token.value = await TokenServices(
+                'https://webapps.rsbhayangkaranganjuk.com/api-rsbnganjuk/api/v1/token',
+                'yudo',
+                'qwerty123')
+            .getToken();
+        await box.write('token', token.value);
+        fetchBooking();
+      } else if (response.statusCode == 404) {
+        isLoading(false);
+        // PopUpDialog.dialogWidget('Pastikan Anda Terhubung Internet');
       }
     } on Exception catch (e) {
       print(e);
       isLoading(false);
+      PopUpDialog.dialogWidget('Tidak Dapat Terhubung Dengan Jaringan');
     }
   }
 

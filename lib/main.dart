@@ -21,6 +21,7 @@ void main() async {
       darkTheme: ThemeData(
         brightness: Brightness.dark,
         primaryColor: Colors.white,
+        fontFamily: 'roboto',
       ),
       initialRoute: '/',
     ),

@@ -1,14 +1,41 @@
+// To parse this JSON data, do
+//
+//     final jadwalPraktek = jadwalPraktekFromJson(jsonString);
+
 import 'dart:convert';
 
-List<JadwalPraktek> jadwalPraktekFromJson(String str) =>
-    List<JadwalPraktek>.from(
-        json.decode(str).map((x) => JadwalPraktek.fromJson(x)));
+JadwalPraktek jadwalPraktekFromJson(String str) =>
+    JadwalPraktek.fromJson(json.decode(str));
 
-String jadwalPraktekToJson(List<JadwalPraktek> data) =>
-    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+String jadwalPraktekToJson(JadwalPraktek data) => json.encode(data.toJson());
 
 class JadwalPraktek {
   JadwalPraktek({
+    this.success,
+    this.data,
+    this.message,
+  });
+
+  bool success;
+  List<JadwalPraktekList> data;
+  String message;
+
+  factory JadwalPraktek.fromJson(Map<String, dynamic> json) => JadwalPraktek(
+        success: json["success"],
+        data: List<JadwalPraktekList>.from(
+            json["data"].map((x) => JadwalPraktekList.fromJson(x))),
+        message: json["message"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "success": success,
+        "data": List<dynamic>.from(data.map((x) => x.toJson())),
+        "message": message,
+      };
+}
+
+class JadwalPraktekList {
+  JadwalPraktekList({
     this.nmDokter,
     this.jk,
     this.nmPoli,
@@ -24,7 +51,8 @@ class JadwalPraktek {
   String jamSelesai;
   String kdDokter;
 
-  factory JadwalPraktek.fromJson(Map<String, dynamic> json) => JadwalPraktek(
+  factory JadwalPraktekList.fromJson(Map<String, dynamic> json) =>
+      JadwalPraktekList(
         nmDokter: json["nm_dokter"],
         jk: json["jk"],
         nmPoli: json["nm_poli"],

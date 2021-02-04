@@ -17,11 +17,15 @@ class OnboardingController extends GetxController {
   }
 
   List<OnboardingInfo> onboardingPages = [
-    OnboardingInfo('assets/images/first.jpg', 'Lorem Ipsum',
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'),
-    OnboardingInfo('assets/images/415.jpg', 'Lorem Ipsum',
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'),
-    OnboardingInfo('assets/images/data.jpg', 'Lorem Ipsum',
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.')
+    OnboardingInfo(
+        'assets/images/first.jpg',
+        'Informasi Pelayanan Kesehatan Rumah Sakit Bhayangkara',
+        'Anggota POLRI Lebih Mudah Berobat Ke Rumah Sakit Bhayangkara Terdekat.'),
+    OnboardingInfo(
+        'assets/images/415.jpg',
+        'Home Visiting dan Layanan Antar Jemput Ke Rumah',
+        'Tidak Perlu Repot Data Ke Rumah Sakit, Cukup Dengan Aplikasi Dokter Kami Akan Mengunjungi Anda.'),
+    OnboardingInfo('assets/images/data.jpg', 'Riwayat Medis',
+        'Mudah dan Cepat Mendapatkan Informasi Riwayat Medis.')
   ];
 }

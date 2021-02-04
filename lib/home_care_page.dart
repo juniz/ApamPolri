@@ -42,168 +42,187 @@ class _HomeCarePageState extends State<HomeCarePage> {
               //   height: Get.height / 4,
               //   color: Colors.green,
               // ),
-              Container(
-                margin: EdgeInsets.all(20),
-                child: MyTextFieldDatePicker(
-                  labelText: "Pilih Tanggal",
-                  prefixIcon: Icon(Icons.date_range),
-                  suffixIcon: Icon(Icons.arrow_drop_down),
-                  lastDate: DateTime.now().add(Duration(days: 7)),
-                  firstDate: DateTime.now(),
-                  initialDate: DateTime.now().add(Duration(days: 1)),
-                  dateFormat: DateFormat('dd-MM-yyyy'),
-                  onDateChanged: (selectedDate) {
-                    // Do something with the selected date
-                    _homecareController.tanggal.value.date = selectedDate;
-                    _homecareController.clearInput();
-                  },
+              Expanded(
+                flex: 8,
+                child: Column(
+                  children: [
+                    Container(
+                      margin: EdgeInsets.all(20),
+                      child: MyTextFieldDatePicker(
+                        labelText: "Pilih Tanggal",
+                        prefixIcon: Icon(Icons.date_range),
+                        suffixIcon: Icon(Icons.arrow_drop_down),
+                        lastDate: DateTime.now().add(Duration(days: 7)),
+                        firstDate: DateTime.now(),
+                        initialDate: DateTime.now().add(Duration(days: 1)),
+                        dateFormat: DateFormat('dd-MM-yyyy'),
+                        onDateChanged: (selectedDate) {
+                          // Do something with the selected date
+                          _homecareController.tanggal.value.date = selectedDate;
+                          _homecareController.clearInput();
+                        },
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.all(20),
+                      child: TextField(
+                        controller: _homecareController.api,
+                        readOnly: true,
+                        decoration: InputDecoration(
+                          labelText: "Pilih Rumah Sakit",
+                          border: OutlineInputBorder(),
+                          prefixIcon: Icon(Icons.home),
+                          suffixIcon: Icon(Icons.arrow_drop_down),
+                          labelStyle: TextStyle(
+                              color: myFocusNode1.hasFocus
+                                  ? Colors.green
+                                  : Colors.black),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.green),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.black),
+                          ),
+                        ),
+                        onTap: () async {
+                          modalApi();
+                          _homecareController.dokter.text = "";
+                        },
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.all(20),
+                      child: TextField(
+                        controller: _homecareController.dokter,
+                        readOnly: true,
+                        decoration: InputDecoration(
+                          labelText: "Pilih Dokter",
+                          border: OutlineInputBorder(),
+                          prefixIcon: Icon(Icons.person),
+                          suffixIcon: Icon(Icons.arrow_drop_down),
+                          labelStyle: TextStyle(
+                              color: myFocusNode1.hasFocus
+                                  ? Colors.green
+                                  : Colors.black),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.green),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.black),
+                          ),
+                        ),
+                        onTap: () async {
+                          modalDokter();
+                        },
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              Container(
-                margin: EdgeInsets.all(20),
-                child: TextField(
-                  controller: _homecareController.api,
-                  readOnly: true,
-                  decoration: InputDecoration(
-                    labelText: "Pilih Rumah Sakit",
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.home),
-                    suffixIcon: Icon(Icons.arrow_drop_down),
-                    labelStyle: TextStyle(
-                        color: myFocusNode1.hasFocus
-                            ? Colors.green
-                            : Colors.black),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.green),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.black),
-                    ),
-                  ),
-                  onTap: () async {
-                    modalApi();
-                    _homecareController.dokter.text = "";
-                  },
+
+              Expanded(
+                flex: 2,
+                child: SizedBox(
+                  height: 20,
                 ),
               ),
-              Container(
-                margin: EdgeInsets.all(20),
-                child: TextField(
-                  controller: _homecareController.dokter,
-                  readOnly: true,
-                  decoration: InputDecoration(
-                    labelText: "Pilih Dokter",
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.person),
-                    suffixIcon: Icon(Icons.arrow_drop_down),
-                    labelStyle: TextStyle(
-                        color: myFocusNode1.hasFocus
-                            ? Colors.green
-                            : Colors.black),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.green),
+              Expanded(
+                child: SizedBox(
+                  width: Get.width / 1.1,
+                  height: 50,
+                  child: RaisedButton.icon(
+                    onPressed: () async {
+                      await _homecareController.postPendaftaran();
+                      if (_homecareController.succses.value == 'Sukses') {
+                        return AwesomeDialog(
+                            context: context,
+                            animType: AnimType.LEFTSLIDE,
+                            headerAnimationLoop: false,
+                            dialogType: DialogType.SUCCES,
+                            title: 'Succes',
+                            desc: 'Data Anda Telah Terdaftar pada Home Care',
+                            btnOkIcon: Icons.check_circle,
+                            onDissmissCallback: () {
+                              debugPrint('Dialog Dissmiss from callback');
+                            }).show();
+                      } else if (_homecareController.succses.value ==
+                          'Duplicate') {
+                        return AwesomeDialog(
+                                context: context,
+                                dialogType: DialogType.ERROR,
+                                animType: AnimType.RIGHSLIDE,
+                                headerAnimationLoop: false,
+                                title: 'Error',
+                                desc:
+                                    'Anda Sudah Terdaftar Pada Tanggal Tersebut',
+                                btnOkOnPress: () {},
+                                btnOkColor: Colors.red)
+                            .show();
+                      } else if (_homecareController.succses.value == 'Full') {
+                        return AwesomeDialog(
+                                context: context,
+                                dialogType: DialogType.ERROR,
+                                animType: AnimType.RIGHSLIDE,
+                                headerAnimationLoop: false,
+                                title: 'Error',
+                                desc:
+                                    'Kuota Sudah Penuh Pada Tanggal ${DateFormat('dd-MM-yyyy').format(_homecareController.tanggal.value.date)}',
+                                btnOkOnPress: () {},
+                                btnOkColor: Colors.red)
+                            .show();
+                      } else if (_homecareController.succses.value == 'Fail') {
+                        return AwesomeDialog(
+                                context: context,
+                                dialogType: DialogType.ERROR,
+                                animType: AnimType.RIGHSLIDE,
+                                headerAnimationLoop: false,
+                                title: 'Error',
+                                desc: 'Data Gagal Disimpan',
+                                btnOkOnPress: () {},
+                                btnOkColor: Colors.red)
+                            .show();
+                      } else if (_homecareController.succses.value ==
+                          'notavailable') {
+                        return AwesomeDialog(
+                                context: context,
+                                dialogType: DialogType.ERROR,
+                                animType: AnimType.RIGHSLIDE,
+                                headerAnimationLoop: false,
+                                title: 'Error',
+                                desc:
+                                    'Layanan ${_homecareController.api.text} Masih Belum Tersedia',
+                                btnOkOnPress: () {},
+                                btnOkColor: Colors.red)
+                            .show();
+                      } else {
+                        return AwesomeDialog(
+                                context: context,
+                                dialogType: DialogType.ERROR,
+                                animType: AnimType.RIGHSLIDE,
+                                headerAnimationLoop: false,
+                                title: 'Error',
+                                desc: 'Tidak Dapat Terhubung Dengan Internet',
+                                btnOkOnPress: () {},
+                                btnOkColor: Colors.red)
+                            .show();
+                      }
+                    },
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20.0),
                     ),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.black),
+                    color: Colors.green,
+                    icon: Icon(Icons.person_add, color: Colors.white),
+                    label: Text(
+                      'Daftar',
+                      style: TextStyle(fontSize: 18, color: Colors.white),
                     ),
                   ),
-                  onTap: () async {
-                    modalDokter();
-                  },
                 ),
               ),
-              SizedBox(
-                height: 20,
-              ),
-              SizedBox(
-                width: Get.width / 1.1,
-                height: 50,
-                child: RaisedButton.icon(
-                  onPressed: () async {
-                    await _homecareController.postPendaftaran();
-                    if (_homecareController.succses.value == 'Sukses') {
-                      return AwesomeDialog(
-                          context: context,
-                          animType: AnimType.LEFTSLIDE,
-                          headerAnimationLoop: false,
-                          dialogType: DialogType.SUCCES,
-                          title: 'Succes',
-                          desc: 'Data Anda Telah Terdaftar pada Home Care',
-                          btnOkIcon: Icons.check_circle,
-                          onDissmissCallback: () {
-                            debugPrint('Dialog Dissmiss from callback');
-                          }).show();
-                    } else if (_homecareController.succses.value ==
-                        'Duplicate') {
-                      return AwesomeDialog(
-                              context: context,
-                              dialogType: DialogType.ERROR,
-                              animType: AnimType.RIGHSLIDE,
-                              headerAnimationLoop: false,
-                              title: 'Error',
-                              desc:
-                                  'Anda Sudah Terdaftar Pada Tanggal Tersebut',
-                              btnOkOnPress: () {},
-                              btnOkColor: Colors.red)
-                          .show();
-                    } else if (_homecareController.succses.value == 'Full') {
-                      return AwesomeDialog(
-                              context: context,
-                              dialogType: DialogType.ERROR,
-                              animType: AnimType.RIGHSLIDE,
-                              headerAnimationLoop: false,
-                              title: 'Error',
-                              desc:
-                                  'Kuota Sudah Penuh Pada Tanggal ${DateFormat('dd-MM-yyyy').format(_homecareController.tanggal.value.date)}',
-                              btnOkOnPress: () {},
-                              btnOkColor: Colors.red)
-                          .show();
-                    } else if (_homecareController.succses.value == 'Fail') {
-                      return AwesomeDialog(
-                              context: context,
-                              dialogType: DialogType.ERROR,
-                              animType: AnimType.RIGHSLIDE,
-                              headerAnimationLoop: false,
-                              title: 'Error',
-                              desc: 'Data Gagal Disimpan',
-                              btnOkOnPress: () {},
-                              btnOkColor: Colors.red)
-                          .show();
-                    } else if (_homecareController.succses.value ==
-                        'notavailable') {
-                      return AwesomeDialog(
-                              context: context,
-                              dialogType: DialogType.ERROR,
-                              animType: AnimType.RIGHSLIDE,
-                              headerAnimationLoop: false,
-                              title: 'Error',
-                              desc:
-                                  'Layanan ${_homecareController.api.text} Masih Belum Tersedia',
-                              btnOkOnPress: () {},
-                              btnOkColor: Colors.red)
-                          .show();
-                    } else {
-                      return AwesomeDialog(
-                              context: context,
-                              dialogType: DialogType.ERROR,
-                              animType: AnimType.RIGHSLIDE,
-                              headerAnimationLoop: false,
-                              title: 'Error',
-                              desc: 'Tidak Dapat Terhubung Dengan Internet',
-                              btnOkOnPress: () {},
-                              btnOkColor: Colors.red)
-                          .show();
-                    }
-                  },
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20.0),
-                  ),
-                  color: Colors.green,
-                  icon: Icon(Icons.person_add, color: Colors.white),
-                  label: Text(
-                    'Daftar',
-                    style: TextStyle(fontSize: 18, color: Colors.white),
-                  ),
+              Expanded(
+                flex: 1,
+                child: SizedBox(
+                  height: 20,
                 ),
               )
             ],
@@ -404,49 +423,66 @@ class _HomeCarePageState extends State<HomeCarePage> {
   modalDokter() async {
     if (_homecareController.api.text.contains('Nganjuk')) {
       await _homecareController.fetchDokter();
-      return Get.bottomSheet(
-        Container(
-          color: Colors.white,
-          child: Column(
-            children: <Widget>[
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ListView.separated(
-                    itemCount: _homecareController.dokterList.length,
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        leading: Icon(Icons.person),
-                        title: Text(
-                          _homecareController.dokterList[index].nmDokter,
-                          style: TextStyle(color: Colors.black),
-                        ),
-                        onTap: () async {
-                          _homecareController.dokter.text =
-                              _homecareController.dokterList[index].nmDokter;
-                          _homecareController.kdDokter.value =
-                              _homecareController.dokterList[index].kdDokter;
-                          Get.back();
-                        },
-                      );
-                    },
-                    separatorBuilder: (BuildContext context, int index) {
-                      return Divider();
-                    },
+      if (_homecareController.error.value == "") {
+        return Get.bottomSheet(
+          Container(
+            color: Colors.white,
+            child: Column(
+              children: <Widget>[
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ListView.separated(
+                      itemCount: _homecareController.dokterList.value.length,
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                          leading: Icon(Icons.person),
+                          title: Text(
+                            _homecareController
+                                .dokterList.value[index].nmDokter,
+                            style: TextStyle(color: Colors.black),
+                          ),
+                          onTap: () async {
+                            _homecareController.dokter.text =
+                                _homecareController
+                                    .dokterList.value[index].nmDokter;
+                            _homecareController.kdDokter.value =
+                                _homecareController
+                                    .dokterList.value[index].kdDokter;
+                            Get.back();
+                          },
+                        );
+                      },
+                      separatorBuilder: (BuildContext context, int index) {
+                        return Divider();
+                      },
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      );
-    } else {
+        );
+      }
+    } else if (_homecareController.error.value == 'noavailable') {
       return Get.bottomSheet(
         Container(
           color: Colors.white,
           child: Center(
             child: Text(
               'Layanan Belum Tersedia',
+              style: TextStyle(fontSize: 25, fontWeight: FontWeight.w600),
+            ),
+          ),
+        ),
+      );
+    } else if (_homecareController.error.value == "kosong") {
+      return Get.bottomSheet(
+        Container(
+          color: Colors.white,
+          child: Center(
+            child: Text(
+              'Data Dokter Kosong',
               style: TextStyle(fontSize: 25, fontWeight: FontWeight.w600),
             ),
           ),

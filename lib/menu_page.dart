@@ -28,55 +28,12 @@ class MenuPage extends StatelessWidget {
                 color: Color(0xffECF0F5),
                 child: CarouselPage(),
               ),
-              // Padding(
-              //   padding: const EdgeInsets.all(8.0),
-              //   child: Wrap(
-              //     children: <Widget>[
-              //       MenuItem(
-              //         title: 'Pendaftaran',
-              //         url: '/pendaftaran',
-              //         image: 'assets/icons/icons8-plus-96.png',
-              //         round: 20,
-              //       ),
-              //       MenuItem(
-              //         title: 'Jadwal Dokter',
-              //         url: '/jadwalDokter',
-              //         image: 'assets/icons/icons-planner.png',
-              //         round: 20,
-              //       ),
-              //       MenuItem(
-              //         title: 'Kamar',
-              //         url: '/kamar',
-              //         image: 'assets/icons/icons-bed.png',
-              //         round: 20,
-              //       ),
-              //       MenuItem(
-              //         title: 'Home Care',
-              //         url: '/homecare',
-              //         image: 'assets/icons/icons-hospital.png',
-              //         round: 20,
-              //       ),
-              //       MenuItem(
-              //         title: 'Riwayat',
-              //         url: '/riwayat',
-              //         image: 'assets/icons/history.png',
-              //         round: 20,
-              //       ),
-              //       MenuItem(
-              //         title: 'Hubungi Kami',
-              //         wa: '628113130690',
-              //         image: 'assets/icons/icons-whatsapp.png',
-              //         round: 20,
-              //       ),
-              //     ],
-              //   ),
-              // ),
               SizedBox(
                 height: 10,
               ),
               Container(
                 width: Get.width,
-                height: 60,
+                height: 50,
                 child: ListView(
                   physics: BouncingScrollPhysics(),
                   scrollDirection: Axis.horizontal,
@@ -264,65 +221,71 @@ class MenuPage extends StatelessWidget {
                             physics: BouncingScrollPhysics(),
                             itemCount: dasboardController.klinikList.length,
                             itemBuilder: (context, index) {
-                              return Container(
-                                margin: EdgeInsets.only(right: 20, left: 20),
-                                child: InkWell(
-                                  child: Container(
-                                    margin: EdgeInsets.only(bottom: 15),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(12),
-                                      ),
-                                      color: Color(0xffECF0F5),
-                                    ),
+                              if (dasboardController.isLoading.value == true) {
+                                return Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              } else {
+                                return Container(
+                                  margin: EdgeInsets.only(right: 20, left: 20),
+                                  child: InkWell(
                                     child: Container(
-                                      // padding: EdgeInsets.only(left: 20),
-                                      child: Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: <Widget>[
-                                          Expanded(
-                                            flex: 1,
-                                            child: Container(
-                                              width: 50,
-                                              height: 50,
-                                              decoration: BoxDecoration(
-                                                  image: DecorationImage(
-                                                      image: AssetImage(
-                                                          'assets/icons/hospital-flat.png'),
-                                                      fit: BoxFit.fitHeight)),
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            width: 15,
-                                          ),
-                                          Expanded(
-                                            flex: 3,
-                                            child: Text(
-                                              dasboardController.klinikList
-                                                  .value[index].nmPoli,
-                                              style: TextStyle(
-                                                fontSize: 15,
-                                                fontWeight: FontWeight.w600,
+                                      margin: EdgeInsets.only(bottom: 15),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.all(
+                                          Radius.circular(12),
+                                        ),
+                                        color: Color(0xffECF0F5),
+                                      ),
+                                      child: Container(
+                                        // padding: EdgeInsets.only(left: 20),
+                                        child: Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: <Widget>[
+                                            Expanded(
+                                              flex: 1,
+                                              child: Container(
+                                                width: 50,
+                                                height: 50,
+                                                decoration: BoxDecoration(
+                                                    image: DecorationImage(
+                                                        image: AssetImage(
+                                                            'assets/icons/hospital-flat.png'),
+                                                        fit: BoxFit.fitHeight)),
                                               ),
                                             ),
-                                          ),
-                                        ],
+                                            SizedBox(
+                                              width: 15,
+                                            ),
+                                            Expanded(
+                                              flex: 3,
+                                              child: Text(
+                                                dasboardController.klinikList
+                                                    .value[index].nmPoli,
+                                                style: TextStyle(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
+                                    onTap: () async {
+                                      dasboardController.kdPoli.value =
+                                          dasboardController
+                                              .klinikList.value[index].kdPoli;
+                                      dasboardController.nmPoli.value =
+                                          dasboardController
+                                              .klinikList.value[index].nmPoli;
+                                      await dasboardController.fetchJadwal();
+                                      Get.toNamed('/detailklinik');
+                                    },
                                   ),
-                                  onTap: () async {
-                                    dasboardController.kdPoli.value =
-                                        dasboardController
-                                            .klinikList.value[index].kdPoli;
-                                    dasboardController.nmPoli.value =
-                                        dasboardController
-                                            .klinikList.value[index].nmPoli;
-                                    await dasboardController.fetchJadwal();
-                                    Get.toNamed('/detailklinik');
-                                  },
-                                ),
-                              );
+                                );
+                              }
                             },
                           )),
                     ],

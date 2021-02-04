@@ -9,11 +9,15 @@ import 'package:get/get.dart';
 import 'package:apam/services/request.dart';
 import 'package:apam/services/url.dart';
 import 'package:http/http.dart' as http;
+import 'package:apam/models/token_model.dart';
+import 'package:apam/models/login_model.dart';
+import 'package:apam/services/token_service.dart';
 
 class LoginController extends GetxController {
   TextEditingController emailTextController;
   TextEditingController passwordTextController;
   TextEditingController rumkitController;
+
   var hasil = "".obs;
 
   @override
@@ -30,30 +34,37 @@ class LoginController extends GetxController {
           barrierDismissible: false);
 
       try {
+        var token = await TokenServices(
+                'https://webapps.rsbhayangkaranganjuk.com/api-rsbnganjuk/api/v1/token',
+                'yudo',
+                'qwerty123')
+            .getToken();
+        // print(token);
         http.Response response = await http.post(
-          urlBase + urlLogin,
+          'https://webapps.rsbhayangkaranganjuk.com/api-rsbnganjuk/api/v1/pasien',
           body: {
-            'no_rkm_medis': emailTextController.text,
-            'no_ktp': passwordTextController.text
+            'nrp': emailTextController.text,
+            'ktp': passwordTextController.text
           },
           headers: {
             "Accept": "application/json",
-            "Content-Type": "application/x-www-form-urlencoded"
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Authorization": "Bearer " + token
           },
           encoding: Encoding.getByName("utf-8"),
         );
-        var res = jsonDecode(response.body);
+        // var res = jsonDecode(response.body);
+        var rkm = loginFromJson(response.body).data;
         if (response.statusCode == 200) {
-          if (res['state'] == 'valid') {
-            LocalData.savePref('no_rkm_medis', res['no_rkm_medis']);
-            Get.back();
-            hasil.value = 'valid';
-          } else {
-            Get.back();
+          LocalData.savePref('no_rkm_medis', rkm.noRkmMedis);
+          LocalData.savePref('token', token.toString());
+          Get.back();
+          hasil.value = 'valid';
+        } else if (response.statusCode == 404) {
+          Get.back();
 
-            hasil.value = 'invalid';
-            clearForm();
-          }
+          hasil.value = 'invalid';
+          clearForm();
         }
       } on TimeoutException catch (e) {
         print('Timeout Error: $e');

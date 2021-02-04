@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:apam/models/daftar_klinik.dart';
 import 'package:apam/models/detail_klinik.dart';
+import 'package:apam/models/token_model.dart';
 import 'package:apam/widget/alert_dialog.dart';
 import 'package:http/http.dart' as http;
 import 'package:apam/menu_page.dart';
@@ -12,17 +13,20 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:apam/widget/modal_daftar.dart';
+import 'package:apam/services/token_service.dart';
 
 class DashboardController extends GetxController {
   static DashboardController get to => Get.find();
   var selectedTabIndex = 0.obs;
   GetStorage box = GetStorage();
+  var error = "".obs;
+  var token = "".obs;
   var rkm = "".obs;
   var listPage = <dynamic>[MenuPage(), ProfilePage()];
   Widget get currentPage => listPage[selectedTabIndex.value];
   var bookList = List<Booking>().obs;
-  var klinikList = List<DaftarKlinik>().obs;
-  var detailKlinik = List<DetailKlinik>().obs;
+  var klinikList = List<DataKlinikList>().obs;
+  var detailKlinik = List<DetailKlinikList>().obs;
   var isLoading = true.obs;
   var kdPoli = "".obs;
   var nmPoli = "".obs;
@@ -31,6 +35,7 @@ class DashboardController extends GetxController {
   @override
   void onInit() {
     rkm.value = box.read('no_rkm_medis');
+    token.value = box.read('token');
     //fetchBooking();
     fetchKlinik();
     super.onInit();
@@ -40,42 +45,59 @@ class DashboardController extends GetxController {
     selectedTabIndex.value = index;
   }
 
-  Future<List<Booking>> fetchBooking() async {
-    try {
-      isLoading(true);
-      var response = await http.post(urlBase,
-          headers: {
-            "Accept": "application/json",
-            "Content-Type": "application/x-www-form-urlencoded"
-          },
-          body: {'action': 'booking', 'no_rkm_medis': rkm.value},
-          encoding: Encoding.getByName("utf-8"));
-      var data = bookingFromJson(response.body);
-      if (data != null) {
-        bookList.value = data;
-        isLoading(false);
-      }
-    } catch (e) {
-      print(e);
-    }
-  }
+  // Future<List<Booking>> fetchBooking() async {
+  //   try {
+  //     isLoading(true);
+  //     var response = await http.post(urlBase,
+  //         headers: {
+  //           "Accept": "application/json",
+  //           "Content-Type": "application/x-www-form-urlencoded"
+  //         },
+  //         body: {'action': 'booking', 'no_rkm_medis': rkm.value},
+  //         encoding: Encoding.getByName("utf-8"));
+  //     var data = bookingFromJson(response.body);
+  //     if (data != null) {
+  //       bookList.value = data;
+  //       isLoading(false);
+  //     }
+  //   } catch (e) {
+  //     print(e);
+  //   }
+  // }
 
   Future<List<DaftarKlinik>> fetchKlinik() async {
     try {
       isLoading(true);
-      var response = await http.post(urlBase,
-          headers: {
-            "Accept": "application/json",
-            "Content-Type": "application/x-www-form-urlencoded"
-          },
-          body: {'action': 'daftarklinik'},
-          encoding: Encoding.getByName("utf-8"));
-      var data = daftarKlinikFromJson(response.body);
-      if (data != null) {
+      var response = await http.get(
+        'https://webapps.rsbhayangkaranganjuk.com/api-rsbnganjuk/api/v1/poliklinik',
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/x-www-form-urlencoded",
+          "Authorization": "Bearer " + token.value
+        },
+      );
+
+      if (response.statusCode == 200) {
+        var data = daftarKlinikFromJson(response.body).data;
         klinikList.value = data;
         isLoading(false);
+      } else if (response.statusCode == 404) {
+        error.value = '404';
+        isLoading(false);
+      } else if (response.statusCode == 401) {
+        error.value = '401';
+        token.value = await TokenServices(
+                'https://webapps.rsbhayangkaranganjuk.com/api-rsbnganjuk/api/v1/token',
+                'yudo',
+                'qwerty123')
+            .getToken();
+        await box.write('token', token.value);
+        fetchKlinik();
+
+        // Get.offAllNamed('/login');
       }
     } on Exception catch (e) {
+      error.value = 'noconnection';
       isLoading(false);
       print(e);
       //PopUpDialog.dialogWidget('Gagal Terhubung Dengan Server');
@@ -89,18 +111,31 @@ class DashboardController extends GetxController {
         () => Get.dialog(Center(child: CircularProgressIndicator()),
             barrierDismissible: false),
       );
-      http.Response response = await http.post(
-        urlBase,
-        body: {'action': 'detailklinik', 'kd_poli': kdPoli.value},
+      http.Response response = await http.get(
+        'https://webapps.rsbhayangkaranganjuk.com/api-rsbnganjuk/api/v1/poliklinik/' +
+            kdPoli.toString(),
         headers: {
           "Accept": "application/json",
-          "Content-Type": "application/x-www-form-urlencoded"
+          "Content-Type": "application/x-www-form-urlencoded",
+          "Authorization": "Bearer " + token.value
         },
-        encoding: Encoding.getByName("utf-8"),
       );
-      var data = detailKlinikFromJson(response.body);
-      detailKlinik.value = data;
-      Get.back();
+      if (response.statusCode == 200) {
+        var data = detailKlinikFromJson(response.body).data;
+        detailKlinik.value = data;
+        Get.back();
+      } else if (response.statusCode == 404) {
+        error.value = '404';
+        Get.back();
+      } else if (response.statusCode == 401) {
+        token.value = await TokenServices(
+                'https://webapps.rsbhayangkaranganjuk.com/api-rsbnganjuk/api/v1/token',
+                'yudo',
+                'qwerty123')
+            .getToken();
+        await box.write('token', token.value);
+        fetchJadwal();
+      }
     } on Exception catch (e) {
       Get.back();
       // PopUpDialog.dialogWidget('Tidak Dapat Terhubung dengan Server');

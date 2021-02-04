@@ -27,9 +27,16 @@ class _PendaftaranPageState extends State<PendaftaranPage> {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Pendaftaran Umum'),
+          title: Text(
+            'Pendaftaran Umum',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+            ),
+          ),
           backgroundColor: Colors.green,
           bottom: TabBar(
+            labelStyle: TextStyle(fontSize: 18),
             tabs: [
               Tab(
                 text: 'Daftar',
@@ -39,237 +46,278 @@ class _PendaftaranPageState extends State<PendaftaranPage> {
           ),
         ),
         body: TabBarView(children: [
-          Column(
-            children: [
-              // Container(
-              //   width: Get.width,
-              //   height: Get.height / 4,
-              //   color: Colors.green,
-              // ),
-              Container(
-                margin: EdgeInsets.all(20),
-                child: MyTextFieldDatePicker(
-                  labelText: "Pilih Tanggal",
-                  prefixIcon: Icon(Icons.date_range),
-                  suffixIcon: Icon(Icons.arrow_drop_down),
-                  lastDate: DateTime.now().add(Duration(days: 7)),
-                  firstDate: DateTime.now(),
-                  initialDate: DateTime.now().add(Duration(days: 1)),
-                  dateFormat: DateFormat('dd-MM-yyyy'),
-                  onDateChanged: (selectedDate) {
-                    // Do something with the selected date
-                    _pendaftaranController.tanggal.value.date = selectedDate;
-                    _pendaftaranController.clearInput();
-                  },
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.all(20),
-                child: TextField(
-                  controller: _pendaftaranController.api,
-                  readOnly: true,
-                  decoration: InputDecoration(
-                    labelText: "Pilih Rumah Sakit",
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.home),
-                    suffixIcon: Icon(Icons.arrow_drop_down),
-                    labelStyle: TextStyle(
-                        color: myFocusNode1.hasFocus
-                            ? Colors.green
-                            : Colors.black),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.green),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.black),
-                    ),
-                  ),
-                  onTap: () async {
-                    modalApi();
-                  },
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.all(20),
-                child: TextField(
-                  controller: _pendaftaranController.poliklinik,
-                  readOnly: true,
-                  decoration: InputDecoration(
-                    labelText: "Pilih Poliklinik",
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.home),
-                    suffixIcon: Icon(Icons.arrow_drop_down),
-                    labelStyle: TextStyle(
-                        color: myFocusNode1.hasFocus
-                            ? Colors.green
-                            : Colors.black),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.green),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.black),
-                    ),
-                  ),
-                  onTap: () async {
-                    if (_pendaftaranController.selectedApi.value != "") {
-                      modalPoli();
-                    } else {
-                      return AwesomeDialog(
-                              context: context,
-                              dialogType: DialogType.ERROR,
-                              animType: AnimType.RIGHSLIDE,
-                              headerAnimationLoop: false,
-                              title: 'Error',
-                              desc: 'Ada Data Yang Masih Kosong',
-                              btnOkOnPress: () {},
-                              btnOkColor: Colors.red)
-                          .show();
-                    }
-                  },
-                ),
-              ),
-              //_homeVisiteController.dokterList != null ? listDokter(context) : '',
-              Container(
-                margin: EdgeInsets.all(20),
-                child: TextField(
-                  controller: _pendaftaranController.dokter,
-                  readOnly: true,
-                  decoration: InputDecoration(
-                    labelText: "Pilih Dokter",
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.person),
-                    suffixIcon: Icon(Icons.arrow_drop_down),
-                    labelStyle: TextStyle(
-                        color: myFocusNode1.hasFocus
-                            ? Colors.green
-                            : Colors.black),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.green),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.black),
-                    ),
-                  ),
-                  onTap: () async {
-                    if (_pendaftaranController.selectedApi.value != "" &&
-                        _pendaftaranController.poliklinik.text != "") {
-                      await modalDokter();
-                    } else {
-                      return AwesomeDialog(
-                              context: context,
-                              dialogType: DialogType.ERROR,
-                              animType: AnimType.RIGHSLIDE,
-                              headerAnimationLoop: false,
-                              title: 'Error',
-                              desc: 'Ada Data Yang Masih Kosong',
-                              btnOkOnPress: () {},
-                              btnOkColor: Colors.red)
-                          .show();
-                    }
-                  },
-                ),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              SizedBox(
-                width: Get.width / 1.1,
-                height: 50,
-                child: RaisedButton.icon(
-                    onPressed: () async {
-                      await _pendaftaranController.postPendaftaran();
-                      if (_pendaftaranController.hasil.value == 'success') {
-                        return AwesomeDialog(
-                            context: context,
-                            animType: AnimType.LEFTSLIDE,
-                            headerAnimationLoop: false,
-                            dialogType: DialogType.SUCCES,
-                            title: 'Succes',
-                            desc:
-                                'Berhasil Terdaftar di ${_pendaftaranController.poliklinik.text} ${_pendaftaranController.api.text}',
-                            btnOkIcon: Icons.check_circle,
-                            onDissmissCallback: () {
-                              Get.toNamed('/dashboard');
-                            }).show();
-                      } else if (_pendaftaranController.hasil.value ==
-                          'limit') {
-                        return AwesomeDialog(
-                                context: context,
-                                dialogType: DialogType.ERROR,
-                                animType: AnimType.RIGHSLIDE,
-                                headerAnimationLoop: false,
-                                title: 'Error',
-                                desc:
-                                    'Kuota ${_pendaftaranController.poliklinik.text} Pada Tanggal ${DateFormat('dd-MM-yyyy').format(_pendaftaranController.tanggal.value.date)} Penuh',
-                                btnOkOnPress: () {},
-                                btnOkColor: Colors.red)
-                            .show();
-                      } else if (_pendaftaranController.hasil.value ==
-                          'duplicate') {
-                        return AwesomeDialog(
-                                context: context,
-                                dialogType: DialogType.ERROR,
-                                animType: AnimType.RIGHSLIDE,
-                                headerAnimationLoop: false,
-                                title: 'Error',
-                                desc:
-                                    'Anda Sudah Terdaftar Pada ${_pendaftaranController.poliklinik.text} Tanggal ${DateFormat('dd-MM-yyyy').format(_pendaftaranController.tanggal.value.date)}',
-                                btnOkOnPress: () {},
-                                btnOkColor: Colors.red)
-                            .show();
-                      } else if (_pendaftaranController.hasil.value == 'fail') {
-                        return AwesomeDialog(
-                                context: context,
-                                dialogType: DialogType.ERROR,
-                                animType: AnimType.RIGHSLIDE,
-                                headerAnimationLoop: false,
-                                title: 'Error',
-                                desc: 'Pendaftaran Gagal',
-                                btnOkOnPress: () {},
-                                btnOkColor: Colors.red)
-                            .show();
-                      } else if (_pendaftaranController.hasil.value ==
-                          'notavailable') {
-                        return AwesomeDialog(
-                                context: context,
-                                dialogType: DialogType.ERROR,
-                                animType: AnimType.RIGHSLIDE,
-                                headerAnimationLoop: false,
-                                title: 'Error',
-                                desc:
-                                    'Layanan ${_pendaftaranController.api.text} Belum Tersedia\nSilahkan Pilih Rumkit Yang Lain',
-                                btnOkOnPress: () {
-                                  _pendaftaranController.clearInput();
-                                },
-                                btnOkColor: Colors.red)
-                            .show();
-                      } else {
-                        return AwesomeDialog(
-                                context: context,
-                                dialogType: DialogType.ERROR,
-                                animType: AnimType.RIGHSLIDE,
-                                headerAnimationLoop: false,
-                                title: 'Error',
-                                desc: 'Tidak Bisa Terhubung Dengan Internet',
-                                btnOkOnPress: () {},
-                                btnOkColor: Colors.red)
-                            .show();
-                      }
-                    },
-                    color: Colors.green,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20.0),
-                    ),
-                    icon: Icon(Icons.person_add, color: Colors.white),
-                    label: Text(
-                      'Daftar',
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.white,
+          Container(
+            height: Get.height,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                // Container(
+                //   width: Get.width,
+                //   height: Get.height / 4,
+                //   color: Colors.green,
+                // ),
+                Expanded(
+                  flex: 8,
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          margin: EdgeInsets.only(left: 20, right: 20, top: 20),
+                          child: MyTextFieldDatePicker(
+                            labelText: "Pilih Tanggal",
+                            prefixIcon: Icon(Icons.date_range),
+                            suffixIcon: Icon(Icons.arrow_drop_down),
+                            lastDate: DateTime.now().add(Duration(days: 7)),
+                            firstDate: DateTime.now(),
+                            initialDate: DateTime.now().add(Duration(days: 1)),
+                            dateFormat: DateFormat('dd-MM-yyyy'),
+                            onDateChanged: (selectedDate) {
+                              // Do something with the selected date
+                              _pendaftaranController.tanggal.value.date =
+                                  selectedDate;
+                              _pendaftaranController.clearInput();
+                            },
+                          ),
+                        ),
                       ),
-                    )),
-              )
-            ],
+                      Expanded(
+                        child: Container(
+                          margin: EdgeInsets.only(left: 20, right: 20, top: 20),
+                          child: TextField(
+                            controller: _pendaftaranController.api,
+                            readOnly: true,
+                            decoration: InputDecoration(
+                              labelText: "Pilih Rumah Sakit",
+                              border: OutlineInputBorder(),
+                              prefixIcon: Icon(Icons.home),
+                              suffixIcon: Icon(Icons.arrow_drop_down),
+                              labelStyle: TextStyle(
+                                  color: myFocusNode1.hasFocus
+                                      ? Colors.green
+                                      : Colors.black),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.green),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.black),
+                              ),
+                            ),
+                            onTap: () async {
+                              modalApi();
+                            },
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: Container(
+                          margin: EdgeInsets.only(left: 20, right: 20, top: 20),
+                          child: TextField(
+                            controller: _pendaftaranController.poliklinik,
+                            readOnly: true,
+                            decoration: InputDecoration(
+                              labelText: "Pilih Poliklinik",
+                              border: OutlineInputBorder(),
+                              prefixIcon: Icon(Icons.home),
+                              suffixIcon: Icon(Icons.arrow_drop_down),
+                              labelStyle: TextStyle(
+                                  color: myFocusNode1.hasFocus
+                                      ? Colors.green
+                                      : Colors.black),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.green),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.black),
+                              ),
+                            ),
+                            onTap: () async {
+                              if (_pendaftaranController.selectedApi.value !=
+                                  "") {
+                                await _pendaftaranController.fetchPoli();
+                                if (_pendaftaranController.poliList.length !=
+                                    0) {
+                                  modalPoli();
+                                }
+                              } else {
+                                return AwesomeDialog(
+                                        context: context,
+                                        dialogType: DialogType.ERROR,
+                                        animType: AnimType.RIGHSLIDE,
+                                        headerAnimationLoop: false,
+                                        title: 'Error',
+                                        desc: 'Ada Data Yang Masih Kosong',
+                                        btnOkOnPress: () {},
+                                        btnOkColor: Colors.red)
+                                    .show();
+                              }
+                            },
+                          ),
+                        ),
+                      ),
+                      //_homeVisiteController.dokterList != null ? listDokter(context) : '',
+                      Expanded(
+                        child: Container(
+                          margin: EdgeInsets.only(left: 20, right: 20, top: 20),
+                          child: TextField(
+                            controller: _pendaftaranController.dokter,
+                            readOnly: true,
+                            decoration: InputDecoration(
+                              labelText: "Pilih Dokter",
+                              border: OutlineInputBorder(),
+                              prefixIcon: Icon(Icons.person),
+                              suffixIcon: Icon(Icons.arrow_drop_down),
+                              labelStyle: TextStyle(
+                                  color: myFocusNode1.hasFocus
+                                      ? Colors.green
+                                      : Colors.black),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.green),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.black),
+                              ),
+                            ),
+                            onTap: () async {
+                              if (_pendaftaranController.selectedApi.value !=
+                                      "" &&
+                                  _pendaftaranController.poliklinik.text !=
+                                      "") {
+                                await modalDokter();
+                              } else {
+                                return AwesomeDialog(
+                                        context: context,
+                                        dialogType: DialogType.ERROR,
+                                        animType: AnimType.RIGHSLIDE,
+                                        headerAnimationLoop: false,
+                                        title: 'Error',
+                                        desc: 'Ada Data Yang Masih Kosong',
+                                        btnOkOnPress: () {},
+                                        btnOkColor: Colors.red)
+                                    .show();
+                              }
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                Expanded(
+                  flex: 3,
+                  child: SizedBox(
+                    height: 20,
+                  ),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: SizedBox(
+                    width: Get.width / 1.1,
+                    // height: 50,
+                    child: RaisedButton.icon(
+                        onPressed: () async {
+                          await _pendaftaranController.postPendaftaran();
+                          if (_pendaftaranController.hasil.value == 'success') {
+                            return AwesomeDialog(
+                                context: context,
+                                animType: AnimType.LEFTSLIDE,
+                                headerAnimationLoop: false,
+                                dialogType: DialogType.SUCCES,
+                                title: 'Succes',
+                                desc:
+                                    'Berhasil Terdaftar di ${_pendaftaranController.poliklinik.text} ${_pendaftaranController.api.text}',
+                                btnOkIcon: Icons.check_circle,
+                                onDissmissCallback: () {
+                                  Get.toNamed('/dashboard');
+                                }).show();
+                          } else if (_pendaftaranController.hasil.value ==
+                              'limit') {
+                            return AwesomeDialog(
+                                    context: context,
+                                    dialogType: DialogType.ERROR,
+                                    animType: AnimType.RIGHSLIDE,
+                                    headerAnimationLoop: false,
+                                    title: 'Error',
+                                    desc:
+                                        'Kuota ${_pendaftaranController.poliklinik.text} Pada Tanggal ${DateFormat('dd-MM-yyyy').format(_pendaftaranController.tanggal.value.date)} Penuh',
+                                    btnOkOnPress: () {},
+                                    btnOkColor: Colors.red)
+                                .show();
+                          } else if (_pendaftaranController.hasil.value ==
+                              'duplicate') {
+                            return AwesomeDialog(
+                                    context: context,
+                                    dialogType: DialogType.ERROR,
+                                    animType: AnimType.RIGHSLIDE,
+                                    headerAnimationLoop: false,
+                                    title: 'Error',
+                                    desc:
+                                        'Anda Sudah Terdaftar Pada ${_pendaftaranController.poliklinik.text} Tanggal ${DateFormat('dd-MM-yyyy').format(_pendaftaranController.tanggal.value.date)}',
+                                    btnOkOnPress: () {},
+                                    btnOkColor: Colors.red)
+                                .show();
+                          } else if (_pendaftaranController.hasil.value ==
+                              'fail') {
+                            return AwesomeDialog(
+                                    context: context,
+                                    dialogType: DialogType.ERROR,
+                                    animType: AnimType.RIGHSLIDE,
+                                    headerAnimationLoop: false,
+                                    title: 'Error',
+                                    desc: 'Pendaftaran Gagal',
+                                    btnOkOnPress: () {},
+                                    btnOkColor: Colors.red)
+                                .show();
+                          } else if (_pendaftaranController.hasil.value ==
+                              'notavailable') {
+                            return AwesomeDialog(
+                                    context: context,
+                                    dialogType: DialogType.ERROR,
+                                    animType: AnimType.RIGHSLIDE,
+                                    headerAnimationLoop: false,
+                                    title: 'Error',
+                                    desc:
+                                        'Layanan ${_pendaftaranController.api.text} Belum Tersedia\nSilahkan Pilih Rumkit Yang Lain',
+                                    btnOkOnPress: () {
+                                      _pendaftaranController.clearInput();
+                                    },
+                                    btnOkColor: Colors.red)
+                                .show();
+                          } else {
+                            return AwesomeDialog(
+                                    context: context,
+                                    dialogType: DialogType.ERROR,
+                                    animType: AnimType.RIGHSLIDE,
+                                    headerAnimationLoop: false,
+                                    title: 'Error',
+                                    desc:
+                                        'Tidak Bisa Terhubung Dengan Internet',
+                                    btnOkOnPress: () {},
+                                    btnOkColor: Colors.red)
+                                .show();
+                          }
+                        },
+                        color: Colors.green,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
+                        icon: Icon(Icons.person_add, color: Colors.white),
+                        label: Text(
+                          'Daftar',
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.white,
+                          ),
+                        )),
+                  ),
+                ),
+                Expanded(
+                  child: SizedBox(
+                    height: 50,
+                  ),
+                ),
+              ],
+            ),
           ),
           Container(
             width: 350,
@@ -313,17 +361,17 @@ class _PendaftaranPageState extends State<PendaftaranPage> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: <Widget>[
                                       Text(
-                                        '${DateFormat('dd-MM-yyyy').format(_pendaftaranController.bookList[index].tanggalPeriksa)}/${_pendaftaranController.bookList[index].status}',
+                                        '${DateFormat('dd-MM-yyyy').format(_pendaftaranController.bookList.value[index].tanggalPeriksa)}/${_pendaftaranController.bookList.value[index].status}',
                                         style: TextStyle(
                                             color: Colors.black, fontSize: 12),
                                       ),
                                       Text(
-                                        '${_pendaftaranController.bookList[index].nmPoli}',
+                                        '${_pendaftaranController.bookList.value[index].nmPoli}',
                                         style: TextStyle(
                                             color: Colors.black, fontSize: 15),
                                       ),
                                       Text(
-                                        '${_pendaftaranController.bookList[index].nmDokter}',
+                                        '${_pendaftaranController.bookList.value[index].nmDokter}',
                                         style: TextStyle(
                                             color: Colors.black, fontSize: 15),
                                       ),
@@ -371,7 +419,6 @@ class _PendaftaranPageState extends State<PendaftaranPage> {
 
   modalPoli() async {
     if (_pendaftaranController.api.text.contains('Nganjuk')) {
-      await _pendaftaranController.fetchPoli();
       return Get.bottomSheet(
         Container(
           height: Get.height,
@@ -538,7 +585,7 @@ class _PendaftaranPageState extends State<PendaftaranPage> {
     }
   }
 
-  modalDetailBooking(Booking data) async {
+  modalDetailBooking(BookingList data) async {
     return Get.bottomSheet(
       Container(
         width: 200,

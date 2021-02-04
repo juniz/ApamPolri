@@ -123,7 +123,7 @@ class _JadwalDokterPageState extends State<JadwalDokterPage> {
                       onTap: () async {
                         _jadwalDokterController.selectedApi.value =
                             DataDummy.dummy[index].nama;
-                        _jadwalDokterController.fetchDokter();
+                        await _jadwalDokterController.fetchDokter();
                         Get.back();
                       },
                     );

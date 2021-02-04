@@ -6,31 +6,36 @@ import 'package:apam/models/detail_dokter_model.dart';
 import 'package:apam/models/jadwal_dokter_controller.dart';
 import 'package:apam/models/jadwal_praktek.dart';
 import 'package:apam/models/rsb_api_model.dart';
+import 'package:apam/services/token_service.dart';
 import 'package:apam/services/url.dart';
 import 'package:apam/widget/alert_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
 class JadwalDokterController extends GetxController {
+  GetStorage box = GetStorage();
   final tanggal = DokterController(tgl: DateTime.now()).obs;
-  final dokter = DokterController(data: List<JadwalPraktek>()).obs;
-  var jadwalDokter = List<JadwalPraktek>().obs;
+  final dokter = DokterController(data: List<JadwalPraktekList>()).obs;
+  var jadwalDokter = List<JadwalPraktekList>().obs;
   var detailDokter = List<DetailDokter>().obs;
   var kdDokter = "".obs;
   var isLoading = true.obs;
   var apiList = List<DataApi>().obs;
   var selectedApi = "".obs;
   var hasil = "".obs;
+  var token = "".obs;
 
   @override
   void onInit() async {
     //fetchDokter();
+    token.value = box.read('token');
     super.onInit();
   }
 
-  void fetchDokter() async {
+  Future fetchDokter() async {
     if (selectedApi.value.contains('Nganjuk')) {
       hasil.value = 'available';
       try {
@@ -39,26 +44,34 @@ class JadwalDokterController extends GetxController {
           () => Get.dialog(Center(child: CircularProgressIndicator()),
               barrierDismissible: false),
         );
-        http.Response response = await http.post(
-          urlBase,
-          body: {'action': 'dokter', 'tanggal': tanggal.value.tgl.toString()},
+        http.Response response = await http.get(
+          'https://webapps.rsbhayangkaranganjuk.com/api-rsbnganjuk/api/v1/jadwal',
           headers: {
             "Accept": "application/json",
-            "Content-Type": "application/x-www-form-urlencoded"
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Authorization": "Bearer " + token.value
           },
-          encoding: Encoding.getByName("utf-8"),
         );
-        var data = jadwalPraktekFromJson(response.body);
-        if (data != null) {
+
+        if (response.statusCode == 200) {
+          var data = jadwalPraktekFromJson(response.body).data;
           jadwalDokter.value = data;
           Get.back();
-        } else {
+        } else if (response.statusCode == 404) {
           Get.back();
           PopUpDialog.dialogWidget('Data Kosong');
+        } else if (response.statusCode == 401) {
+          token.value = await TokenServices(
+                  'https://webapps.rsbhayangkaranganjuk.com/api-rsbnganjuk/api/v1/token',
+                  'yudo',
+                  'qwerty123')
+              .getToken();
+          await box.write('token', token.value);
+          Get.back();
+          fetchDokter();
         }
       } on TimeoutException catch (e) {
         print('Timeout Error: $e');
-
         PopUpDialog.dialogWidget('Waktu Koneksi Habis');
         Get.back();
       } on SocketException catch (e) {

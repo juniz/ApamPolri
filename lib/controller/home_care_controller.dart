@@ -1,5 +1,6 @@
 import 'package:apam/models/jadwal_dokter_model.dart';
 import 'package:apam/models/rsb_api_model.dart';
+import 'package:apam/services/token_service.dart';
 import 'package:apam/widget/alert_dialog.dart';
 import 'package:http/http.dart' as http;
 import 'package:apam/models/poloklinik_model.dart';
@@ -19,8 +20,9 @@ class Tanggal {
 }
 
 class HomeCareController extends GetxController {
-  List<dynamic> poliList = List<Poliklinik>().obs;
-  List<JadwalDokter> dokterList = List<JadwalDokter>().obs;
+  GetStorage box = GetStorage();
+  List<dynamic> poliList = List<PoliklinikList>().obs;
+  var dokterList = List<JadwalDokterList>().obs;
   List<DataApi> apiList = List<DataApi>().obs;
   var succses = "".obs;
   var isSucces = false.obs;
@@ -29,17 +31,19 @@ class HomeCareController extends GetxController {
   var selectedApi = "".obs;
   var isLoading = true.obs;
   final tanggal = Tanggal(date: DateTime.now()).obs;
-  final kdPoli = Poliklinik(kdPoli: "").obs;
-  var homecareList = List<RiwayatHomeCare>().obs;
+  final kdPoli = PoliklinikList(kdPoli: "").obs;
+  var homecareList = List<RiwayatHomeCareList>().obs;
   TextEditingController poliklinik;
   TextEditingController dokter;
   TextEditingController api;
+  var token = "".obs;
+  var error = "".obs;
 
   DateTime picked;
 
   @override
   void onInit() {
-    GetStorage box = GetStorage();
+    token.value = box.read('token');
     nrp.value = box.read('no_rkm_medis');
     poliklinik = TextEditingController();
     dokter = TextEditingController();
@@ -49,56 +53,97 @@ class HomeCareController extends GetxController {
   }
 
   // ignore: missing_return
-  Future<List<Poliklinik>> fetchPoli() async {
-    try {
+  Future fetchPoli() async {
+    if (api.text.contains('Nganjuk')) {
       Future.delayed(
           Duration.zero,
           () => Get.dialog(Center(child: CircularProgressIndicator()),
               barrierDismissible: false));
-      var response = await http.post(
-        selectedApi + urlPoli,
-        headers: {
-          "Accept": "application/json",
-          "Content-Type": "application/x-www-form-urlencoded"
-        },
-        body: {
-          'tanggal':
-              DateFormat('dd-MM-yyyy').format(tanggal.value.date).toString()
-        },
-      ).timeout(Duration(minutes: 2));
-      poliList = poliklinikFromJson(response.body);
-      Get.back();
-    } on Exception catch (e) {
-      Get.back();
-      PopUpDialog.dialogWidget('Pastikan Anda Terhubung Internet');
+
+      try {
+        error.value = "";
+        // var year = DateFormat('yyyy').format(tanggal.value.date);
+        // var month = DateFormat('MM').format(tanggal.value.date);
+        // var day = DateFormat('dd').format(tanggal.value.date);
+        var date = DateTime.parse(tanggal.value.date.toString());
+        http.Response response = await http.get(
+          'https://webapps.rsbhayangkaranganjuk.com/api-rsbnganjuk/api/v1/jadwalklinik/${date.year}/${date.month}/${date.day}',
+          headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Authorization": "Bearer " + token.value
+          },
+        );
+        if (response.statusCode == 200) {
+          poliList = poliklinikFromJson(response.body).data;
+          Get.back();
+        } else if (response.statusCode == 401) {
+          token.value = await TokenServices(
+                  'https://webapps.rsbhayangkaranganjuk.com/api-rsbnganjuk/api/v1/token',
+                  'yudo',
+                  'qwerty123')
+              .getToken();
+          await box.write('token', token.value);
+          Get.back();
+          fetchPoli();
+        } else if (response.statusCode == 404) {
+          error.value = 'kosong';
+          Get.back();
+          PopUpDialog.dialogWidget('Data Tidak Ditemukan');
+        }
+      } on Exception catch (e) {
+        Get.back();
+        PopUpDialog.dialogWidget('Pastikan Anda Terhubung Internet');
+      }
+    } else {
+      error.value = 'noavailable';
     }
   }
 
   // ignore: missing_return
   Future<List<JadwalDokter>> fetchDokter() async {
-    try {
-      Future.delayed(
-        Duration.zero,
-        () => Get.dialog(Center(child: CircularProgressIndicator()),
-            barrierDismissible: false),
-      );
-      var response = await http.post(
-        urlBase + urlDok,
-        headers: {
-          "Accept": "application/json",
-          "Content-Type": "application/x-www-form-urlencoded"
-        },
-        body: {
-          'tanggal':
-              DateFormat('dd-MM-yyyy').format(tanggal.value.date).toString(),
-          'kd_poli': 'U000'
-        },
-      );
-      dokterList = jadwalDokterFromJson(response.body);
-      Get.back();
-    } on Exception catch (e) {
-      Get.back();
-      PopUpDialog.dialogWidget('Pastikan Anda Terhubung Internet');
+    if (api.text.contains('Nganjuk')) {
+      error.value = "";
+      try {
+        Future.delayed(
+          Duration.zero,
+          () => Get.dialog(Center(child: CircularProgressIndicator()),
+              barrierDismissible: false),
+        );
+        var date = DateTime.parse(tanggal.value.date.toString());
+        var response = await http.get(
+          'https://webapps.rsbhayangkaranganjuk.com/api-rsbnganjuk/api/v1/jadwaldokter/${date.year}/${date.month}/${date.day}/U000',
+          headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Authorization": "Bearer " + token.value
+          },
+        );
+
+        if (response.statusCode == 200) {
+          var data = jadwalDokterFromJson(response.body).data;
+          dokterList.value = data;
+          Get.back();
+        } else if (response.statusCode == 401) {
+          token.value = await TokenServices(
+                  'https://webapps.rsbhayangkaranganjuk.com/api-rsbnganjuk/api/v1/token',
+                  'yudo',
+                  'qwerty123')
+              .getToken();
+          await box.write('token', token.value);
+          Get.back();
+          await fetchDokter();
+        } else if (response.statusCode == 404) {
+          error.value = 'kosong';
+          Get.back();
+          PopUpDialog.dialogWidget('Dokter Tidak Ditemukan Pilih Tanggal Lain');
+        }
+      } on Exception catch (e) {
+        Get.back();
+        PopUpDialog.dialogWidget('Pastikan Anda Terhubung Internet');
+      }
+    } else {
+      error.value = 'noavailable';
     }
   }
 
@@ -121,12 +166,13 @@ class HomeCareController extends GetxController {
         PopUpDialog.dialogAnimation('Data Masih Ada Yang Kosong !');
       } else {
         try {
+          succses.value = "";
           //  isSucces(false);
           PopUpDialog.dialogCircular();
 
           var response = await http
               .post(
-                "https://api.rsbhayangkaranganjuk.com/api-rsb/public/index.php/homecare",
+                'https://webapps.rsbhayangkaranganjuk.com/api-rsbnganjuk/api/v1/homevisit',
                 body: {
                   'nrp': nrp.value.toString(),
                   'poli': 'U000',
@@ -134,28 +180,35 @@ class HomeCareController extends GetxController {
                   'tgl': tanggal.value.date.toString()
                 },
                 headers: {
-                  'Connection': 'Keep-alive',
-                  'Keep-alive': 'timeout=5, max=100',
                   "Accept": "application/json",
+                  "Content-Type": "application/x-www-form-urlencoded",
+                  "Authorization": "Bearer " + token.value
                 },
                 encoding: Encoding.getByName("utf-8"),
               )
               .timeout(Duration(minutes: 2));
           var data = jsonDecode(response.body);
-          if (data["message"] == "Sukses") {
+          if (response.statusCode == 200) {
             print('berhasil');
             Get.back();
             succses.value = 'Sukses';
-          } else if (data["message"] == "Duplicate") {
+          } else if (response.statusCode == 404) {
+            if (data["message"] == "Duplication") {
+              Get.back();
+              succses.value = 'Duplicate';
+            } else if (data["message"] == "Full") {
+              Get.back();
+              succses.value = 'Full';
+            }
+          } else if (response.statusCode == 401) {
+            token.value = await TokenServices(
+                    'https://webapps.rsbhayangkaranganjuk.com/api-rsbnganjuk/api/v1/token',
+                    'yudo',
+                    'qwerty123')
+                .getToken();
+            await box.write('token', token.value);
             Get.back();
-            succses.value = 'Duplicate';
-          } else if (data["message"] == "Full") {
-            Get.back();
-            succses.value = 'Full';
-          } else {
-            print('gagal');
-            Get.back();
-            succses.value = 'Fail';
+            await postPendaftaran();
           }
         } on Exception catch (e) {
           Get.back();
@@ -170,17 +223,29 @@ class HomeCareController extends GetxController {
   Future<List<RiwayatHomeCare>> fetchHomecare() async {
     try {
       isLoading(true);
-      var response = await http.post(urlBase,
-          headers: {
-            "Accept": "application/json",
-            "Content-Type": "application/x-www-form-urlencoded"
-          },
-          body: {'action': 'riwayathomecare', 'no_rkm_medis': nrp.value},
-          encoding: Encoding.getByName("utf-8"));
-      var data = riwayatHomeCareFromJson(response.body);
-      if (data != null) {
+      var response = await http.get(
+        'https://webapps.rsbhayangkaranganjuk.com/api-rsbnganjuk/api/v1/homevisit/${nrp.value}',
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/x-www-form-urlencoded",
+          "Authorization": "Bearer " + token.value
+        },
+      );
+      if (response.statusCode == 200) {
+        var data = riwayatHomeCareFromJson(response.body).data;
         homecareList.value = data;
         isLoading(false);
+      } else if (response.statusCode == 401) {
+        token.value = await TokenServices(
+                'https://webapps.rsbhayangkaranganjuk.com/api-rsbnganjuk/api/v1/token',
+                'yudo',
+                'qwerty123')
+            .getToken();
+        await box.write('token', token.value);
+        fetchHomecare();
+      } else if (response.statusCode == 404) {
+        isLoading(false);
+        // PopUpDialog.dialogWidget('Data Kosong');
       }
     } on Exception catch (e) {
       print(e);

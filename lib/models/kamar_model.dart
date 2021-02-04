@@ -4,38 +4,49 @@
 
 import 'dart:convert';
 
-List<Kamar> kamarFromJson(String str) =>
-    List<Kamar>.from(json.decode(str).map((x) => Kamar.fromJson(x)));
+Kamar kamarFromJson(String str) => Kamar.fromJson(json.decode(str));
 
-String kamarToJson(List<Kamar> data) =>
-    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+String kamarToJson(Kamar data) => json.encode(data.toJson());
 
 class Kamar {
   Kamar({
-    this.the0,
-    this.the1,
-    this.the2,
-    this.the3,
+    this.success,
+    this.data,
+    this.message,
+  });
+
+  bool success;
+  List<KamarList> data;
+  String message;
+
+  factory Kamar.fromJson(Map<String, dynamic> json) => Kamar(
+        success: json["success"],
+        data: List<KamarList>.from(
+            json["data"].map((x) => KamarList.fromJson(x))),
+        message: json["message"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "success": success,
+        "data": List<dynamic>.from(data.map((x) => x.toJson())),
+        "message": message,
+      };
+}
+
+class KamarList {
+  KamarList({
     this.kelas,
     this.total,
     this.isi,
     this.kosong,
   });
 
-  String the0;
-  String the1;
-  String the2;
-  String the3;
   String kelas;
-  String total;
-  String isi;
-  String kosong;
+  int total;
+  int isi;
+  int kosong;
 
-  factory Kamar.fromJson(Map<String, dynamic> json) => Kamar(
-        the0: json["0"],
-        the1: json["1"],
-        the2: json["2"],
-        the3: json["3"],
+  factory KamarList.fromJson(Map<String, dynamic> json) => KamarList(
         kelas: json["kelas"],
         total: json["total"],
         isi: json["isi"],
@@ -43,10 +54,6 @@ class Kamar {
       );
 
   Map<String, dynamic> toJson() => {
-        "0": the0,
-        "1": the1,
-        "2": the2,
-        "3": the3,
         "kelas": kelas,
         "total": total,
         "isi": isi,

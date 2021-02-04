@@ -20,25 +20,35 @@ class OnboardingPage extends StatelessWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Container(
-                          width: Get.width,
-                          height: 300,
-                          child: Image.asset(
-                              _controller.onboardingPages[index].imageAsset),
+                        Expanded(
+                          flex: 5,
+                          child: Container(
+                            width: Get.width,
+                            height: Get.height / 3,
+                            child: Image.asset(
+                                _controller.onboardingPages[index].imageAsset),
+                          ),
                         ),
-                        SizedBox(height: 32),
-                        Text(
-                          _controller.onboardingPages[index].title,
-                          style: TextStyle(
-                              fontSize: 24, fontWeight: FontWeight.w500),
-                        ),
-                        SizedBox(height: 32),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 64.0),
+                        // SizedBox(height: 32),
+                        Expanded(
+                          flex: 1,
                           child: Text(
-                            _controller.onboardingPages[index].description,
+                            _controller.onboardingPages[index].title,
                             textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 18),
+                            style: TextStyle(
+                                fontSize: 24, fontWeight: FontWeight.w500),
+                          ),
+                        ),
+                        SizedBox(height: 20),
+                        Expanded(
+                          flex: 3,
+                          child: Padding(
+                            padding: EdgeInsets.only(left: 20, right: 20),
+                            child: Text(
+                              _controller.onboardingPages[index].description,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(fontSize: 18),
+                            ),
                           ),
                         ),
                       ],

@@ -11,7 +11,7 @@ import 'package:http/http.dart' as http;
 
 class DetailKlinikController extends GetxController {
   DashboardController dashboardController;
-  var detailKlinik = List<DetailKlinik>().obs;
+  var detailKlinik = List<DetailKlinikList>().obs;
   var isLoading = true.obs;
 
   @override
@@ -39,7 +39,7 @@ class DetailKlinikController extends GetxController {
         },
         encoding: Encoding.getByName("utf-8"),
       );
-      var data = detailKlinikFromJson(response.body);
+      var data = detailKlinikFromJson(response.body).data;
       detailKlinik.value = data;
       Get.back();
     } on Exception catch (e) {
