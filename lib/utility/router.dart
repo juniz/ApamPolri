@@ -12,6 +12,7 @@ import 'package:apam/splashscreen_view.dart';
 import 'package:apam/onboarding_page.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:apam/sign_up.dart';
 
 class RouterPage {
   static final route = [
@@ -26,6 +27,10 @@ class RouterPage {
     GetPage(
       name: '/login',
       page: () => LoginPage(),
+    ),
+    GetPage(
+      name: '/signup',
+      page: () => SignUpPage(),
     ),
     GetPage(
       name: '/panduan',

@@ -25,10 +25,13 @@ class CarouselPageController extends GetxController {
     try {
       isLoading(true);
       var request = await http.get(
-          'https://newsapi.org/v2/top-headlines?country=id&category=sport&apiKey=199bdb149a8641e5b36d7153b2d68f0a&pageSize=5');
-      var data = articleFromJson(request.body).articles;
-
-      articleList = data;
+          'https://newsapi.org/v2/top-headlines?country=id&category=health&apiKey=199bdb149a8641e5b36d7153b2d68f0a&pageSize=5');
+      if (request.statusCode == 200) {
+        var data = articleFromJson(request.body).articles;
+        articleList = data;
+      } else {
+        return null;
+      }
 
       isLoading(false);
     } on Exception catch (e) {

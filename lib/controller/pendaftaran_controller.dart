@@ -214,9 +214,13 @@ class PendaftaranController extends GetxController {
             await box.write('token', token.value);
             Get.back();
             postPendaftaran();
+          } else {
+            Get.back();
+            hasil.value = 'fail';
           }
         } on Exception catch (e) {
           hasil.value = 'noconnection';
+          Get.back();
         }
       }
     } else {

@@ -187,12 +187,14 @@ class HomeCareController extends GetxController {
                 encoding: Encoding.getByName("utf-8"),
               )
               .timeout(Duration(minutes: 2));
-          var data = jsonDecode(response.body);
+
           if (response.statusCode == 200) {
+            var data = jsonDecode(response.body);
             print('berhasil');
             Get.back();
             succses.value = 'Sukses';
           } else if (response.statusCode == 404) {
+            var data = jsonDecode(response.body);
             if (data["message"] == "Duplication") {
               Get.back();
               succses.value = 'Duplicate';
@@ -209,6 +211,9 @@ class HomeCareController extends GetxController {
             await box.write('token', token.value);
             Get.back();
             await postPendaftaran();
+          } else {
+            Get.back();
+            succses.value = 'Fail';
           }
         } on Exception catch (e) {
           Get.back();

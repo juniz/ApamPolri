@@ -7,8 +7,8 @@ class LocalData {
     box.write(key, value);
   }
 
-  static Future<String> getPref(String key) {
-    return box.read(key);
+  static Future<String> getPref(String key) async {
+    return await box.read(key);
   }
 
   static delPref(String key) {

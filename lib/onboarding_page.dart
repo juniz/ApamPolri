@@ -21,34 +21,47 @@ class OnboardingPage extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Expanded(
-                          flex: 5,
-                          child: Container(
-                            width: Get.width,
-                            height: Get.height / 3,
-                            child: Image.asset(
-                                _controller.onboardingPages[index].imageAsset),
-                          ),
+                          child: SizedBox(),
                         ),
-                        // SizedBox(height: 32),
                         Expanded(
-                          flex: 1,
-                          child: Text(
-                            _controller.onboardingPages[index].title,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                fontSize: 24, fontWeight: FontWeight.w500),
-                          ),
-                        ),
-                        SizedBox(height: 20),
-                        Expanded(
-                          flex: 3,
+                          flex: 6,
                           child: Padding(
-                            padding: EdgeInsets.only(left: 20, right: 20),
-                            child: Text(
-                              _controller.onboardingPages[index].description,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(fontSize: 18),
+                            padding: const EdgeInsets.only(bottom: 20.0),
+                            child: Container(
+                              width: Get.width,
+                              height: Get.height / 3,
+                              child: Image.asset(_controller
+                                  .onboardingPages[index].imageAsset),
                             ),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 5,
+                          child: Column(
+                            children: [
+                              Expanded(
+                                flex: 1,
+                                child: Text(
+                                  _controller.onboardingPages[index].title,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w600),
+                                ),
+                              ),
+                              Expanded(
+                                flex: 3,
+                                child: Padding(
+                                  padding: EdgeInsets.only(left: 10, right: 10),
+                                  child: Text(
+                                    _controller
+                                        .onboardingPages[index].description,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(fontSize: 18),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
