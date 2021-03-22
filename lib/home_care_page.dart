@@ -23,9 +23,13 @@ class _HomeCarePageState extends State<HomeCarePage> {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Home Care'),
+          title: Text('Home Care',textAlign: TextAlign.center,
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+            ),),
           backgroundColor: Colors.green,
           bottom: TabBar(
+            labelStyle: TextStyle(fontSize: 18),
             tabs: [
               Tab(
                 text: 'Daftar',
@@ -43,77 +47,84 @@ class _HomeCarePageState extends State<HomeCarePage> {
               //   color: Colors.green,
               // ),
               Expanded(
-                flex: 8,
+                flex: 6,
                 child: Column(
                   children: [
-                    Container(
-                      margin: EdgeInsets.all(20),
-                      child: MyTextFieldDatePicker(
-                        labelText: "Pilih Tanggal",
-                        prefixIcon: Icon(Icons.date_range),
-                        suffixIcon: Icon(Icons.arrow_drop_down),
-                        lastDate: DateTime.now().add(Duration(days: 7)),
-                        firstDate: DateTime.now(),
-                        initialDate: DateTime.now().add(Duration(days: 1)),
-                        dateFormat: DateFormat('dd-MM-yyyy'),
-                        onDateChanged: (selectedDate) {
-                          // Do something with the selected date
-                          _homecareController.tanggal.value.date = selectedDate;
-                          _homecareController.clearInput();
-                        },
+                    Expanded(
+                      child: Container(
+                        margin: EdgeInsets.all(20),
+                        child: MyTextFieldDatePicker(
+                          labelText: "Pilih Tanggal",
+                          prefixIcon: Icon(Icons.date_range),
+                          suffixIcon: Icon(Icons.arrow_drop_down),
+                          lastDate: DateTime.now().add(Duration(days: 7)),
+                          firstDate: DateTime.now(),
+                          initialDate: DateTime.now().add(Duration(days: 1)),
+                          dateFormat: DateFormat('dd-MM-yyyy'),
+                          onDateChanged: (selectedDate) {
+                            // Do something with the selected date
+                            _homecareController.tanggal.value.date =
+                                selectedDate;
+                            _homecareController.clearInput();
+                          },
+                        ),
                       ),
                     ),
-                    Container(
-                      margin: EdgeInsets.all(20),
-                      child: TextField(
-                        controller: _homecareController.api,
-                        readOnly: true,
-                        decoration: InputDecoration(
-                          labelText: "Pilih Rumah Sakit",
-                          border: OutlineInputBorder(),
-                          prefixIcon: Icon(Icons.home),
-                          suffixIcon: Icon(Icons.arrow_drop_down),
-                          labelStyle: TextStyle(
-                              color: myFocusNode1.hasFocus
-                                  ? Colors.green
-                                  : Colors.black),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.green),
+                    Expanded(
+                      child: Container(
+                        margin: EdgeInsets.all(20),
+                        child: TextField(
+                          controller: _homecareController.api,
+                          readOnly: true,
+                          decoration: InputDecoration(
+                            labelText: "Pilih Rumah Sakit",
+                            border: OutlineInputBorder(),
+                            prefixIcon: Icon(Icons.home),
+                            suffixIcon: Icon(Icons.arrow_drop_down),
+                            labelStyle: TextStyle(
+                                color: myFocusNode1.hasFocus
+                                    ? Colors.green
+                                    : Colors.black),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.green),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.black),
+                            ),
                           ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.black),
-                          ),
+                          onTap: () async {
+                            modalApi();
+                            _homecareController.dokter.text = "";
+                          },
                         ),
-                        onTap: () async {
-                          modalApi();
-                          _homecareController.dokter.text = "";
-                        },
                       ),
                     ),
-                    Container(
-                      margin: EdgeInsets.all(20),
-                      child: TextField(
-                        controller: _homecareController.dokter,
-                        readOnly: true,
-                        decoration: InputDecoration(
-                          labelText: "Pilih Dokter",
-                          border: OutlineInputBorder(),
-                          prefixIcon: Icon(Icons.person),
-                          suffixIcon: Icon(Icons.arrow_drop_down),
-                          labelStyle: TextStyle(
-                              color: myFocusNode1.hasFocus
-                                  ? Colors.green
-                                  : Colors.black),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.green),
+                    Expanded(
+                      child: Container(
+                        margin: EdgeInsets.all(20),
+                        child: TextField(
+                          controller: _homecareController.dokter,
+                          readOnly: true,
+                          decoration: InputDecoration(
+                            labelText: "Pilih Dokter",
+                            border: OutlineInputBorder(),
+                            prefixIcon: Icon(Icons.person),
+                            suffixIcon: Icon(Icons.arrow_drop_down),
+                            labelStyle: TextStyle(
+                                color: myFocusNode1.hasFocus
+                                    ? Colors.green
+                                    : Colors.black),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.green),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.black),
+                            ),
                           ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.black),
-                          ),
+                          onTap: () async {
+                            modalDokter();
+                          },
                         ),
-                        onTap: () async {
-                          modalDokter();
-                        },
                       ),
                     ),
                   ],

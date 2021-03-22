@@ -1,3 +1,4 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -18,12 +19,14 @@ class _SignUpPageState extends State<SignUpPage> {
   FocusNode myFocusNode3 = new FocusNode();
   FocusNode myFocusNode4 = new FocusNode();
   FocusNode myFocusNode5 = new FocusNode();
-  User uid = Get.arguments;
+  FocusNode myFocusNode6 = new FocusNode();
+  FocusNode myFocusNode7 = new FocusNode();
+  // User uid = Get.arguments;
 
   @override
   Widget build(BuildContext context) {
-    signupController.nama.value = uid.displayName;
-    signupController.email.value = uid.email;
+    // signupController.nama.value = uid.displayName;
+    // signupController.email.value = uid.email;
     return Scaffold(
       resizeToAvoidBottomInset: true,
       body: SafeArea(
@@ -45,7 +48,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 ),
               ),
               Expanded(
-                flex: 10,
+                flex: 14,
                 child: Form(
                   key: _formKey,
                   child: SingleChildScrollView(
@@ -122,8 +125,7 @@ class _SignUpPageState extends State<SignUpPage> {
                             height: 50,
                             child: TextFormField(
                               focusNode: myFocusNode3,
-                              controller: signupController.namaController
-                                ..text = uid.displayName,
+                              controller: signupController.namaController,
                               maxLines: 1,
                               keyboardType: TextInputType.name,
                               validator: (value) => value.trim().isEmpty
@@ -155,6 +157,42 @@ class _SignUpPageState extends State<SignUpPage> {
                             height: 50,
                             child: TextFormField(
                               focusNode: myFocusNode4,
+                              controller: signupController.jkController,
+                              maxLines: 1,
+                              readOnly: true,
+                              keyboardType: TextInputType.name,
+                              onTap: () async {
+                                await modalJK();
+                              },
+                              validator: (value) => value.trim().isEmpty
+                                  ? 'Jenis Kelamin masih kosong'
+                                  : null,
+                              decoration: InputDecoration(
+                                labelText: "Jenis Kelamin",
+                                hintText: "Isikan Jenis Kelamin",
+                                fillColor: Colors.black,
+                                prefixIcon: Icon(Icons.person),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                  borderSide: BorderSide(color: Colors.green),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                  borderSide:
+                                      BorderSide(color: Colors.black, width: 2),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        Padding(
+                          padding:
+                              EdgeInsets.only(right: 20, left: 20, bottom: 20),
+                          child: SizedBox(
+                            height: 50,
+                            child: TextFormField(
+                              focusNode: myFocusNode5,
                               controller: signupController.satuanController,
                               maxLines: 1,
                               keyboardType: TextInputType.text,
@@ -186,11 +224,10 @@ class _SignUpPageState extends State<SignUpPage> {
                           child: SizedBox(
                             height: 50,
                             child: TextFormField(
-                              focusNode: myFocusNode5,
-                              controller: signupController.emailController
-                                ..text = uid.email,
+                              focusNode: myFocusNode6,
+                              controller: signupController.emailController,
                               maxLines: 1,
-                              readOnly: true,
+                              readOnly: false,
                               keyboardType: TextInputType.emailAddress,
                               validator: (value) => value.trim().isEmpty
                                   ? 'Email masih kosong'
@@ -200,6 +237,39 @@ class _SignUpPageState extends State<SignUpPage> {
                                 hintText: "Isikan Email",
                                 fillColor: Colors.black,
                                 prefixIcon: Icon(Icons.mail),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                  borderSide: BorderSide(color: Colors.green),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                  borderSide:
+                                      BorderSide(color: Colors.black, width: 2),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        Padding(
+                          padding:
+                              EdgeInsets.only(right: 20, left: 20, bottom: 20),
+                          child: SizedBox(
+                            height: 50,
+                            child: TextFormField(
+                              focusNode: myFocusNode7,
+                              controller: signupController.hpController,
+                              maxLines: 1,
+                              readOnly: false,
+                              keyboardType: TextInputType.phone,
+                              validator: (value) => value.trim().isEmpty
+                                  ? 'No. Telp masih kosong'
+                                  : null,
+                              decoration: InputDecoration(
+                                labelText: "No. Telp",
+                                hintText: "Isikan No. Telp",
+                                fillColor: Colors.black,
+                                prefixIcon: Icon(Icons.phone),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(20),
                                   borderSide: BorderSide(color: Colors.green),
@@ -229,8 +299,37 @@ class _SignUpPageState extends State<SignUpPage> {
                     width: Get.width / 1.1,
                     child: RaisedButton(
                       onPressed: () async {
-                        await signupController.insert(uid);
-                        signupController.clear();
+                        await signupController.saveParam();
+                        await signupController.getOTP();
+                        Get.toNamed('/otp',
+                            arguments: signupController.param.value);
+                        // if (signupController.hasil.value == '200') {
+                        //   return AwesomeDialog(
+                        //       context: context,
+                        //       animType: AnimType.LEFTSLIDE,
+                        //       headerAnimationLoop: false,
+                        //       dialogType: DialogType.SUCCES,
+                        //       title: 'Pendaftaran Berhasil',
+                        //       desc:
+                        //           'Silahkan Tunggu Notifikasi Dari Pihak Rumah Sakit',
+                        //       btnOkIcon: Icons.check_circle,
+                        //       onDissmissCallback: () {
+                        //         // debugPrint('Dialog Dissmiss from callback');
+                        //         Get.toNamed('/otp',
+                        //             arguments: signupController.param.value);
+                        //       }).show();
+                        // } else {
+                        //   return AwesomeDialog(
+                        //           context: context,
+                        //           dialogType: DialogType.ERROR,
+                        //           animType: AnimType.RIGHSLIDE,
+                        //           headerAnimationLoop: false,
+                        //           title: 'Error',
+                        //           desc: signupController.res.value,
+                        //           btnOkOnPress: () {},
+                        //           btnOkColor: Colors.red)
+                        //       .show();
+                        // }
                       },
                       child: Text(
                         'Daftar',
@@ -250,6 +349,46 @@ class _SignUpPageState extends State<SignUpPage> {
               )
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  modalJK() async {
+    //await _homecareController.fetchapi();
+    return Get.bottomSheet(
+      Container(
+        color: Colors.white,
+        child: Column(
+          children: <Widget>[
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ListView.separated(
+                  itemCount: signupController.listJK.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      leading: Icon(Icons.person),
+                      title: Text(
+                        signupController.listJK[index].text,
+                        style: TextStyle(color: Colors.black),
+                      ),
+                      onTap: () async {
+                        signupController.jkController.text =
+                            signupController.listJK[index].text;
+                        signupController.selectedJK.value =
+                            signupController.listJK[index].id;
+                        Get.back();
+                      },
+                    );
+                  },
+                  separatorBuilder: (BuildContext context, int index) {
+                    return Divider();
+                  },
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

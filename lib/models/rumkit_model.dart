@@ -1,30 +1,78 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+// To parse this JSON data, do
+//
+//     final rumkit = rumkitFromJson(jsonString);
+
+import 'dart:convert';
+
+Rumkit rumkitFromJson(String str) => Rumkit.fromJson(json.decode(str));
+
+String rumkitToJson(Rumkit data) => json.encode(data.toJson());
 
 class Rumkit {
   Rumkit({
-    this.nama,
-    this.password,
-    this.status,
-    this.tlp,
-    this.urlApi,
-    this.username,
+    this.success,
+    this.data,
+    this.message,
   });
-  String nama;
-  String password;
-  bool status;
 
-  int tlp;
-  String urlApi;
+  bool success;
+  List<DataRumkit> data;
+  String message;
+
+  factory Rumkit.fromJson(Map<String, dynamic> json) => Rumkit(
+        success: json["success"],
+        data: List<DataRumkit>.from(
+            json["data"].map((x) => DataRumkit.fromJson(x))),
+        message: json["message"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "success": success,
+        "data": List<dynamic>.from(data.map((x) => x.toJson())),
+        "message": message,
+      };
+}
+
+class DataRumkit {
+  DataRumkit({
+    this.id,
+    this.rumkit,
+    this.username,
+    this.password,
+    this.urlBase,
+    this.urlBlog,
+    this.telp,
+    this.status,
+  });
+
+  int id;
+  String rumkit;
   String username;
+  String password;
+  String urlBase;
+  String urlBlog;
+  String telp;
+  String status;
 
-  Rumkit.fromDocumentSnapshot(
-    DocumentSnapshot documentSnapshot,
-  ) {
-    nama = documentSnapshot.data()["nama"];
-    password = documentSnapshot.data()["password"];
-    status = documentSnapshot.data()["status"];
-    tlp = documentSnapshot.data()["tlp"];
-    urlApi = documentSnapshot.data()["urlApi"];
-    username = documentSnapshot.data()["username"];
-  }
+  factory DataRumkit.fromJson(Map<String, dynamic> json) => DataRumkit(
+        id: json["id"],
+        rumkit: json["rumkit"],
+        username: json["username"],
+        password: json["password"],
+        urlBase: json["urlBase"],
+        urlBlog: json["urlBlog"],
+        telp: json["telp"],
+        status: json["status"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "rumkit": rumkit,
+        "username": username,
+        "password": password,
+        "urlBase": urlBase,
+        "urlBlog": urlBlog,
+        "telp": telp,
+        "status": status,
+      };
 }

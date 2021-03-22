@@ -34,27 +34,19 @@ class Login {
 
 class DataLogin {
   DataLogin({
-    this.noRkmMedis,
-    this.nmPasien,
     this.nip,
     this.noKtp,
   });
 
-  String noRkmMedis;
-  String nmPasien;
   String nip;
   String noKtp;
 
   factory DataLogin.fromJson(Map<String, dynamic> json) => DataLogin(
-        noRkmMedis: json["no_rkm_medis"],
-        nmPasien: json["nm_pasien"],
-        nip: json["nip"],
-        noKtp: json["no_ktp"],
+        nip: json["nrp"],
+        noKtp: json["ktp"],
       );
 
   Map<String, dynamic> toJson() => {
-        "no_rkm_medis": noRkmMedis,
-        "nm_pasien": nmPasien,
         "nip": nip,
         "no_ktp": noKtp,
       };

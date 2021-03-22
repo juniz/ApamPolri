@@ -20,14 +20,17 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
 
   startSplashScreen() async {
     var duration = const Duration(seconds: 5);
-    return Timer(duration, () {
-      Get.offAllNamed("/login");
-      // Navigator.of(context).pushReplacement(
-      //   MaterialPageRoute(builder: (_) {
-      //     return HomePage();
-      //   }),
-      // );
-    });
+    return Timer(
+      duration,
+      () {
+        Get.offAllNamed("/login");
+        // Navigator.of(context).pushReplacement(
+        //   MaterialPageRoute(builder: (_) {
+        //     return HomePage();
+        //   }),
+        // );
+      },
+    );
   }
 
   @override

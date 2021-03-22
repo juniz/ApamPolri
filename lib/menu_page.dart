@@ -23,11 +23,11 @@ class MenuPage extends StatelessWidget {
         child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Container(
-                width: Get.width,
-                color: Color(0xffECF0F5),
-                child: CarouselPage(),
-              ),
+              // Container(
+              //   width: Get.width,
+              //   color: Color(0xffECF0F5),
+              //   child: CarouselPage(),
+              // ),
               SizedBox(
                 height: 10,
               ),

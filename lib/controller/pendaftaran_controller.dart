@@ -194,6 +194,9 @@ class PendaftaranController extends GetxController {
             encoding: Encoding.getByName("utf-8"),
           );
           var data = jsonDecode(response.body);
+          print(response.body);
+          print(response.statusCode);
+          print(nrp);
           if (response.statusCode == 200) {
             hasil.value = 'success';
             Get.back();

@@ -16,12 +16,15 @@ import 'package:apam/widget/modal_daftar.dart';
 import 'package:apam/services/token_service.dart';
 
 class DashboardController extends GetxController {
-  static DashboardController get to => Get.find();
+  static DashboardController get to => Get.put(DashboardController());
   var selectedTabIndex = 0.obs;
   GetStorage box = GetStorage();
   var error = "".obs;
   var token = "".obs;
   var rkm = "".obs;
+  var username = "".obs;
+  var password = "".obs;
+  var url = "".obs;
   var listPage = <dynamic>[MenuPage(), ProfilePage()];
   Widget get currentPage => listPage[selectedTabIndex.value];
   var bookList = List<Booking>().obs;
@@ -35,7 +38,10 @@ class DashboardController extends GetxController {
   @override
   void onInit() {
     rkm.value = box.read('no_rkm_medis');
-    token.value = box.read('token');
+    // token.value = box.read('token');
+    username.value = box.read('username');
+    password.value = box.read('password');
+    url.value = box.read('url');
     //fetchBooking();
     fetchKlinik();
     super.onInit();
@@ -69,7 +75,7 @@ class DashboardController extends GetxController {
     try {
       isLoading(true);
       var response = await http.get(
-        'https://webapps.rsbhayangkaranganjuk.com/api-rsbnganjuk/api/v1/poliklinik',
+        '${url.value}poliklinik',
         headers: {
           "Accept": "application/json",
           "Content-Type": "application/x-www-form-urlencoded",
@@ -86,11 +92,9 @@ class DashboardController extends GetxController {
         isLoading(false);
       } else if (response.statusCode == 401) {
         error.value = '401';
-        token.value = await TokenServices(
-                'https://webapps.rsbhayangkaranganjuk.com/api-rsbnganjuk/api/v1/token',
-                'yudo',
-                'qwerty123')
-            .getToken();
+        token.value =
+            await TokenServices('${url.value}token', 'yudo', 'qwerty123')
+                .getToken();
         await box.write('token', token.value);
         fetchKlinik();
 
@@ -112,8 +116,7 @@ class DashboardController extends GetxController {
             barrierDismissible: false),
       );
       http.Response response = await http.get(
-        'https://webapps.rsbhayangkaranganjuk.com/api-rsbnganjuk/api/v1/poliklinik/' +
-            kdPoli.toString(),
+        '${url.value}poliklinik/' + kdPoli.toString(),
         headers: {
           "Accept": "application/json",
           "Content-Type": "application/x-www-form-urlencoded",
@@ -128,11 +131,9 @@ class DashboardController extends GetxController {
         error.value = '404';
         Get.back();
       } else if (response.statusCode == 401) {
-        token.value = await TokenServices(
-                'https://webapps.rsbhayangkaranganjuk.com/api-rsbnganjuk/api/v1/token',
-                'yudo',
-                'qwerty123')
-            .getToken();
+        token.value =
+            await TokenServices('${url.value}token', 'yudo', 'qwerty123')
+                .getToken();
         await box.write('token', token.value);
         fetchJadwal();
       }

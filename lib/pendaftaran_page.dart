@@ -80,34 +80,34 @@ class _PendaftaranPageState extends State<PendaftaranPage> {
                           ),
                         ),
                       ),
-                      Expanded(
-                        child: Container(
-                          margin: EdgeInsets.only(left: 20, right: 20, top: 20),
-                          child: TextField(
-                            controller: _pendaftaranController.api,
-                            readOnly: true,
-                            decoration: InputDecoration(
-                              labelText: "Pilih Rumah Sakit",
-                              border: OutlineInputBorder(),
-                              prefixIcon: Icon(Icons.home),
-                              suffixIcon: Icon(Icons.arrow_drop_down),
-                              labelStyle: TextStyle(
-                                  color: myFocusNode1.hasFocus
-                                      ? Colors.green
-                                      : Colors.black),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.green),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.black),
-                              ),
-                            ),
-                            onTap: () async {
-                              modalApi();
-                            },
-                          ),
-                        ),
-                      ),
+                      // Expanded(
+                      //   child: Container(
+                      //     margin: EdgeInsets.only(left: 20, right: 20, top: 20),
+                      //     child: TextField(
+                      //       controller: _pendaftaranController.api,
+                      //       readOnly: true,
+                      //       decoration: InputDecoration(
+                      //         labelText: "Pilih Rumah Sakit",
+                      //         border: OutlineInputBorder(),
+                      //         prefixIcon: Icon(Icons.home),
+                      //         suffixIcon: Icon(Icons.arrow_drop_down),
+                      //         labelStyle: TextStyle(
+                      //             color: myFocusNode1.hasFocus
+                      //                 ? Colors.green
+                      //                 : Colors.black),
+                      //         focusedBorder: OutlineInputBorder(
+                      //           borderSide: BorderSide(color: Colors.green),
+                      //         ),
+                      //         enabledBorder: OutlineInputBorder(
+                      //           borderSide: BorderSide(color: Colors.black),
+                      //         ),
+                      //       ),
+                      //       onTap: () async {
+                      //         modalApi();
+                      //       },
+                      //     ),
+                      //   ),
+                      // ),
                       Expanded(
                         child: Container(
                           margin: EdgeInsets.only(left: 20, right: 20, top: 20),

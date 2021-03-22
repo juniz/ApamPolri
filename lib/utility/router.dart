@@ -2,6 +2,7 @@ import 'package:apam/dashboard.dart';
 import 'package:apam/detail_klinik_page.dart';
 import 'package:apam/home_care_page.dart';
 import 'package:apam/home_view.dart';
+import 'package:apam/otp_page.dart';
 import 'package:apam/pendaftaran_page.dart';
 import 'package:apam/jadwal_dokter_page.dart';
 import 'package:apam/kamar_page.dart';
@@ -20,7 +21,7 @@ class RouterPage {
         name: '/',
         page: () {
           GetStorage box = GetStorage();
-          return box.hasData('no_rkm_medis')
+          return box.hasData('no_rkm_medis') & box.hasData('token')
               ? DashboardPage()
               : OnboardingPage();
         }),
@@ -67,6 +68,10 @@ class RouterPage {
     GetPage(
       name: '/detailklinik',
       page: () => DetailKlinik(),
+    ),
+    GetPage(
+      name: '/otp',
+      page: () => OtpPage(),
     ),
   ];
 }

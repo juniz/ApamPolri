@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:apam/services/preference.dart';
+import 'package:apam/services/token_service.dart';
 import 'package:apam/services/url.dart';
 import 'package:apam/widget/alert_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -20,24 +21,28 @@ class ProfileController extends GetxController {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final GoogleSignIn googleSignIn = GoogleSignIn();
   FirebaseFirestore firestore = FirebaseFirestore.instance;
-  var profil = Profile().obs;
+  var profil = DataProfile().obs;
   var isLoading = true.obs;
   var rkm = "".obs;
   var uid = "".obs;
+  var url = "".obs;
+  var token = "".obs;
   var photoURL = "".obs;
   var isGoogle = false.obs;
   var doc = ProfilFirebase().obs;
   final box = GetStorage();
 
   @override
-  void onInit() {
+  void onInit() async {
     rkm.value = box.read('no_rkm_medis');
+    token.value = box.read('token');
+    url.value = box.read('url');
     uid.value = box.read('uid');
     isGoogle.value = box.read('isGoogle');
     photoURL.value = box.read('photoURL');
     // fireProfile();
-    // fetchProfile();
-    cek();
+    await fetchProfile();
+    // cek();
     super.onInit();
   }
 
@@ -69,21 +74,29 @@ class ProfileController extends GetxController {
   }
 
   // ignore: missing_return
-  void fetchProfile() async {
+  Future fetchProfile() async {
     try {
       isLoading(true);
-      http.Response response = await http.post(
-        urlBase,
-        body: {'action': 'profil', 'no_rkm_medis': rkm.value},
+      http.Response response = await http.get(
+        url.value + 'polri/' + rkm.value,
         headers: {
           "Accept": "application/json",
-          "Content-Type": "application/x-www-form-urlencoded"
+          "Content-Type": "application/x-www-form-urlencoded",
+          "Authorization": "Bearer " + token.value
         },
-        encoding: Encoding.getByName("utf-8"),
       );
-      var data = profileFromJson(response.body);
-      if (data != null) {
+
+      if (response.statusCode == 200) {
+        var data = profileFromJson(response.body).data;
         profil.value = data;
+      } else if (response.statusCode == 401) {
+        token.value = await TokenServices(
+                'https://webapps.rsbhayangkaranganjuk.com/api-rsbnganjuk/api/v1/token',
+                'yudo',
+                'qwerty123')
+            .getToken();
+        await box.write('token', token.value);
+        fetchProfile();
       } else {
         isLoading(false);
         PopUpDialog.dialogWidget('Data Kosong');
@@ -114,7 +127,7 @@ class ProfileController extends GetxController {
     await LocalData.delPref('uid');
     await LocalData.delPref('photoURL');
     await signOut();
-    Future.delayed(Duration(seconds: 5), () {
+    Future.delayed(Duration(seconds: 0), () {
       Get.back();
       Get.offAllNamed("/login");
     });

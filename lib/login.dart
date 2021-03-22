@@ -24,7 +24,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     final bottom = MediaQuery.of(context).viewInsets.bottom;
     return Scaffold(
-      resizeToAvoidBottomInset: true,
+      // resizeToAvoidBottomInset: true,
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Container(
@@ -35,7 +35,7 @@ class _LoginPageState extends State<LoginPage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               Expanded(
-                flex: 6,
+                flex: 8,
                 child: Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: Image.asset(
@@ -61,118 +61,118 @@ class _LoginPageState extends State<LoginPage> {
                 flex: 10,
                 child: Form(
                   key: _formKey,
-                  child: Container(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.only(right: 20, left: 20),
-                            child: SizedBox(
-                              height: 50,
-                              child: TextFormField(
-                                focusNode: myFocusNode1,
-                                controller:
-                                    _loginController.emailTextController,
-                                maxLines: 1,
-                                keyboardType: TextInputType.number,
-                                validator: (value) => value.trim().isEmpty
-                                    ? 'NRP masih kosong'
-                                    : null,
-                                decoration: InputDecoration(
-                                  labelText: "NRP",
-                                  hintText: "Isikan No. NRP",
-                                  fillColor: Colors.black,
-                                  prefixIcon: Icon(Icons.person),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.green),
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(20),
-                                    borderSide: BorderSide(
-                                        color: Colors.black, width: 2),
-                                  ),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(right: 20, left: 20),
+                          child: SizedBox(
+                            height: 50,
+                            child: TextFormField(
+                              focusNode: myFocusNode1,
+                              controller: _loginController.emailTextController,
+                              maxLines: 1,
+                              keyboardType: TextInputType.number,
+                              validator: (value) => value.trim().isEmpty
+                                  ? 'NRP masih kosong'
+                                  : null,
+                              decoration: InputDecoration(
+                                labelText: "NRP",
+                                hintText: "Isikan No. NRP",
+                                fillColor: Colors.black,
+                                prefixIcon: Icon(Icons.person),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.green),
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                  borderSide:
+                                      BorderSide(color: Colors.black, width: 2),
                                 ),
                               ),
                             ),
                           ),
-                          SizedBox(
-                            height: 25,
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(right: 20, left: 20),
-                            child: SizedBox(
-                              height: 50,
-                              child: TextFormField(
-                                focusNode: myFocusNode2,
-                                controller:
-                                    _loginController.passwordTextController,
-                                maxLines: 1,
-                                keyboardType: TextInputType.number,
-                                validator: (value) => value.trim().isEmpty
-                                    ? 'KTP masih kosong'
-                                    : null,
-                                decoration: InputDecoration(
-                                  labelText: "KTP",
-                                  hintText: "Isikan No. KTP",
-                                  fillColor: Colors.black,
-                                  prefixIcon: Icon(Icons.credit_card),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(20),
-                                    borderSide: BorderSide(color: Colors.green),
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(20),
-                                    borderSide: BorderSide(
-                                        color: Colors.black, width: 2),
-                                  ),
+                        ),
+                        SizedBox(
+                          height: 25,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(right: 20, left: 20),
+                          child: SizedBox(
+                            height: 50,
+                            child: TextFormField(
+                              focusNode: myFocusNode2,
+                              controller:
+                                  _loginController.passwordTextController,
+                              maxLines: 1,
+                              keyboardType: TextInputType.number,
+                              validator: (value) => value.trim().isEmpty
+                                  ? 'KTP masih kosong'
+                                  : null,
+                              decoration: InputDecoration(
+                                labelText: "KTP",
+                                hintText: "Isikan No. KTP",
+                                fillColor: Colors.black,
+                                prefixIcon: Icon(Icons.credit_card),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                  borderSide: BorderSide(color: Colors.green),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                  borderSide:
+                                      BorderSide(color: Colors.black, width: 2),
                                 ),
                               ),
                             ),
                           ),
-                          SizedBox(
-                            height: 25,
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(right: 20, left: 20),
-                            child: SizedBox(
-                              height: 50,
-                              child: TextFormField(
-                                onTap: () => modalApi(),
-                                readOnly: true,
-                                focusNode: myFocusNode3,
-                                controller: _loginController.rumkitController,
-                                maxLines: 1,
-                                validator: (value) => value.trim().isEmpty
-                                    ? 'Rumah Sakit Masih Kosong'
-                                    : null,
-                                decoration: InputDecoration(
-                                  labelText: "Rumkit",
-                                  hintText: "Pilih Rumkit",
-                                  fillColor: Colors.black,
-                                  prefixIcon: Icon(Icons.home),
-                                  suffixIcon: Icon(Icons.arrow_drop_down),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(20),
-                                    borderSide: BorderSide(color: Colors.green),
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(20),
-                                    borderSide: BorderSide(
-                                        color: Colors.black, width: 2),
-                                  ),
+                        ),
+                        SizedBox(
+                          height: 25,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(right: 20, left: 20),
+                          child: SizedBox(
+                            height: 50,
+                            child: TextFormField(
+                              // onTap: () => modalApi(),
+                              readOnly: false,
+                              focusNode: myFocusNode3,
+                              controller: _loginController.rumkitController,
+                              maxLines: 1,
+                              validator: (value) => value.trim().isEmpty
+                                  ? 'Rumah Sakit Masih Kosong'
+                                  : null,
+                              decoration: InputDecoration(
+                                labelText: "Rumkit",
+                                hintText: "Pilih Rumkit",
+                                fillColor: Colors.black,
+                                prefixIcon: Icon(Icons.home),
+                                suffixIcon: Icon(Icons.arrow_drop_down),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                  borderSide: BorderSide(color: Colors.green),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                  borderSide:
+                                      BorderSide(color: Colors.black, width: 2),
                                 ),
                               ),
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
               ),
 
-              // SizedBox(height: 20),
+              Expanded(
+                flex: 1,
+                child: SizedBox(height: 20),
+              ),
               // Container(
               //   width: double.infinity,
               //   padding: EdgeInsets.only(left: 10, right: 10),
@@ -249,19 +249,36 @@ class _LoginPageState extends State<LoginPage> {
                       flex: 1,
                       child: SizedBox(),
                     ),
+                    // Expanded(
+                    //   flex: 2,
+                    //   child: SizedBox(
+                    //     width: Get.width / 1.1,
+                    //     child: SignInButton(
+                    //       Buttons.GoogleDark,
+                    //       shape: RoundedRectangleBorder(
+                    //         borderRadius: BorderRadius.circular(30.0),
+                    //       ),
+                    //       onPressed: () async {
+                    //         await modalApi();
+                    //         if (_loginController.rumkitController.text != "") {
+                    //           await _loginController.signInWithGoogle();
+                    //           _loginController.cek();
+                    //         }
+                    //       },
+                    //     ),
+                    //   ),
+                    // ),
                     Expanded(
-                      flex: 2,
-                      child: SizedBox(
-                        width: Get.width / 1.1,
-                        child: SignInButton(
-                          Buttons.GoogleDark,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30.0),
+                      flex: 1,
+                      child: GestureDetector(
+                        onTap: () {
+                          Get.toNamed('/signup');
+                        },
+                        child: SizedBox(
+                          child: Text(
+                            'Belum punya akun? Registrasi disini.',
+                            style: TextStyle(fontWeight: FontWeight.w600),
                           ),
-                          onPressed: () async {
-                            await _loginController.signInWithGoogle();
-                            _loginController.cek();
-                          },
                         ),
                       ),
                     ),
@@ -278,9 +295,10 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   modalApi() async {
-    // await _loginController.apiRumkit();
-    FirebaseFirestore firestore = FirebaseFirestore.instance;
-    CollectionReference rumkit = firestore.collection('rumkit');
+    await _loginController.apiRumkit();
+    // _loginController.clearForm();
+    // FirebaseFirestore firestore = FirebaseFirestore.instance;
+    // CollectionReference rumkit = firestore.collection('rumkit');
     return Get.bottomSheet(
       Container(
         color: Colors.white,
@@ -289,42 +307,71 @@ class _LoginPageState extends State<LoginPage> {
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: StreamBuilder<QuerySnapshot>(
-                  stream: rumkit.snapshots(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData)
-                      return Container(
-                        child: ListView.separated(
-                          itemCount: snapshot.data.docs.length,
-                          itemBuilder: (context, index) {
-                            return ListTile(
-                              leading: Icon(Icons.home),
-                              title: Text(
-                                snapshot.data.docs[index].data()['nama'],
-                                style: TextStyle(color: Colors.black),
-                              ),
-                              onTap: () async {
-                                _loginController.rumkitController.text =
-                                    snapshot.data.docs[index].data()['nama'];
-                                await _loginController.selectedRumkit(
-                                    snapshot.data.docs[index].data()['urlApi'],
-                                    snapshot.data.docs[index]
-                                        .data()['username'],
-                                    snapshot.data.docs[index]
-                                        .data()['password']);
-                                Get.back();
-                              },
-                            );
-                          },
-                          separatorBuilder: (BuildContext context, int index) {
-                            return Divider();
-                          },
-                        ),
-                      );
-                    else
-                      return Center(
-                        child: Text('Loading.......'),
-                      );
+                // child: StreamBuilder<QuerySnapshot>(
+                //   stream: rumkit.snapshots(),
+                //   builder: (context, snapshot) {
+                //     if (snapshot.hasData)
+                //       return Container(
+                //         child: ListView.separated(
+                //           itemCount: snapshot.data.docs.length,
+                //           itemBuilder: (context, index) {
+                //             return ListTile(
+                //               leading: Icon(Icons.home),
+                //               title: Text(
+                //                 snapshot.data.docs[index].data()['nama'],
+                //                 style: TextStyle(color: Colors.black),
+                //               ),
+                //               onTap: () async {
+                //                 _loginController.rumkitController.text =
+                //                     snapshot.data.docs[index].data()['nama'];
+                //                 await _loginController.selectedRumkit(
+                //                     snapshot.data.docs[index].data()['urlApi'],
+                //                     snapshot.data.docs[index]
+                //                         .data()['username'],
+                //                     snapshot.data.docs[index]
+                //                         .data()['password']);
+                //                 Get.back();
+                //               },
+                //             );
+                //           },
+                //           separatorBuilder: (BuildContext context, int index) {
+                //             return Divider();
+                //           },
+                //         ),
+                //       );
+                //     else
+                //       return Center(
+                //         child: Text(
+                //           'Loading.......',
+                //         ),
+                //       );
+                //   },
+                // ),
+                child: ListView.separated(
+                  itemCount: _loginController.rumkit.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      leading: Icon(Icons.local_post_office),
+                      title: Text(
+                        _loginController.rumkit[index].rumkit,
+                        style: TextStyle(color: Colors.black),
+                      ),
+                      onTap: () async {
+                        _loginController.rumkitController.text =
+                            _loginController.rumkit[index].rumkit;
+                        await _loginController.selectedRumkit(
+                            _loginController.rumkit[index].rumkit,
+                            _loginController.rumkit[index].urlBase,
+                            _loginController.rumkit[index].urlBlog,
+                            _loginController.rumkit[index].username,
+                            _loginController.rumkit[index].password,
+                            _loginController.rumkit[index].telp);
+                        Get.back();
+                      },
+                    );
+                  },
+                  separatorBuilder: (BuildContext context, int index) {
+                    return Divider();
                   },
                 ),
               ),

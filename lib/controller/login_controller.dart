@@ -17,6 +17,7 @@ import 'package:apam/services/token_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 
 class LoginController extends GetxController {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -25,10 +26,11 @@ class LoginController extends GetxController {
   TextEditingController emailTextController;
   TextEditingController passwordTextController;
   TextEditingController rumkitController;
-  List<Rumkit> rumkit = List<Rumkit>().obs;
+  List<DataRumkit> rumkit = List<DataRumkit>().obs;
   var api = "".obs;
   var username = "".obs;
   var password = "".obs;
+  var rumkitApi = "".obs;
 
   var hasil = "".obs;
 
@@ -74,10 +76,11 @@ class LoginController extends GetxController {
     try {
       Get.dialog(Center(child: CircularProgressIndicator()),
           barrierDismissible: false);
+      username.value = await LocalData.getPref('username');
+      password.value = await LocalData.getPref('password');
+      api.value = await LocalData.getPref('url');
       var token = await TokenServices(
-              'https://webapps.rsbhayangkaranganjuk.com/api-rsbnganjuk/api/v1/token',
-              'yudo',
-              'qwerty123')
+              '${api.value}token', username.value, password.value)
           .getToken();
       var uid = await signInWithGoogle();
       FirebaseFirestore.instance
@@ -110,19 +113,34 @@ class LoginController extends GetxController {
     try {
       Get.dialog(Center(child: CircularProgressIndicator()),
           barrierDismissible: true);
-      await FirebaseFirestore.instance
-          .collection('rumkit')
-          .doc()
-          .get()
-          .then((DocumentSnapshot documentSnapshot) {
-        if (documentSnapshot.exists) {
-          rumkit.add(Rumkit.fromDocumentSnapshot(documentSnapshot));
-          Get.back();
-        }
-      });
+      hasil.value = '';
+
+      http.Response response = await http.get(
+        'https://webapps.rsbhayangkaranganjuk.com/api-rsbnganjuk/api/v1/rumkit',
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      );
+      var res = jsonDecode(response.body);
+      print(res);
+      if (response.statusCode == 200) {
+        rumkit = rumkitFromJson(response.body).data;
+        Get.back();
+      } else {
+        Get.back();
+        Get.snackbar(
+          "Error",
+          "Data tidak ditemukan",
+        );
+      }
     } on Exception catch (e) {
       print(e.toString());
-      return null;
+      Get.back();
+      Get.snackbar(
+        "Error",
+        "Gagal tersambung dengan server",
+      );
     }
   }
 
@@ -134,19 +152,17 @@ class LoginController extends GetxController {
       try {
         hasil.value = '';
         username.value = await LocalData.getPref('username');
-        print(username.value);
         password.value = await LocalData.getPref('password');
-        print(password.value);
         api.value = await LocalData.getPref('url');
-        print(api.value);
+        // var status = await OneSignal.shared.getPermissionSubscriptionState();
+        // var playerId = status.subscriptionStatus.userId;
+
         var token = await TokenServices(
-                'https://webapps.rsbhayangkaranganjuk.com/api-rsbnganjuk/api/v1/token',
-                username.value,
-                password.value)
+                '${api.value}token', username.value, password.value)
             .getToken();
         // print(token);
         http.Response response = await http.post(
-          api.value + 'pasien',
+          api.value + 'login',
           body: {
             'nrp': emailTextController.text,
             'ktp': passwordTextController.text
@@ -158,11 +174,12 @@ class LoginController extends GetxController {
           },
           encoding: Encoding.getByName("utf-8"),
         );
-        // var res = jsonDecode(response.body);
+        var res = jsonDecode(response.body);
+        print(res);
 
         if (response.statusCode == 200) {
           var rkm = loginFromJson(response.body).data;
-          LocalData.savePref('no_rkm_medis', rkm.noRkmMedis);
+          LocalData.savePref('no_rkm_medis', rkm.nip);
           LocalData.savePref('token', token.toString());
           LocalData.savePref('isGoogle', false);
           Get.back();
@@ -192,10 +209,14 @@ class LoginController extends GetxController {
     }
   }
 
-  void selectedRumkit(String urlApi, String username, String password) async {
+  Future selectedRumkit(String rumkit, String urlApi, String urlBlog,
+      String username, String password, String telp) async {
+    LocalData.savePref('rumkit', rumkit);
     LocalData.savePref('username', username);
     LocalData.savePref('password', password);
     LocalData.savePref('url', urlApi);
+    LocalData.savePref('urlBlog', urlBlog);
+    LocalData.savePref('telp', telp);
   }
 
   void clearForm() {
