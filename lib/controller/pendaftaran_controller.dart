@@ -1,5 +1,6 @@
 import 'package:apam/models/jadwal_dokter_model.dart';
 import 'package:apam/models/rsb_api_model.dart';
+import 'package:apam/services/preference.dart';
 import 'package:apam/services/token_service.dart';
 import 'package:apam/widget/alert_dialog.dart';
 import 'package:http/http.dart' as http;
@@ -36,18 +37,33 @@ class PendaftaranController extends GetxController {
   TextEditingController dokter;
   TextEditingController api;
   var token = "".obs;
-
+  var rumkit = "".obs;
+  var username = "".obs;
+  var password = "".obs;
+  var url = "".obs;
+  var blog = "".obs;
   DateTime picked;
 
   @override
-  void onInit() {
-    token.value = box.read('token');
-    nrp.value = box.read('no_rkm_medis');
+  void onInit() async {
+    // token.value = box.read('token');
+    // nrp.value = box.read('no_rkm_medis');
     poliklinik = TextEditingController();
     dokter = TextEditingController();
     api = TextEditingController();
-    fetchBooking();
+    await getData();
+    await fetchBooking();
     super.onInit();
+  }
+
+  Future getData() async {
+    rumkit.value = await LocalData.getPref('rumkit');
+    url.value = await LocalData.getPref('url');
+    blog.value = await LocalData.getPref('urlBlog');
+    username.value = await LocalData.getPref('username');
+    password.value = await LocalData.getPref('password');
+    token.value = await LocalData.getPref('token');
+    nrp.value = await LocalData.getPref('no_rkm_medis');
   }
 
   // ignore: missing_return
@@ -62,7 +78,7 @@ class PendaftaranController extends GetxController {
       // var day = DateFormat('dd').format(tanggal.value.date);
       var date = DateTime.parse(tanggal.value.date.toString());
       http.Response response = await http.get(
-        'https://webapps.rsbhayangkaranganjuk.com/api-rsbnganjuk/api/v1/jadwalklinik/${date.year}/${date.month}/${date.day}',
+        url.value + 'jadwalklinik/${date.year}/${date.month}/${date.day}',
         headers: {
           "Accept": "application/json",
           "Content-Type": "application/x-www-form-urlencoded",
@@ -74,9 +90,7 @@ class PendaftaranController extends GetxController {
         Get.back();
       } else if (response.statusCode == 401) {
         token.value = await TokenServices(
-                'https://webapps.rsbhayangkaranganjuk.com/api-rsbnganjuk/api/v1/token',
-                'yudo',
-                'qwerty123')
+                url.value + 'token', username.value, password.value)
             .getToken();
         await box.write('token', token.value);
         Get.back();
@@ -105,7 +119,8 @@ class PendaftaranController extends GetxController {
       var day = DateFormat('dd').format(tanggal.value.date);
       var date = DateTime.parse(tanggal.value.date.toString());
       var response = await http.get(
-        'https://webapps.rsbhayangkaranganjuk.com/api-rsbnganjuk/api/v1/jadwaldokter/${year}/${month}/${day}/${kdPoli.value.kdPoli}',
+        url.value +
+            'jadwaldokter/${year}/${month}/${day}/${kdPoli.value.kdPoli}',
         headers: {
           "Accept": "application/json",
           "Content-Type": "application/x-www-form-urlencoded",
@@ -117,9 +132,7 @@ class PendaftaranController extends GetxController {
         Get.back();
       } else if (response.statusCode == 401) {
         token.value = await TokenServices(
-                'https://webapps.rsbhayangkaranganjuk.com/api-rsbnganjuk/api/v1/token',
-                'yudo',
-                'qwerty123')
+                url.value + 'token', username.value, password.value)
             .getToken();
         await box.write('token', token.value);
         Get.back();
@@ -148,7 +161,7 @@ class PendaftaranController extends GetxController {
   }
 
   void konfirmasi() async {
-    if (api.text == "" || dokter.text == "" || poliklinik.text == "") {
+    if (dokter.text == "" || poliklinik.text == "") {
       PopUpDialog.dialogAnimation('Data Masih Ada Yang Kosong !');
     } else {
       await PopUpDialog.dialogKonfirmasiPendaftaran(tanggal.value.date,
@@ -157,85 +170,82 @@ class PendaftaranController extends GetxController {
   }
 
   Future postPendaftaran() async {
-    if (api.text.contains('Nganjuk')) {
-      if (api.text == "" || dokter.text == "" || poliklinik.text == "") {
-        PopUpDialog.dialogAnimation('Data Masih Ada Yang Kosong !');
-      } else {
-        try {
-          Get.dialog(
-              AlertDialog(
-                //title: Text('Mohon Tunggu Sebentar'),
-                content: SizedBox(
-                  width: 100,
-                  height: 100,
-                  child: Center(
-                    child: CircularProgressIndicator(),
-                  ),
-                ),
-                elevation: 20.0,
+    // if (api.text.contains('Nganjuk')) {
+    // if (api.text == "" || dokter.text == "" || poliklinik.text == "") {
+    //   PopUpDialog.dialogAnimation('Data Masih Ada Yang Kosong !');
+    // } else {
+    try {
+      Get.dialog(
+          AlertDialog(
+            //title: Text('Mohon Tunggu Sebentar'),
+            content: SizedBox(
+              width: 100,
+              height: 100,
+              child: Center(
+                child: CircularProgressIndicator(),
               ),
-              barrierDismissible: false);
-          var response = await http.post(
-            'https://webapps.rsbhayangkaranganjuk.com/api-rsbnganjuk/api/v1/booking',
-            body: {
-              'no_rkm_medis': nrp.value,
-              'kd_poli': kdPoli.value.kdPoli,
-              'kd_dokter': kdDokter.value,
-              'tanggal': DateFormat('yyyy-MM-dd')
-                  .format(tanggal.value.date)
-                  .toString(),
-              'kd_pj': 'A01'
-            },
-            headers: {
-              "Accept": "application/json",
-              "Content-Type": "application/x-www-form-urlencoded",
-              "Authorization": "Bearer " + token.value
-            },
-            encoding: Encoding.getByName("utf-8"),
-          );
-          var data = jsonDecode(response.body);
-          print(response.body);
-          print(response.statusCode);
-          print(nrp);
-          if (response.statusCode == 200) {
-            hasil.value = 'success';
-            Get.back();
-          } else if (response.statusCode == 404) {
-            if (data["message"] == 'Limit') {
-              hasil.value = 'limit';
-              Get.back();
-            } else {
-              hasil.value = 'duplicate';
-              Get.back();
-            }
-          } else if (response.statusCode == 401) {
-            token.value = await TokenServices(
-                    'https://webapps.rsbhayangkaranganjuk.com/api-rsbnganjuk/api/v1/token',
-                    'yudo',
-                    'qwerty123')
-                .getToken();
-            await box.write('token', token.value);
-            Get.back();
-            postPendaftaran();
-          } else {
-            Get.back();
-            hasil.value = 'fail';
-          }
-        } on Exception catch (e) {
-          hasil.value = 'noconnection';
+            ),
+            elevation: 20.0,
+          ),
+          barrierDismissible: false);
+      var response = await http.post(
+        url.value + 'booking',
+        body: {
+          'no_rkm_medis': nrp.value,
+          'kd_poli': kdPoli.value.kdPoli,
+          'kd_dokter': kdDokter.value,
+          'tanggal':
+              DateFormat('yyyy-MM-dd').format(tanggal.value.date).toString(),
+          'kd_pj': 'A01'
+        },
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/x-www-form-urlencoded",
+          "Authorization": "Bearer " + token.value
+        },
+        encoding: Encoding.getByName("utf-8"),
+      );
+      var data = jsonDecode(response.body);
+      print(response.body);
+      print(response.statusCode);
+      print(nrp);
+      if (response.statusCode == 200) {
+        hasil.value = 'success';
+        Get.back();
+      } else if (response.statusCode == 404) {
+        if (data["message"] == 'Limit') {
+          hasil.value = 'limit';
+          Get.back();
+        } else {
+          hasil.value = 'duplicate';
           Get.back();
         }
+      } else if (response.statusCode == 401) {
+        token.value = await TokenServices(
+                url.value + 'token', username.value, password.value)
+            .getToken();
+        await box.write('token', token.value);
+        Get.back();
+        postPendaftaran();
+      } else {
+        Get.back();
+        hasil.value = 'fail';
       }
-    } else {
-      hasil.value = 'noavailable';
+    } on Exception catch (e) {
+      hasil.value = 'noconnection';
+      Get.back();
     }
+    // }
+    // } else {
+    //   hasil.value = 'noavailable';
+    // }
   }
 
   Future<List<Booking>> fetchBooking() async {
     try {
       isLoading(true);
       var response = await http.get(
-        'https://webapps.rsbhayangkaranganjuk.com/api-rsbnganjuk/api/v1/booking/${nrp.value}',
+        url.value + 'booking/${nrp.value}',
         headers: {
           "Accept": "application/json",
           "Content-Type": "application/x-www-form-urlencoded",
@@ -249,9 +259,7 @@ class PendaftaranController extends GetxController {
         isLoading(false);
       } else if (response.statusCode == 401) {
         token.value = await TokenServices(
-                'https://webapps.rsbhayangkaranganjuk.com/api-rsbnganjuk/api/v1/token',
-                'yudo',
-                'qwerty123')
+                url.value + 'token', username.value, password.value)
             .getToken();
         await box.write('token', token.value);
         fetchBooking();

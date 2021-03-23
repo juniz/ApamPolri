@@ -34,16 +34,16 @@ class Rumkit {
 }
 
 class DataRumkit {
-  DataRumkit({
-    this.id,
-    this.rumkit,
-    this.username,
-    this.password,
-    this.urlBase,
-    this.urlBlog,
-    this.telp,
-    this.status,
-  });
+  DataRumkit(
+      {this.id,
+      this.rumkit,
+      this.username,
+      this.password,
+      this.urlBase,
+      this.urlBlog,
+      this.telp,
+      this.status,
+      this.hc});
 
   int id;
   String rumkit;
@@ -53,6 +53,7 @@ class DataRumkit {
   String urlBlog;
   String telp;
   String status;
+  String hc;
 
   factory DataRumkit.fromJson(Map<String, dynamic> json) => DataRumkit(
         id: json["id"],
@@ -63,6 +64,7 @@ class DataRumkit {
         urlBlog: json["urlBlog"],
         telp: json["telp"],
         status: json["status"],
+        hc: json["hc"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -74,5 +76,6 @@ class DataRumkit {
         "urlBlog": urlBlog,
         "telp": telp,
         "status": status,
+        "kd_hc": hc,
       };
 }

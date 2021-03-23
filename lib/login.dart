@@ -136,8 +136,8 @@ class _LoginPageState extends State<LoginPage> {
                           child: SizedBox(
                             height: 50,
                             child: TextFormField(
-                              // onTap: () => modalApi(),
-                              readOnly: false,
+                              onTap: () => modalApi(),
+                              readOnly: true,
                               focusNode: myFocusNode3,
                               controller: _loginController.rumkitController,
                               maxLines: 1,
@@ -365,7 +365,8 @@ class _LoginPageState extends State<LoginPage> {
                             _loginController.rumkit[index].urlBlog,
                             _loginController.rumkit[index].username,
                             _loginController.rumkit[index].password,
-                            _loginController.rumkit[index].telp);
+                            _loginController.rumkit[index].telp,
+                            _loginController.rumkit[index].hc);
                         Get.back();
                       },
                     );

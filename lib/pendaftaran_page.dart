@@ -1,14 +1,11 @@
 import 'package:apam/services/data_dummy.dart';
-import 'package:apam/widget/alert_dialog.dart';
 import 'package:apam/widget/datepicker.dart';
 import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'controller/pendaftaran_controller.dart';
 import 'package:apam/models/booking_model.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
-import 'package:apam/widget/awesome_dialog_screen.dart';
 
 class PendaftaranPage extends StatefulWidget {
   @override
@@ -57,7 +54,7 @@ class _PendaftaranPageState extends State<PendaftaranPage> {
                 //   color: Colors.green,
                 // ),
                 Expanded(
-                  flex: 8,
+                  flex: 6,
                   child: Column(
                     children: [
                       Expanded(
@@ -131,25 +128,24 @@ class _PendaftaranPageState extends State<PendaftaranPage> {
                               ),
                             ),
                             onTap: () async {
-                              if (_pendaftaranController.selectedApi.value !=
-                                  "") {
-                                await _pendaftaranController.fetchPoli();
-                                if (_pendaftaranController.poliList.length !=
-                                    0) {
-                                  modalPoli();
-                                }
-                              } else {
-                                return AwesomeDialog(
-                                        context: context,
-                                        dialogType: DialogType.ERROR,
-                                        animType: AnimType.RIGHSLIDE,
-                                        headerAnimationLoop: false,
-                                        title: 'Error',
-                                        desc: 'Ada Data Yang Masih Kosong',
-                                        btnOkOnPress: () {},
-                                        btnOkColor: Colors.red)
-                                    .show();
+                              // if (_pendaftaranController.selectedApi.value !=
+                              //     "") {
+                              await _pendaftaranController.fetchPoli();
+                              if (_pendaftaranController.poliList.length != 0) {
+                                modalPoli();
                               }
+                              // } else {
+                              //   return AwesomeDialog(
+                              //           context: context,
+                              //           dialogType: DialogType.ERROR,
+                              //           animType: AnimType.RIGHSLIDE,
+                              //           headerAnimationLoop: false,
+                              //           title: 'Error',
+                              //           desc: 'Ada Data Yang Masih Kosong',
+                              //           btnOkOnPress: () {},
+                              //           btnOkColor: Colors.red)
+                              //       .show();
+                              // }
                             },
                           ),
                         ),
@@ -178,10 +174,8 @@ class _PendaftaranPageState extends State<PendaftaranPage> {
                               ),
                             ),
                             onTap: () async {
-                              if (_pendaftaranController.selectedApi.value !=
-                                      "" &&
-                                  _pendaftaranController.poliklinik.text !=
-                                      "") {
+                              if (_pendaftaranController.poliklinik.text !=
+                                  "") {
                                 await modalDokter();
                               } else {
                                 return AwesomeDialog(
@@ -418,74 +412,73 @@ class _PendaftaranPageState extends State<PendaftaranPage> {
   }
 
   modalPoli() async {
-    if (_pendaftaranController.api.text.contains('Nganjuk')) {
-      return Get.bottomSheet(
-        Container(
-          height: Get.height,
-          child: Column(
-            children: [
-              Expanded(
-                child: Container(
-                  color: Colors.white,
-                  child: Column(
-                    children: <Widget>[
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: ListView.separated(
-                            itemCount: _pendaftaranController.poliList.length,
-                            itemBuilder: (context, index) {
-                              return ListTile(
-                                leading: Icon(Icons.home_filled),
-                                title: Text(
-                                  _pendaftaranController.poliList[index].nmPoli,
-                                  style: TextStyle(color: Colors.black),
-                                ),
-                                subtitle: Text(
-                                    'Jam Buka : ${_pendaftaranController.poliList[index].jamMulai}\nJam Tutup : ${_pendaftaranController.poliList[index].jamSelesai}',
-                                    style: TextStyle(color: Colors.black)),
-                                onTap: () async {
-                                  _pendaftaranController.kdPoli.value.kdPoli =
-                                      _pendaftaranController
-                                          .poliList[index].kdPoli;
-                                  _pendaftaranController.poliklinik.text =
-                                      _pendaftaranController
-                                          .poliList[index].nmPoli;
+    // if (_pendaftaranController.api.text.contains('Nganjuk')) {
+    return Get.bottomSheet(
+      Container(
+        height: Get.height,
+        child: Column(
+          children: [
+            Expanded(
+              child: Container(
+                color: Colors.white,
+                child: Column(
+                  children: <Widget>[
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ListView.separated(
+                          itemCount: _pendaftaranController.poliList.length,
+                          itemBuilder: (context, index) {
+                            return ListTile(
+                              leading: Icon(Icons.home_filled),
+                              title: Text(
+                                _pendaftaranController.poliList[index].nmPoli,
+                                style: TextStyle(color: Colors.black),
+                              ),
+                              subtitle: Text(
+                                  'Jam Buka : ${_pendaftaranController.poliList[index].jamMulai}\nJam Tutup : ${_pendaftaranController.poliList[index].jamSelesai}',
+                                  style: TextStyle(color: Colors.black)),
+                              onTap: () async {
+                                _pendaftaranController.kdPoli.value.kdPoli =
+                                    _pendaftaranController
+                                        .poliList[index].kdPoli;
+                                _pendaftaranController.poliklinik.text =
+                                    _pendaftaranController
+                                        .poliList[index].nmPoli;
 
-                                  //await _homeVisiteController.fetchDokter();
-                                  //print(_homeVisiteController.dokterList);
-                                  Get.back();
-                                },
-                              );
-                            },
-                            separatorBuilder:
-                                (BuildContext context, int index) {
-                              return Divider();
-                            },
-                          ),
+                                //await _homeVisiteController.fetchDokter();
+                                //print(_homeVisiteController.dokterList);
+                                Get.back();
+                              },
+                            );
+                          },
+                          separatorBuilder: (BuildContext context, int index) {
+                            return Divider();
+                          },
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
-            ],
-          ),
-        ),
-      );
-    } else {
-      return Get.bottomSheet(
-        Container(
-          color: Colors.white,
-          child: Center(
-            child: Text(
-              'Layanan Belum Tersedia',
-              style: TextStyle(fontSize: 25, fontWeight: FontWeight.w600),
             ),
-          ),
+          ],
         ),
-      );
-    }
+      ),
+    );
+    // } else {
+    //   return Get.bottomSheet(
+    //     Container(
+    //       color: Colors.white,
+    //       child: Center(
+    //         child: Text(
+    //           'Layanan Belum Tersedia',
+    //           style: TextStyle(fontSize: 25, fontWeight: FontWeight.w600),
+    //         ),
+    //       ),
+    //     ),
+    //   );
+    // }
   }
 
   modalApi() async {
@@ -531,58 +524,58 @@ class _PendaftaranPageState extends State<PendaftaranPage> {
   }
 
   modalDokter() async {
-    if (_pendaftaranController.api.text.contains('Nganjuk')) {
-      await _pendaftaranController.fetchDokter();
-      return Get.bottomSheet(
-        Container(
-          color: Colors.white,
-          child: Column(
-            children: <Widget>[
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ListView.separated(
-                    itemCount: _pendaftaranController.dokterList.length,
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        leading: Icon(Icons.person),
-                        title: Text(
-                          _pendaftaranController.dokterList[index].nmDokter,
-                          style: TextStyle(color: Colors.black),
-                        ),
-                        onTap: () async {
-                          _pendaftaranController.dokter.text =
-                              _pendaftaranController.dokterList[index].nmDokter;
-                          _pendaftaranController.kdDokter.value =
-                              _pendaftaranController.dokterList[index].kdDokter;
+    // if (_pendaftaranController.api.text.contains('Nganjuk')) {
+    await _pendaftaranController.fetchDokter();
+    return Get.bottomSheet(
+      Container(
+        color: Colors.white,
+        child: Column(
+          children: <Widget>[
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ListView.separated(
+                  itemCount: _pendaftaranController.dokterList.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      leading: Icon(Icons.person),
+                      title: Text(
+                        _pendaftaranController.dokterList[index].nmDokter,
+                        style: TextStyle(color: Colors.black),
+                      ),
+                      onTap: () async {
+                        _pendaftaranController.dokter.text =
+                            _pendaftaranController.dokterList[index].nmDokter;
+                        _pendaftaranController.kdDokter.value =
+                            _pendaftaranController.dokterList[index].kdDokter;
 
-                          Get.back();
-                        },
-                      );
-                    },
-                    separatorBuilder: (BuildContext context, int index) {
-                      return Divider();
-                    },
-                  ),
+                        Get.back();
+                      },
+                    );
+                  },
+                  separatorBuilder: (BuildContext context, int index) {
+                    return Divider();
+                  },
                 ),
               ),
-            ],
-          ),
-        ),
-      );
-    } else {
-      return Get.bottomSheet(
-        Container(
-          color: Colors.white,
-          child: Center(
-            child: Text(
-              'Layanan Belum Tersedia',
-              style: TextStyle(fontSize: 25, fontWeight: FontWeight.w600),
             ),
-          ),
+          ],
         ),
-      );
-    }
+      ),
+    );
+    // } else {
+    //   return Get.bottomSheet(
+    //     Container(
+    //       color: Colors.white,
+    //       child: Center(
+    //         child: Text(
+    //           'Layanan Belum Tersedia',
+    //           style: TextStyle(fontSize: 25, fontWeight: FontWeight.w600),
+    //         ),
+    //       ),
+    //     ),
+    //   );
+    // }
   }
 
   modalDetailBooking(BookingList data) async {
@@ -635,10 +628,10 @@ class _PendaftaranPageState extends State<PendaftaranPage> {
                 leading: Icon(Icons.wallet_membership),
                 title: Text('Nomor Antrian : ${data.noReg}'),
               ),
-              ListTile(
-                leading: Icon(Icons.payment),
-                title: Text('Cara Bayar : ${data.pngJawab}'),
-              ),
+              // ListTile(
+              //   leading: Icon(Icons.payment),
+              //   title: Text('Cara Bayar : ${data.pngJawab}'),
+              // ),
             ],
           ),
         ),

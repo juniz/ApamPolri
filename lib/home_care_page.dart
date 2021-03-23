@@ -23,10 +23,13 @@ class _HomeCarePageState extends State<HomeCarePage> {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Home Care',textAlign: TextAlign.center,
+          title: Text(
+            'Home Care',
+            textAlign: TextAlign.center,
             style: TextStyle(
               fontWeight: FontWeight.w600,
-            ),),
+            ),
+          ),
           backgroundColor: Colors.green,
           bottom: TabBar(
             labelStyle: TextStyle(fontSize: 18),
@@ -70,35 +73,35 @@ class _HomeCarePageState extends State<HomeCarePage> {
                         ),
                       ),
                     ),
-                    Expanded(
-                      child: Container(
-                        margin: EdgeInsets.all(20),
-                        child: TextField(
-                          controller: _homecareController.api,
-                          readOnly: true,
-                          decoration: InputDecoration(
-                            labelText: "Pilih Rumah Sakit",
-                            border: OutlineInputBorder(),
-                            prefixIcon: Icon(Icons.home),
-                            suffixIcon: Icon(Icons.arrow_drop_down),
-                            labelStyle: TextStyle(
-                                color: myFocusNode1.hasFocus
-                                    ? Colors.green
-                                    : Colors.black),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.green),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.black),
-                            ),
-                          ),
-                          onTap: () async {
-                            modalApi();
-                            _homecareController.dokter.text = "";
-                          },
-                        ),
-                      ),
-                    ),
+                    // Expanded(
+                    //   child: Container(
+                    //     margin: EdgeInsets.all(20),
+                    //     child: TextField(
+                    //       controller: _homecareController.api,
+                    //       readOnly: true,
+                    //       decoration: InputDecoration(
+                    //         labelText: "Pilih Rumah Sakit",
+                    //         border: OutlineInputBorder(),
+                    //         prefixIcon: Icon(Icons.home),
+                    //         suffixIcon: Icon(Icons.arrow_drop_down),
+                    //         labelStyle: TextStyle(
+                    //             color: myFocusNode1.hasFocus
+                    //                 ? Colors.green
+                    //                 : Colors.black),
+                    //         focusedBorder: OutlineInputBorder(
+                    //           borderSide: BorderSide(color: Colors.green),
+                    //         ),
+                    //         enabledBorder: OutlineInputBorder(
+                    //           borderSide: BorderSide(color: Colors.black),
+                    //         ),
+                    //       ),
+                    //       onTap: () async {
+                    //         modalApi();
+                    //         _homecareController.dokter.text = "";
+                    //       },
+                    //     ),
+                    //   ),
+                    // ),
                     Expanded(
                       child: Container(
                         margin: EdgeInsets.all(20),
@@ -432,74 +435,72 @@ class _HomeCarePageState extends State<HomeCarePage> {
   }
 
   modalDokter() async {
-    if (_homecareController.api.text.contains('Nganjuk')) {
-      await _homecareController.fetchDokter();
-      if (_homecareController.error.value == "") {
-        return Get.bottomSheet(
-          Container(
-            color: Colors.white,
-            child: Column(
-              children: <Widget>[
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ListView.separated(
-                      itemCount: _homecareController.dokterList.value.length,
-                      itemBuilder: (context, index) {
-                        return ListTile(
-                          leading: Icon(Icons.person),
-                          title: Text(
-                            _homecareController
-                                .dokterList.value[index].nmDokter,
-                            style: TextStyle(color: Colors.black),
-                          ),
-                          onTap: () async {
-                            _homecareController.dokter.text =
-                                _homecareController
-                                    .dokterList.value[index].nmDokter;
-                            _homecareController.kdDokter.value =
-                                _homecareController
-                                    .dokterList.value[index].kdDokter;
-                            Get.back();
-                          },
-                        );
-                      },
-                      separatorBuilder: (BuildContext context, int index) {
-                        return Divider();
-                      },
-                    ),
+    // if (_homecareController.api.text.contains('Nganjuk')) {
+    await _homecareController.fetchDokter();
+    if (_homecareController.error.value == "") {
+      return Get.bottomSheet(
+        Container(
+          color: Colors.white,
+          child: Column(
+            children: <Widget>[
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ListView.separated(
+                    itemCount: _homecareController.dokterList.value.length,
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        leading: Icon(Icons.person),
+                        title: Text(
+                          _homecareController.dokterList.value[index].nmDokter,
+                          style: TextStyle(color: Colors.black),
+                        ),
+                        onTap: () async {
+                          _homecareController.dokter.text = _homecareController
+                              .dokterList.value[index].nmDokter;
+                          _homecareController.kdDokter.value =
+                              _homecareController
+                                  .dokterList.value[index].kdDokter;
+                          Get.back();
+                        },
+                      );
+                    },
+                    separatorBuilder: (BuildContext context, int index) {
+                      return Divider();
+                    },
                   ),
                 ),
-              ],
-            ),
-          ),
-        );
-      }
-    } else if (_homecareController.error.value == 'noavailable') {
-      return Get.bottomSheet(
-        Container(
-          color: Colors.white,
-          child: Center(
-            child: Text(
-              'Layanan Belum Tersedia',
-              style: TextStyle(fontSize: 25, fontWeight: FontWeight.w600),
-            ),
-          ),
-        ),
-      );
-    } else if (_homecareController.error.value == "kosong") {
-      return Get.bottomSheet(
-        Container(
-          color: Colors.white,
-          child: Center(
-            child: Text(
-              'Data Dokter Kosong',
-              style: TextStyle(fontSize: 25, fontWeight: FontWeight.w600),
-            ),
+              ),
+            ],
           ),
         ),
       );
     }
+    // } else if (_homecareController.error.value == 'noavailable') {
+    //   return Get.bottomSheet(
+    //     Container(
+    //       color: Colors.white,
+    //       child: Center(
+    //         child: Text(
+    //           'Layanan Belum Tersedia',
+    //           style: TextStyle(fontSize: 25, fontWeight: FontWeight.w600),
+    //         ),
+    //       ),
+    //     ),
+    // //   );
+    // } else if (_homecareController.error.value == "kosong") {
+    //   return Get.bottomSheet(
+    //     Container(
+    //       color: Colors.white,
+    //       child: Center(
+    //         child: Text(
+    //           'Data Dokter Kosong',
+    //           style: TextStyle(fontSize: 25, fontWeight: FontWeight.w600),
+    //         ),
+    //       ),
+    //     ),
+    //   );
+    // }
   }
 
   Widget listDokter(BuildContext context) {

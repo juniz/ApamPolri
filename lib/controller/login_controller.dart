@@ -210,13 +210,14 @@ class LoginController extends GetxController {
   }
 
   Future selectedRumkit(String rumkit, String urlApi, String urlBlog,
-      String username, String password, String telp) async {
+      String username, String password, String telp, String hc) async {
     LocalData.savePref('rumkit', rumkit);
     LocalData.savePref('username', username);
     LocalData.savePref('password', password);
     LocalData.savePref('url', urlApi);
     LocalData.savePref('urlBlog', urlBlog);
     LocalData.savePref('telp', telp);
+    LocalData.savePref('hc', hc);
   }
 
   void clearForm() {
