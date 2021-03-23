@@ -3,6 +3,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:apam/controller/signup_controller.dart';
+import 'package:intl/intl.dart';
+
+import 'widget/datepicker.dart';
 
 class SignUpPage extends StatefulWidget {
   SignUpPage({Key key}) : super(key: key);
@@ -21,6 +24,7 @@ class _SignUpPageState extends State<SignUpPage> {
   FocusNode myFocusNode5 = new FocusNode();
   FocusNode myFocusNode6 = new FocusNode();
   FocusNode myFocusNode7 = new FocusNode();
+  FocusNode myFocusNode8 = new FocusNode();
   // User uid = Get.arguments;
 
   @override
@@ -34,8 +38,7 @@ class _SignUpPageState extends State<SignUpPage> {
           width: Get.width,
           height: Get.height,
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Expanded(
                 flex: 2,
@@ -48,7 +51,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 ),
               ),
               Expanded(
-                flex: 14,
+                flex: 10,
                 child: Form(
                   key: _formKey,
                   child: SingleChildScrollView(
@@ -57,56 +60,28 @@ class _SignUpPageState extends State<SignUpPage> {
                         Padding(
                           padding:
                               EdgeInsets.only(right: 20, left: 20, bottom: 20),
-                          child: TextFormField(
-                            focusNode: myFocusNode1,
-                            controller: signupController.nrpController,
-                            maxLines: 1,
-                            keyboardType: TextInputType.number,
-                            validator: (value) => value.trim().isEmpty
-                                ? 'NRP masih kosong'
-                                : null,
-                            decoration: InputDecoration(
-                              labelText: "NRP",
-                              hintText: "Isikan No. NRP",
-                              fillColor: Colors.black,
-                              prefixIcon: Icon(Icons.person),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.green),
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(20),
-                                borderSide:
-                                    BorderSide(color: Colors.black, width: 2),
-                              ),
-                            ),
-                          ),
-                        ),
-
-                        Padding(
-                          padding:
-                              EdgeInsets.only(right: 20, left: 20, bottom: 20),
-                          child: TextFormField(
-                            focusNode: myFocusNode2,
-                            controller: signupController.ktpController,
-                            maxLines: 1,
-                            keyboardType: TextInputType.number,
-                            validator: (value) => value.trim().isEmpty
-                                ? 'KTP masih kosong'
-                                : null,
-                            decoration: InputDecoration(
-                              labelText: "KTP",
-                              hintText: "Isikan No. KTP",
-                              fillColor: Colors.black,
-                              prefixIcon: Icon(Icons.credit_card),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(20),
-                                borderSide: BorderSide(color: Colors.green),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(20),
-                                borderSide:
-                                    BorderSide(color: Colors.black, width: 2),
+                          child: SizedBox(
+                            height: Get.height * 0.07,
+                            child: TextFormField(
+                              focusNode: myFocusNode1,
+                              controller: signupController.nrpController,
+                              maxLines: 1,
+                              keyboardType: TextInputType.number,
+                              validator: (value) => value.trim().isEmpty
+                                  ? 'NRP masih kosong'
+                                  : null,
+                              decoration: InputDecoration(
+                                labelText: "NRP",
+                                hintText: "Isikan No. NRP",
+                                fillColor: Colors.black,
+                                prefixIcon: Icon(Icons.person),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.green),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Colors.black, width: 2),
+                                ),
                               ),
                             ),
                           ),
@@ -115,60 +90,28 @@ class _SignUpPageState extends State<SignUpPage> {
                         Padding(
                           padding:
                               EdgeInsets.only(right: 20, left: 20, bottom: 20),
-                          child: TextFormField(
-                            focusNode: myFocusNode3,
-                            controller: signupController.namaController,
-                            maxLines: 1,
-                            keyboardType: TextInputType.name,
-                            validator: (value) => value.trim().isEmpty
-                                ? 'Nama masih kosong'
-                                : null,
-                            decoration: InputDecoration(
-                              labelText: "Nama",
-                              hintText: "Isikan Nama",
-                              fillColor: Colors.black,
-                              prefixIcon: Icon(Icons.person),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(20),
-                                borderSide: BorderSide(color: Colors.green),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(20),
-                                borderSide:
-                                    BorderSide(color: Colors.black, width: 2),
-                              ),
-                            ),
-                          ),
-                        ),
-
-                        Padding(
-                          padding:
-                              EdgeInsets.only(right: 20, left: 20, bottom: 20),
-                          child: TextFormField(
-                            focusNode: myFocusNode4,
-                            controller: signupController.jkController,
-                            maxLines: 1,
-                            readOnly: true,
-                            keyboardType: TextInputType.name,
-                            onTap: () async {
-                              await modalJK();
-                            },
-                            validator: (value) => value.trim().isEmpty
-                                ? 'Jenis Kelamin masih kosong'
-                                : null,
-                            decoration: InputDecoration(
-                              labelText: "Jenis Kelamin",
-                              hintText: "Isikan Jenis Kelamin",
-                              fillColor: Colors.black,
-                              prefixIcon: Icon(Icons.person),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(20),
-                                borderSide: BorderSide(color: Colors.green),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(20),
-                                borderSide:
-                                    BorderSide(color: Colors.black, width: 2),
+                          child: SizedBox(
+                            height: Get.height * 0.07,
+                            child: TextFormField(
+                              focusNode: myFocusNode2,
+                              controller: signupController.ktpController,
+                              maxLines: 1,
+                              keyboardType: TextInputType.number,
+                              validator: (value) => value.trim().isEmpty
+                                  ? 'KTP masih kosong'
+                                  : null,
+                              decoration: InputDecoration(
+                                labelText: "KTP",
+                                hintText: "Isikan No. KTP",
+                                fillColor: Colors.black,
+                                prefixIcon: Icon(Icons.credit_card),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.green),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Colors.black, width: 2),
+                                ),
                               ),
                             ),
                           ),
@@ -177,56 +120,28 @@ class _SignUpPageState extends State<SignUpPage> {
                         Padding(
                           padding:
                               EdgeInsets.only(right: 20, left: 20, bottom: 20),
-                          child: TextFormField(
-                            focusNode: myFocusNode3,
-                            controller: signupController.namaController,
-                            maxLines: 1,
-                            keyboardType: TextInputType.name,
-                            validator: (value) => value.trim().isEmpty
-                                ? 'Tanggal lahir masih kosong'
-                                : null,
-                            decoration: InputDecoration(
-                              labelText: "Tanggal Lahir",
-                              hintText: "Isikan Tanggal Lahir",
-                              fillColor: Colors.black,
-                              prefixIcon: Icon(Icons.person),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(20),
-                                borderSide: BorderSide(color: Colors.green),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(20),
-                                borderSide:
-                                    BorderSide(color: Colors.black, width: 2),
-                              ),
-                            ),
-                          ),
-                        ),
-
-                        Padding(
-                          padding:
-                              EdgeInsets.only(right: 20, left: 20, bottom: 20),
-                          child: TextFormField(
-                            focusNode: myFocusNode5,
-                            controller: signupController.satuanController,
-                            maxLines: 1,
-                            keyboardType: TextInputType.text,
-                            validator: (value) => value.trim().isEmpty
-                                ? 'Kesatuan masih kosong'
-                                : null,
-                            decoration: InputDecoration(
-                              labelText: "Kesatuan",
-                              hintText: "Isikan Kesatuan",
-                              fillColor: Colors.black,
-                              prefixIcon: Icon(Icons.home_work),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(20),
-                                borderSide: BorderSide(color: Colors.green),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(20),
-                                borderSide:
-                                    BorderSide(color: Colors.black, width: 2),
+                          child: SizedBox(
+                            height: Get.height * 0.07,
+                            child: TextFormField(
+                              focusNode: myFocusNode3,
+                              controller: signupController.namaController,
+                              maxLines: 1,
+                              keyboardType: TextInputType.name,
+                              validator: (value) => value.trim().isEmpty
+                                  ? 'Nama masih kosong'
+                                  : null,
+                              decoration: InputDecoration(
+                                labelText: "Nama",
+                                hintText: "Isikan Nama",
+                                fillColor: Colors.black,
+                                prefixIcon: Icon(Icons.person),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.green),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Colors.black, width: 2),
+                                ),
                               ),
                             ),
                           ),
@@ -235,28 +150,32 @@ class _SignUpPageState extends State<SignUpPage> {
                         Padding(
                           padding:
                               EdgeInsets.only(right: 20, left: 20, bottom: 20),
-                          child: TextFormField(
-                            focusNode: myFocusNode6,
-                            controller: signupController.emailController,
-                            maxLines: 1,
-                            readOnly: false,
-                            keyboardType: TextInputType.emailAddress,
-                            validator: (value) => value.trim().isEmpty
-                                ? 'Email masih kosong'
-                                : null,
-                            decoration: InputDecoration(
-                              labelText: "Email",
-                              hintText: "Isikan Email",
-                              fillColor: Colors.black,
-                              prefixIcon: Icon(Icons.mail),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(20),
-                                borderSide: BorderSide(color: Colors.green),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(20),
-                                borderSide:
-                                    BorderSide(color: Colors.black, width: 2),
+                          child: SizedBox(
+                            height: Get.height * 0.07,
+                            child: TextFormField(
+                              focusNode: myFocusNode4,
+                              controller: signupController.jkController,
+                              maxLines: 1,
+                              readOnly: true,
+                              keyboardType: TextInputType.name,
+                              onTap: () async {
+                                await modalJK();
+                              },
+                              validator: (value) => value.trim().isEmpty
+                                  ? 'Jenis Kelamin masih kosong'
+                                  : null,
+                              decoration: InputDecoration(
+                                labelText: "Jenis Kelamin",
+                                hintText: "Isikan Jenis Kelamin",
+                                fillColor: Colors.black,
+                                prefixIcon: Icon(Icons.person),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.green),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Colors.black, width: 2),
+                                ),
                               ),
                             ),
                           ),
@@ -265,28 +184,144 @@ class _SignUpPageState extends State<SignUpPage> {
                         Padding(
                           padding:
                               EdgeInsets.only(right: 20, left: 20, bottom: 20),
-                          child: TextFormField(
-                            focusNode: myFocusNode7,
-                            controller: signupController.hpController,
-                            maxLines: 1,
-                            readOnly: false,
-                            keyboardType: TextInputType.phone,
-                            validator: (value) => value.trim().isEmpty
-                                ? 'No. Telp masih kosong'
-                                : null,
-                            decoration: InputDecoration(
-                              labelText: "No. Telp",
-                              hintText: "Isikan No. Telp",
-                              fillColor: Colors.black,
-                              prefixIcon: Icon(Icons.phone),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(20),
-                                borderSide: BorderSide(color: Colors.green),
+                          child: SizedBox(
+                            height: Get.height * 0.07,
+                            child: MyTextFieldDatePicker(
+                              labelText: "Pilih Tanggal Lahir",
+                              prefixIcon: Icon(Icons.date_range),
+                              suffixIcon: Icon(Icons.arrow_drop_down),
+                              lastDate: DateTime.now().add(Duration(days: 1)),
+                              firstDate: DateTime.now()
+                                  .subtract(Duration(days: 999999999999999999)),
+                              initialDate: DateTime.now(),
+                              dateFormat: DateFormat('dd-MM-yyyy'),
+                              onDateChanged: (selectedDate) {
+                                // Do something with the selected date
+                                // _homecareController.tanggal.value.date =
+                                //     selectedDate;
+                                // _homecareController.clearInput();
+                              },
+                            ),
+                          ),
+                        ),
+
+                        Padding(
+                          padding:
+                              EdgeInsets.only(right: 20, left: 20, bottom: 20),
+                          child: SizedBox(
+                            height: Get.height * 0.15,
+                            child: TextFormField(
+                              focusNode: myFocusNode8,
+                              controller: signupController.namaController,
+                              maxLines: 3,
+                              keyboardType: TextInputType.name,
+                              validator: (value) => value.trim().isEmpty
+                                  ? 'Alamat masih kosong'
+                                  : null,
+                              decoration: InputDecoration(
+                                labelText: "Alamat",
+                                hintText: "Isikan Alamat",
+                                fillColor: Colors.black,
+                                prefixIcon: Icon(Icons.person),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.green),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Colors.black, width: 2),
+                                ),
                               ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(20),
-                                borderSide:
-                                    BorderSide(color: Colors.black, width: 2),
+                            ),
+                          ),
+                        ),
+
+                        Padding(
+                          padding:
+                              EdgeInsets.only(right: 20, left: 20, bottom: 20),
+                          child: SizedBox(
+                            height: Get.height * 0.07,
+                            child: TextFormField(
+                              focusNode: myFocusNode5,
+                              controller: signupController.satuanController,
+                              maxLines: 1,
+                              keyboardType: TextInputType.text,
+                              validator: (value) => value.trim().isEmpty
+                                  ? 'Kesatuan masih kosong'
+                                  : null,
+                              decoration: InputDecoration(
+                                labelText: "Kesatuan",
+                                hintText: "Isikan Kesatuan",
+                                fillColor: Colors.black,
+                                prefixIcon: Icon(Icons.home_work),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.green),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Colors.black, width: 2),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        Padding(
+                          padding:
+                              EdgeInsets.only(right: 20, left: 20, bottom: 20),
+                          child: SizedBox(
+                            height: Get.height * 0.07,
+                            child: TextFormField(
+                              focusNode: myFocusNode6,
+                              controller: signupController.emailController,
+                              maxLines: 1,
+                              readOnly: false,
+                              keyboardType: TextInputType.emailAddress,
+                              validator: (value) => value.trim().isEmpty
+                                  ? 'Email masih kosong'
+                                  : null,
+                              decoration: InputDecoration(
+                                labelText: "Email",
+                                hintText: "Isikan Email",
+                                fillColor: Colors.black,
+                                prefixIcon: Icon(Icons.mail),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.green),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Colors.black, width: 2),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        Padding(
+                          padding:
+                              EdgeInsets.only(right: 20, left: 20, bottom: 20),
+                          child: SizedBox(
+                            height: Get.height * 0.07,
+                            child: TextFormField(
+                              focusNode: myFocusNode7,
+                              controller: signupController.hpController,
+                              maxLines: 1,
+                              readOnly: false,
+                              keyboardType: TextInputType.phone,
+                              validator: (value) => value.trim().isEmpty
+                                  ? 'No. Telp masih kosong'
+                                  : null,
+                              decoration: InputDecoration(
+                                labelText: "No. Telp",
+                                hintText: "Isikan No. Telp",
+                                fillColor: Colors.black,
+                                prefixIcon: Icon(Icons.phone),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.green),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Colors.black, width: 2),
+                                ),
                               ),
                             ),
                           ),

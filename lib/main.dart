@@ -35,6 +35,7 @@ void main() async {
         primaryColor: Colors.white,
         fontFamily: 'roboto',
       ),
+      locale: Locale('id'),
       initialRoute: '/',
     ),
   );
