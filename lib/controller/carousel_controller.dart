@@ -21,7 +21,7 @@ class CarouselPageController extends GetxController {
     current.value = index;
   }
 
-  void fetchPhoto() async {
+  Future fetchPhoto() async {
     try {
       isLoading(true);
       var request = await http.get(
@@ -36,7 +36,7 @@ class CarouselPageController extends GetxController {
       isLoading(false);
     } on Exception catch (e) {
       print(e);
-      //isLoading(false);
+      isLoading(false);
     }
   }
 }

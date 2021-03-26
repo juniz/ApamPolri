@@ -35,6 +35,8 @@ class _OtpPageState extends State<OtpPage> {
   @override
   Widget build(BuildContext context) {
     return OtpScreen(
+      title: 'Kode Verifikasi',
+      subTitle: 'mohon masukkan kode OTP dikirimkan\n ke email anda',
       otpLength: 4,
       validateOtp: validateOtp,
       routeCallback: moveToNextScreen,

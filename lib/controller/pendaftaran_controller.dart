@@ -216,8 +216,11 @@ class PendaftaranController extends GetxController {
         if (data["message"] == 'Limit') {
           hasil.value = 'limit';
           Get.back();
-        } else {
+        } else if (data["message"] == 'duplicate') {
           hasil.value = 'duplicate';
+          Get.back();
+        } else {
+          hasil.value = 'notregister';
           Get.back();
         }
       } else if (response.statusCode == 401) {

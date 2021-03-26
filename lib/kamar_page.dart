@@ -3,8 +3,11 @@ import 'package:apam/services/data_dummy.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import 'controller/login_controller.dart';
+
 class KamarPage extends StatelessWidget {
   final KamarController kamarController = Get.put((KamarController()));
+  final LoginController _loginController = Get.put(LoginController());
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,7 +68,10 @@ class KamarPage extends StatelessWidget {
             onPressed: () {
               modalApi();
             },
-            icon: Icon(Icons.home),
+            icon: Icon(
+              Icons.home,
+              color: Colors.white,
+            ),
             label: Text(
               "Pilih Rumah Sakit",
               style: TextStyle(color: Colors.white),
@@ -75,7 +81,7 @@ class KamarPage extends StatelessWidget {
   }
 
   modalApi() async {
-    //await kamarController.fetchapi();
+    await _loginController.apiRumkit();
     return Get.bottomSheet(
       Container(
         color: Colors.white,
@@ -85,18 +91,22 @@ class KamarPage extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: ListView.separated(
-                  itemCount: DataDummy.dummy.length,
+                  itemCount: _loginController.rumkit.length,
                   itemBuilder: (context, index) {
                     return ListTile(
-                      leading: Icon(Icons.home),
+                      leading: Icon(Icons.local_post_office),
                       title: Text(
-                        DataDummy.dummy[index].nama,
+                        _loginController.rumkit[index].rumkit,
                         style: TextStyle(color: Colors.black),
                       ),
                       onTap: () async {
                         kamarController.selectedApi.value =
-                            DataDummy.dummy[index].nama;
-                        kamarController.fetchKamar();
+                            _loginController.rumkit[index].urlBase;
+                        kamarController.username.value =
+                            _loginController.rumkit[index].username;
+                        kamarController.password.value =
+                            _loginController.rumkit[index].password;
+                        await kamarController.fetchKamar();
                         Get.back();
                       },
                     );
@@ -112,4 +122,43 @@ class KamarPage extends StatelessWidget {
       ),
     );
   }
+
+  // modalApi() async {
+  //   //await kamarController.fetchapi();
+  //   return Get.bottomSheet(
+  //     Container(
+  //       color: Colors.white,
+  //       child: Column(
+  //         children: <Widget>[
+  //           Expanded(
+  //             child: Padding(
+  //               padding: const EdgeInsets.all(8.0),
+  //               child: ListView.separated(
+  //                 itemCount: DataDummy.dummy.length,
+  //                 itemBuilder: (context, index) {
+  //                   return ListTile(
+  //                     leading: Icon(Icons.home),
+  //                     title: Text(
+  //                       DataDummy.dummy[index].nama,
+  //                       style: TextStyle(color: Colors.black),
+  //                     ),
+  //                     onTap: () async {
+  //                       kamarController.selectedApi.value =
+  //                           DataDummy.dummy[index].nama;
+  //                       kamarController.fetchKamar();
+  //                       Get.back();
+  //                     },
+  //                   );
+  //                 },
+  //                 separatorBuilder: (BuildContext context, int index) {
+  //                   return Divider();
+  //                 },
+  //               ),
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 }

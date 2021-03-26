@@ -3,9 +3,12 @@ import 'package:apam/widget/datepicker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'controller/login_controller.dart';
 import 'controller/pendaftaran_controller.dart';
 import 'package:apam/models/booking_model.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
+
+import 'controller/profile_controller.dart';
 
 class PendaftaranPage extends StatefulWidget {
   @override
@@ -16,6 +19,8 @@ class _PendaftaranPageState extends State<PendaftaranPage> {
   //final LoginController _loginController = Get.find();
   final PendaftaranController _pendaftaranController =
       Get.put(PendaftaranController());
+  final profileController = Get.put(ProfileController());
+  final LoginController _loginController = Get.put(LoginController());
   FocusNode myFocusNode1 = new FocusNode();
 
   @override
@@ -77,34 +82,34 @@ class _PendaftaranPageState extends State<PendaftaranPage> {
                           ),
                         ),
                       ),
-                      // Expanded(
-                      //   child: Container(
-                      //     margin: EdgeInsets.only(left: 20, right: 20, top: 20),
-                      //     child: TextField(
-                      //       controller: _pendaftaranController.api,
-                      //       readOnly: true,
-                      //       decoration: InputDecoration(
-                      //         labelText: "Pilih Rumah Sakit",
-                      //         border: OutlineInputBorder(),
-                      //         prefixIcon: Icon(Icons.home),
-                      //         suffixIcon: Icon(Icons.arrow_drop_down),
-                      //         labelStyle: TextStyle(
-                      //             color: myFocusNode1.hasFocus
-                      //                 ? Colors.green
-                      //                 : Colors.black),
-                      //         focusedBorder: OutlineInputBorder(
-                      //           borderSide: BorderSide(color: Colors.green),
-                      //         ),
-                      //         enabledBorder: OutlineInputBorder(
-                      //           borderSide: BorderSide(color: Colors.black),
-                      //         ),
-                      //       ),
-                      //       onTap: () async {
-                      //         modalApi();
-                      //       },
-                      //     ),
-                      //   ),
-                      // ),
+                      Expanded(
+                        child: Container(
+                          margin: EdgeInsets.only(left: 20, right: 20, top: 20),
+                          child: TextField(
+                            controller: _pendaftaranController.api,
+                            readOnly: true,
+                            decoration: InputDecoration(
+                              labelText: "Pilih Rumah Sakit",
+                              border: OutlineInputBorder(),
+                              prefixIcon: Icon(Icons.home),
+                              suffixIcon: Icon(Icons.arrow_drop_down),
+                              labelStyle: TextStyle(
+                                  color: myFocusNode1.hasFocus
+                                      ? Colors.green
+                                      : Colors.black),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.green),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.black),
+                              ),
+                            ),
+                            onTap: () async {
+                              modalApi();
+                            },
+                          ),
+                        ),
+                      ),
                       Expanded(
                         child: Container(
                           margin: EdgeInsets.only(left: 20, right: 20, top: 20),
@@ -260,6 +265,32 @@ class _PendaftaranPageState extends State<PendaftaranPage> {
                                     title: 'Error',
                                     desc: 'Pendaftaran Gagal',
                                     btnOkOnPress: () {},
+                                    btnOkColor: Colors.red)
+                                .show();
+                          } else if (_pendaftaranController.hasil.value ==
+                              'notregister') {
+                            return AwesomeDialog(
+                                    context: context,
+                                    dialogType: DialogType.ERROR,
+                                    animType: AnimType.RIGHSLIDE,
+                                    headerAnimationLoop: false,
+                                    title: 'Error',
+                                    desc:
+                                        'Anda belum terdaftar di ${_pendaftaranController.rumkit.value} silahkan daftar dahulu',
+                                    btnOkOnPress: () {
+                                      AwesomeDialog(
+                                        context: context,
+                                        dialogType: DialogType.WARNING,
+                                        headerAnimationLoop: false,
+                                        animType: AnimType.TOPSLIDE,
+                                        title: 'Log Out',
+                                        desc: 'Apakah Anda Yakin ?',
+                                        btnCancelOnPress: () {},
+                                        btnOkOnPress: () async {
+                                          await profileController.logout();
+                                        },
+                                      ).show();
+                                    },
                                     btnOkColor: Colors.red)
                                 .show();
                           } else if (_pendaftaranController.hasil.value ==
@@ -482,7 +513,7 @@ class _PendaftaranPageState extends State<PendaftaranPage> {
   }
 
   modalApi() async {
-    //await _pendaftaranController.fetchapi();
+    await _loginController.apiRumkit();
     return Get.bottomSheet(
       Container(
         color: Colors.white,
@@ -492,21 +523,25 @@ class _PendaftaranPageState extends State<PendaftaranPage> {
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: ListView.separated(
-                  itemCount: DataDummy.dummy.length,
+                  itemCount: _loginController.rumkit.length,
                   itemBuilder: (context, index) {
                     return ListTile(
-                      leading: Icon(Icons.home),
+                      leading: Icon(Icons.local_post_office),
                       title: Text(
-                        DataDummy.dummy[index].nama,
+                        _loginController.rumkit[index].rumkit,
                         style: TextStyle(color: Colors.black),
                       ),
                       onTap: () async {
-                        _pendaftaranController.selectedApi.value =
-                            DataDummy.dummy[index].api;
-                        _pendaftaranController.api.text =
-                            DataDummy.dummy[index].nama;
-                        _pendaftaranController.poliklinik.text = "";
-                        _pendaftaranController.dokter.text = "";
+                        _loginController.rumkitController.text =
+                            _loginController.rumkit[index].rumkit;
+                        await _loginController.selectedRumkit(
+                            _loginController.rumkit[index].rumkit,
+                            _loginController.rumkit[index].urlBase,
+                            _loginController.rumkit[index].urlBlog,
+                            _loginController.rumkit[index].username,
+                            _loginController.rumkit[index].password,
+                            _loginController.rumkit[index].telp,
+                            _loginController.rumkit[index].hc);
                         Get.back();
                       },
                     );
@@ -522,6 +557,48 @@ class _PendaftaranPageState extends State<PendaftaranPage> {
       ),
     );
   }
+
+  // modalApi() async {
+  //   //await _pendaftaranController.fetchapi();
+  //   return Get.bottomSheet(
+  //     Container(
+  //       color: Colors.white,
+  //       child: Column(
+  //         children: <Widget>[
+  //           Expanded(
+  //             child: Padding(
+  //               padding: const EdgeInsets.all(8.0),
+  //               child: ListView.separated(
+  //                 itemCount: DataDummy.dummy.length,
+  //                 itemBuilder: (context, index) {
+  //                   return ListTile(
+  //                     leading: Icon(Icons.home),
+  //                     title: Text(
+  //                       DataDummy.dummy[index].nama,
+  //                       style: TextStyle(color: Colors.black),
+  //                     ),
+  //                     onTap: () async {
+  //                       _pendaftaranController.selectedApi.value =
+  //                           DataDummy.dummy[index].api;
+  //                       _pendaftaranController.api.text =
+  //                           DataDummy.dummy[index].nama;
+  //                       _pendaftaranController.poliklinik.text = "";
+  //                       _pendaftaranController.dokter.text = "";
+  //                       Get.back();
+  //                     },
+  //                   );
+  //                 },
+  //                 separatorBuilder: (BuildContext context, int index) {
+  //                   return Divider();
+  //                 },
+  //               ),
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 
   modalDokter() async {
     // if (_pendaftaranController.api.text.contains('Nganjuk')) {

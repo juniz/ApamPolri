@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:apam/controller/signup_controller.dart';
 import 'package:intl/intl.dart';
 
+import 'controller/login_controller.dart';
 import 'widget/datepicker.dart';
 
 class SignUpPage extends StatefulWidget {
@@ -16,6 +17,7 @@ class SignUpPage extends StatefulWidget {
 
 class _SignUpPageState extends State<SignUpPage> {
   final SignUpController signupController = Get.put(SignUpController());
+  final LoginController _loginController = Get.put(LoginController());
   final _formKey = GlobalKey<FormState>();
   FocusNode myFocusNode1 = new FocusNode();
   FocusNode myFocusNode2 = new FocusNode();
@@ -25,6 +27,7 @@ class _SignUpPageState extends State<SignUpPage> {
   FocusNode myFocusNode6 = new FocusNode();
   FocusNode myFocusNode7 = new FocusNode();
   FocusNode myFocusNode8 = new FocusNode();
+  FocusNode myFocusNode9 = new FocusNode();
   // User uid = Get.arguments;
 
   @override
@@ -57,6 +60,37 @@ class _SignUpPageState extends State<SignUpPage> {
                   child: SingleChildScrollView(
                     child: Column(
                       children: [
+                        Padding(
+                          padding:
+                              EdgeInsets.only(right: 20, left: 20, bottom: 20),
+                          child: SizedBox(
+                            height: 50,
+                            child: TextFormField(
+                              onTap: () => modalApi(),
+                              readOnly: true,
+                              focusNode: myFocusNode9,
+                              controller: signupController.rumkitController,
+                              maxLines: 1,
+                              validator: (value) => value.trim().isEmpty
+                                  ? 'Rumah Sakit Masih Kosong'
+                                  : null,
+                              decoration: InputDecoration(
+                                labelText: "Rumkit",
+                                hintText: "Pilih Rumkit",
+                                fillColor: Colors.black,
+                                prefixIcon: Icon(Icons.home),
+                                suffixIcon: Icon(Icons.arrow_drop_down),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.green),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Colors.black, width: 2),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
                         Padding(
                           padding:
                               EdgeInsets.only(right: 20, left: 20, bottom: 20),
@@ -97,8 +131,8 @@ class _SignUpPageState extends State<SignUpPage> {
                               controller: signupController.ktpController,
                               maxLines: 1,
                               keyboardType: TextInputType.number,
-                              validator: (value) => value.trim().isEmpty
-                                  ? 'KTP masih kosong'
+                              validator: (value) => value.length < 16
+                                  ? 'KTP harus 16 digit'
                                   : null,
                               decoration: InputDecoration(
                                 labelText: "KTP",
@@ -125,6 +159,7 @@ class _SignUpPageState extends State<SignUpPage> {
                             child: TextFormField(
                               focusNode: myFocusNode3,
                               controller: signupController.namaController,
+                              textCapitalization: TextCapitalization.characters,
                               maxLines: 1,
                               keyboardType: TextInputType.name,
                               validator: (value) => value.trim().isEmpty
@@ -169,6 +204,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                 hintText: "Isikan Jenis Kelamin",
                                 fillColor: Colors.black,
                                 prefixIcon: Icon(Icons.person),
+                                suffixIcon: Icon(Icons.arrow_drop_down),
                                 focusedBorder: OutlineInputBorder(
                                   borderSide: BorderSide(color: Colors.green),
                                 ),
@@ -197,9 +233,7 @@ class _SignUpPageState extends State<SignUpPage> {
                               dateFormat: DateFormat('dd-MM-yyyy'),
                               onDateChanged: (selectedDate) {
                                 // Do something with the selected date
-                                // _homecareController.tanggal.value.date =
-                                //     selectedDate;
-                                // _homecareController.clearInput();
+                                signupController.tgl.value = selectedDate;
                               },
                             ),
                           ),
@@ -212,8 +246,9 @@ class _SignUpPageState extends State<SignUpPage> {
                             height: Get.height * 0.15,
                             child: TextFormField(
                               focusNode: myFocusNode8,
-                              controller: signupController.namaController,
+                              controller: signupController.alamatController,
                               maxLines: 3,
+                              textCapitalization: TextCapitalization.characters,
                               keyboardType: TextInputType.name,
                               validator: (value) => value.trim().isEmpty
                                   ? 'Alamat masih kosong'
@@ -222,7 +257,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                 labelText: "Alamat",
                                 hintText: "Isikan Alamat",
                                 fillColor: Colors.black,
-                                prefixIcon: Icon(Icons.person),
+                                prefixIcon: Icon(Icons.home),
                                 focusedBorder: OutlineInputBorder(
                                   borderSide: BorderSide(color: Colors.green),
                                 ),
@@ -244,6 +279,7 @@ class _SignUpPageState extends State<SignUpPage> {
                               focusNode: myFocusNode5,
                               controller: signupController.satuanController,
                               maxLines: 1,
+                              textCapitalization: TextCapitalization.characters,
                               keyboardType: TextInputType.text,
                               validator: (value) => value.trim().isEmpty
                                   ? 'Kesatuan masih kosong'
@@ -276,9 +312,8 @@ class _SignUpPageState extends State<SignUpPage> {
                               maxLines: 1,
                               readOnly: false,
                               keyboardType: TextInputType.emailAddress,
-                              validator: (value) => value.trim().isEmpty
-                                  ? 'Email masih kosong'
-                                  : null,
+                              validator: (value) =>
+                                  value.isEmail ? null : 'Format email salah',
                               decoration: InputDecoration(
                                 labelText: "Email",
                                 hintText: "Isikan Email",
@@ -342,37 +377,39 @@ class _SignUpPageState extends State<SignUpPage> {
                     width: Get.width / 1.1,
                     child: RaisedButton(
                       onPressed: () async {
-                        await signupController.saveParam();
-                        await signupController.getOTP();
-                        Get.toNamed('/otp',
-                            arguments: signupController.param.value);
-                        // if (signupController.hasil.value == '200') {
-                        //   return AwesomeDialog(
-                        //       context: context,
-                        //       animType: AnimType.LEFTSLIDE,
-                        //       headerAnimationLoop: false,
-                        //       dialogType: DialogType.SUCCES,
-                        //       title: 'Pendaftaran Berhasil',
-                        //       desc:
-                        //           'Silahkan Tunggu Notifikasi Dari Pihak Rumah Sakit',
-                        //       btnOkIcon: Icons.check_circle,
-                        //       onDissmissCallback: () {
-                        //         // debugPrint('Dialog Dissmiss from callback');
-                        //         Get.toNamed('/otp',
-                        //             arguments: signupController.param.value);
-                        //       }).show();
-                        // } else {
-                        //   return AwesomeDialog(
-                        //           context: context,
-                        //           dialogType: DialogType.ERROR,
-                        //           animType: AnimType.RIGHSLIDE,
-                        //           headerAnimationLoop: false,
-                        //           title: 'Error',
-                        //           desc: signupController.res.value,
-                        //           btnOkOnPress: () {},
-                        //           btnOkColor: Colors.red)
-                        //       .show();
-                        // }
+                        if (_formKey.currentState.validate()) {
+                          await signupController.saveParam();
+                          await signupController.getOTP();
+                          Get.toNamed('/otp',
+                              arguments: signupController.param.value);
+                          // if (signupController.hasil.value == '200') {
+                          //   return AwesomeDialog(
+                          //       context: context,
+                          //       animType: AnimType.LEFTSLIDE,
+                          //       headerAnimationLoop: false,
+                          //       dialogType: DialogType.SUCCES,
+                          //       title: 'Pendaftaran Berhasil',
+                          //       desc:
+                          //           'Silahkan Tunggu Notifikasi Dari Pihak Rumah Sakit',
+                          //       btnOkIcon: Icons.check_circle,
+                          //       onDissmissCallback: () {
+                          //         // debugPrint('Dialog Dissmiss from callback');
+                          //         Get.toNamed('/otp',
+                          //             arguments: signupController.param.value);
+                          //       }).show();
+                          // } else {
+                          //   return AwesomeDialog(
+                          //           context: context,
+                          //           dialogType: DialogType.ERROR,
+                          //           animType: AnimType.RIGHSLIDE,
+                          //           headerAnimationLoop: false,
+                          //           title: 'Error',
+                          //           desc: signupController.res.value,
+                          //           btnOkOnPress: () {},
+                          //           btnOkColor: Colors.red)
+                          //       .show();
+                          // }
+                        }
                       },
                       child: Text(
                         'Daftar',
@@ -421,6 +458,96 @@ class _SignUpPageState extends State<SignUpPage> {
                             signupController.listJK[index].text;
                         signupController.selectedJK.value =
                             signupController.listJK[index].id;
+                        Get.back();
+                      },
+                    );
+                  },
+                  separatorBuilder: (BuildContext context, int index) {
+                    return Divider();
+                  },
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  modalApi() async {
+    await _loginController.apiRumkit();
+    // _loginController.clearForm();
+    // FirebaseFirestore firestore = FirebaseFirestore.instance;
+    // CollectionReference rumkit = firestore.collection('rumkit');
+    return Get.bottomSheet(
+      Container(
+        color: Colors.white,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: <Widget>[
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                // child: StreamBuilder<QuerySnapshot>(
+                //   stream: rumkit.snapshots(),
+                //   builder: (context, snapshot) {
+                //     if (snapshot.hasData)
+                //       return Container(
+                //         child: ListView.separated(
+                //           itemCount: snapshot.data.docs.length,
+                //           itemBuilder: (context, index) {
+                //             return ListTile(
+                //               leading: Icon(Icons.home),
+                //               title: Text(
+                //                 snapshot.data.docs[index].data()['nama'],
+                //                 style: TextStyle(color: Colors.black),
+                //               ),
+                //               onTap: () async {
+                //                 _loginController.rumkitController.text =
+                //                     snapshot.data.docs[index].data()['nama'];
+                //                 await _loginController.selectedRumkit(
+                //                     snapshot.data.docs[index].data()['urlApi'],
+                //                     snapshot.data.docs[index]
+                //                         .data()['username'],
+                //                     snapshot.data.docs[index]
+                //                         .data()['password']);
+                //                 Get.back();
+                //               },
+                //             );
+                //           },
+                //           separatorBuilder: (BuildContext context, int index) {
+                //             return Divider();
+                //           },
+                //         ),
+                //       );
+                //     else
+                //       return Center(
+                //         child: Text(
+                //           'Loading.......',
+                //         ),
+                //       );
+                //   },
+                // ),
+                child: ListView.separated(
+                  itemCount: _loginController.rumkit.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      leading: Icon(Icons.home_work),
+                      title: Text(
+                        _loginController.rumkit[index].rumkit,
+                        style: TextStyle(color: Colors.black),
+                      ),
+                      onTap: () async {
+                        signupController.rumkitController.text =
+                            _loginController.rumkit[index].rumkit;
+                        await _loginController.selectedRumkit(
+                            _loginController.rumkit[index].rumkit,
+                            _loginController.rumkit[index].urlBase,
+                            _loginController.rumkit[index].urlBlog,
+                            _loginController.rumkit[index].username,
+                            _loginController.rumkit[index].password,
+                            _loginController.rumkit[index].telp,
+                            _loginController.rumkit[index].hc);
                         Get.back();
                       },
                     );

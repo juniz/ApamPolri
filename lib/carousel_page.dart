@@ -124,7 +124,7 @@ class _CarouselPageState extends State<CarouselPage> {
                   viewportFraction: 0.9,
                   autoPlay: true,
                   enlargeCenterPage: true,
-                  aspectRatio: 2.0,
+                  aspectRatio: 2.5,
                   onPageChanged: (index, reason) {
                     _carouselController.changeIndex(index);
                   }),

@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:footer/footer.dart';
 import 'package:footer/footer_view.dart';
 import 'controller/jadwal_dokter_controller.dart';
+import 'controller/login_controller.dart';
 
 class JadwalDokterPage extends StatefulWidget {
   @override
@@ -13,6 +14,7 @@ class JadwalDokterPage extends StatefulWidget {
 class _JadwalDokterPageState extends State<JadwalDokterPage> {
   final JadwalDokterController _jadwalDokterController =
       Get.put(JadwalDokterController());
+  final LoginController _loginController = Get.put(LoginController());
 
   @override
   Widget build(BuildContext context) {
@@ -92,7 +94,7 @@ class _JadwalDokterPageState extends State<JadwalDokterPage> {
             onPressed: () {
               modalApi();
             },
-            icon: Icon(Icons.home),
+            icon: Icon(Icons.home, color: Colors.white),
             label: Text(
               "Pilih Rumah Sakit",
               style: TextStyle(color: Colors.white),
@@ -102,7 +104,7 @@ class _JadwalDokterPageState extends State<JadwalDokterPage> {
   }
 
   modalApi() async {
-    //await _jadwalDokterController.fetchapi();
+    await _loginController.apiRumkit();
     return Get.bottomSheet(
       Container(
         color: Colors.white,
@@ -112,17 +114,21 @@ class _JadwalDokterPageState extends State<JadwalDokterPage> {
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: ListView.separated(
-                  itemCount: DataDummy.dummy.length,
+                  itemCount: _loginController.rumkit.length,
                   itemBuilder: (context, index) {
                     return ListTile(
-                      leading: Icon(Icons.home),
+                      leading: Icon(Icons.local_post_office),
                       title: Text(
-                        DataDummy.dummy[index].nama,
+                        _loginController.rumkit[index].rumkit,
                         style: TextStyle(color: Colors.black),
                       ),
                       onTap: () async {
                         _jadwalDokterController.selectedApi.value =
-                            DataDummy.dummy[index].nama;
+                            _loginController.rumkit[index].urlBase;
+                        _jadwalDokterController.username.value =
+                            _loginController.rumkit[index].username;
+                        _jadwalDokterController.password.value =
+                            _loginController.rumkit[index].password;
                         await _jadwalDokterController.fetchDokter();
                         Get.back();
                       },
@@ -139,6 +145,45 @@ class _JadwalDokterPageState extends State<JadwalDokterPage> {
       ),
     );
   }
+
+  // modalApi() async {
+  //   //await _jadwalDokterController.fetchapi();
+  //   return Get.bottomSheet(
+  //     Container(
+  //       color: Colors.white,
+  //       child: Column(
+  //         children: <Widget>[
+  //           Expanded(
+  //             child: Padding(
+  //               padding: const EdgeInsets.all(8.0),
+  //               child: ListView.separated(
+  //                 itemCount: DataDummy.dummy.length,
+  //                 itemBuilder: (context, index) {
+  //                   return ListTile(
+  //                     leading: Icon(Icons.home),
+  //                     title: Text(
+  //                       DataDummy.dummy[index].nama,
+  //                       style: TextStyle(color: Colors.black),
+  //                     ),
+  //                     onTap: () async {
+  //                       _jadwalDokterController.selectedApi.value =
+  //                           DataDummy.dummy[index].nama;
+  //                       await _jadwalDokterController.fetchDokter();
+  //                       Get.back();
+  //                     },
+  //                   );
+  //                 },
+  //                 separatorBuilder: (BuildContext context, int index) {
+  //                   return Divider();
+  //                 },
+  //               ),
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 
   modalDetailDokter() async {
     await _jadwalDokterController.fetchDetail();

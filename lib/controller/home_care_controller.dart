@@ -1,3 +1,4 @@
+import 'package:apam/models/homecarePolri_modell.dart';
 import 'package:apam/models/jadwal_dokter_model.dart';
 import 'package:apam/models/rsb_api_model.dart';
 import 'package:apam/services/token_service.dart';
@@ -32,7 +33,7 @@ class HomeCareController extends GetxController {
   var isLoading = true.obs;
   final tanggal = Tanggal(date: DateTime.now()).obs;
   final kdPoli = PoliklinikList(kdPoli: "").obs;
-  var homecareList = List<RiwayatHomeCareList>().obs;
+  var homecareList = List<HomecarePolriData>().obs;
   TextEditingController poliklinik;
   TextEditingController dokter;
   TextEditingController api;
@@ -240,7 +241,7 @@ class HomeCareController extends GetxController {
         },
       );
       if (response.statusCode == 200) {
-        var data = riwayatHomeCareFromJson(response.body).data;
+        var data = homecarePolriFromJson(response.body).data;
         homecareList.value = data;
         isLoading(false);
       } else if (response.statusCode == 401) {

@@ -21,6 +21,9 @@ class KamarController extends GetxController {
   var hasil = "".obs;
   var token = "".obs;
 
+  var username = "".obs;
+  var password = "".obs;
+
   @override
   void onInit() {
     //fetchKamar();
@@ -41,51 +44,49 @@ class KamarController extends GetxController {
     Get.back();
   }
 
-  void fetchKamar() async {
-    if (selectedApi.value.contains('Nganjuk')) {
-      hasil.value = 'available';
-      try {
-        isLoading(true);
-        http.Response response = await http.get(
-          'https://webapps.rsbhayangkaranganjuk.com/api-rsbnganjuk/api/v1/kamar',
-          headers: {
-            "Accept": "application/json",
-            "Content-Type": "application/x-www-form-urlencoded",
-            "Authorization": "Bearer " + token.value
-          },
-        );
+  Future fetchKamar() async {
+    // if (selectedApi.value.contains('Nganjuk')) {
+    hasil.value = 'available';
+    try {
+      isLoading(true);
+      http.Response response = await http.get(
+        selectedApi.value + 'kamar',
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/x-www-form-urlencoded",
+          "Authorization": "Bearer " + token.value
+        },
+      );
 
-        if (response.statusCode == 200) {
-          var data = kamarFromJson(response.body).data;
-          kamarList.value = data;
-        } else if (response.statusCode == 404) {
-          hasil.value = '404';
-        } else if (response.statusCode == 401) {
-          token.value = await TokenServices(
-                  'https://webapps.rsbhayangkaranganjuk.com/api-rsbnganjuk/api/v1/token',
-                  'yudo',
-                  'qwerty123')
-              .getToken();
-          await box.write('token', token.value);
-          fetchKamar();
-        }
-      } on TimeoutException catch (e) {
-        print('Timeout Error: $e');
-
-        PopUpDialog.dialogWidget('Waktu Koneksi Habis');
-      } on SocketException catch (e) {
-        print('Socket Error: $e');
-
-        PopUpDialog.dialogWidget('Tidak Dapat Terhubung Internet');
-      } on Error catch (e) {
-        print('General Error: $e');
-
-        PopUpDialog.dialogWidget('Terjadi Kesalahan');
-      } finally {
-        isLoading(false);
+      if (response.statusCode == 200) {
+        var data = kamarFromJson(response.body).data;
+        kamarList.value = data;
+      } else if (response.statusCode == 404) {
+        hasil.value = '404';
+      } else if (response.statusCode == 401) {
+        token.value = await TokenServices(
+                selectedApi.value + 'token', username.value, password.value)
+            .getToken();
+        await box.write('token', token.value);
+        fetchKamar();
       }
-    } else {
-      hasil.value = 'notavailable';
+    } on TimeoutException catch (e) {
+      print('Timeout Error: $e');
+
+      PopUpDialog.dialogWidget('Waktu Koneksi Habis');
+    } on SocketException catch (e) {
+      print('Socket Error: $e');
+
+      PopUpDialog.dialogWidget('Tidak Dapat Terhubung Internet');
+    } on Error catch (e) {
+      print('General Error: $e');
+
+      PopUpDialog.dialogWidget('Terjadi Kesalahan');
+    } finally {
+      isLoading(false);
     }
+    // } else {
+    //   hasil.value = 'notavailable';
+    // }
   }
 }

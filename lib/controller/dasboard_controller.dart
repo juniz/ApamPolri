@@ -25,6 +25,8 @@ class DashboardController extends GetxController {
   var username = "".obs;
   var password = "".obs;
   var url = "".obs;
+  var urlBlog = "".obs;
+  var telp = "".obs;
   var listPage = <dynamic>[MenuPage(), ProfilePage()];
   Widget get currentPage => listPage[selectedTabIndex.value];
   var bookList = List<Booking>().obs;
@@ -42,6 +44,8 @@ class DashboardController extends GetxController {
     username.value = box.read('username');
     password.value = box.read('password');
     url.value = box.read('url');
+    urlBlog.value = box.read('urlBlog');
+    telp.value = box.read('telp');
     //fetchBooking();
     fetchKlinik();
     super.onInit();

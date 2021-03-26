@@ -1,4 +1,5 @@
 import 'package:apam/controller/home_care_controller.dart';
+import 'package:apam/models/homecarePolri_modell.dart';
 import 'package:apam/services/data_dummy.dart';
 import 'package:apam/widget/datepicker.dart';
 import 'package:flutter/material.dart';
@@ -50,8 +51,10 @@ class _HomeCarePageState extends State<HomeCarePage> {
               //   color: Colors.green,
               // ),
               Expanded(
-                flex: 6,
+                flex: 4,
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.max,
                   children: [
                     Expanded(
                       child: Container(
@@ -134,13 +137,11 @@ class _HomeCarePageState extends State<HomeCarePage> {
                 ),
               ),
 
-              Expanded(
-                flex: 2,
-                child: SizedBox(
-                  height: 20,
-                ),
+              Spacer(
+                flex: 4,
               ),
               Expanded(
+                flex: 1,
                 child: SizedBox(
                   width: Get.width / 1.1,
                   height: 50,
@@ -233,11 +234,8 @@ class _HomeCarePageState extends State<HomeCarePage> {
                   ),
                 ),
               ),
-              Expanded(
+              Spacer(
                 flex: 1,
-                child: SizedBox(
-                  height: 20,
-                ),
               )
             ],
           ),
@@ -283,15 +281,15 @@ class _HomeCarePageState extends State<HomeCarePage> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: <Widget>[
                                       Text(
-                                        '${DateFormat('dd-MM-yyyy').format(_homecareController.homecareList[index].tgl)}',
+                                        '${DateFormat('dd-MM-yyyy').format(_homecareController.homecareList[index].tanggalPeriksa)} / ${_homecareController.homecareList[index].status}',
                                         style: TextStyle(
-                                            color: Colors.black, fontSize: 12),
+                                            color: Colors.black, fontSize: 14),
                                       ),
-                                      Text(
-                                        '${_homecareController.homecareList[index].nmPoli}',
-                                        style: TextStyle(
-                                            color: Colors.black, fontSize: 15),
-                                      ),
+                                      // Text(
+                                      //   '${_homecareController.homecareList[index].tanggalBooking}',
+                                      //   style: TextStyle(
+                                      //       color: Colors.black, fontSize: 15),
+                                      // ),
                                       Text(
                                         '${_homecareController.homecareList[index].nmDokter}',
                                         style: TextStyle(
@@ -300,8 +298,8 @@ class _HomeCarePageState extends State<HomeCarePage> {
                                     ],
                                   ),
                                   onTap: () {
-                                    // modalDetailBooking(
-                                    //     _pendaftaranController.bookList[index]);
+                                    modalDetailBooking(_homecareController
+                                        .homecareList[index]);
                                   },
                                 );
                               },
@@ -389,6 +387,67 @@ class _HomeCarePageState extends State<HomeCarePage> {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  modalDetailBooking(HomecarePolriData data) async {
+    return Get.bottomSheet(
+      Container(
+        width: 200,
+        color: Colors.white,
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Container(
+                height: 40,
+                color: Colors.green,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(right: 15.0),
+                      child: GestureDetector(
+                        child: Icon(Icons.close),
+                        onTap: () => Get.back(),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              ListTile(
+                leading: Icon(Icons.calendar_today),
+                title: Text(
+                    'Tanggal Daftar : ${DateFormat('dd-MM-yyyy').format(data.tanggalBooking)}'),
+              ),
+              ListTile(
+                leading: Icon(Icons.calendar_today),
+                title: Text(
+                    'Tanggal Periksa : ${DateFormat('dd-MM-yyyy').format(data.tanggalPeriksa)}'),
+              ),
+              ListTile(
+                leading: Icon(Icons.all_inbox),
+                title: Text('Status : ${data.status}'),
+              ),
+              // ListTile(
+              //   leading: Icon(Icons.home),
+              //   title: Text('Klinik : ${data.nmPoli}'),
+              // ),
+              ListTile(
+                leading: Icon(Icons.person),
+                title: Text('Dokter : ${data.nmDokter}'),
+              ),
+              // ListTile(
+              //   leading: Icon(Icons.wallet_membership),
+              //   title: Text('Nomor Antrian : ${data.noReg}'),
+              // ),
+              // ListTile(
+              //   leading: Icon(Icons.payment),
+              //   title: Text('Cara Bayar : ${data.pngJawab}'),
+              // ),
+            ],
+          ),
         ),
       ),
     );

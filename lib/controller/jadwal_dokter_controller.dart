@@ -25,6 +25,8 @@ class JadwalDokterController extends GetxController {
   var isLoading = true.obs;
   var apiList = List<DataApi>().obs;
   var selectedApi = "".obs;
+  var username = "".obs;
+  var password = "".obs;
   var hasil = "".obs;
   var token = "".obs;
 
@@ -36,57 +38,55 @@ class JadwalDokterController extends GetxController {
   }
 
   Future fetchDokter() async {
-    if (selectedApi.value.contains('Nganjuk')) {
-      hasil.value = 'available';
-      try {
-        Future.delayed(
-          Duration.zero,
-          () => Get.dialog(Center(child: CircularProgressIndicator()),
-              barrierDismissible: false),
-        );
-        http.Response response = await http.get(
-          'https://webapps.rsbhayangkaranganjuk.com/api-rsbnganjuk/api/v1/jadwal',
-          headers: {
-            "Accept": "application/json",
-            "Content-Type": "application/x-www-form-urlencoded",
-            "Authorization": "Bearer " + token.value
-          },
-        );
+    // if (selectedApi.value.contains('Nganjuk')) {
+    hasil.value = 'available';
+    try {
+      Future.delayed(
+        Duration.zero,
+        () => Get.dialog(Center(child: CircularProgressIndicator()),
+            barrierDismissible: false),
+      );
+      http.Response response = await http.get(
+        selectedApi.value + 'jadwal',
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/x-www-form-urlencoded",
+          "Authorization": "Bearer " + token.value
+        },
+      );
 
-        if (response.statusCode == 200) {
-          var data = jadwalPraktekFromJson(response.body).data;
-          jadwalDokter.value = data;
-          Get.back();
-        } else if (response.statusCode == 404) {
-          Get.back();
-          PopUpDialog.dialogWidget('Data Kosong');
-        } else if (response.statusCode == 401) {
-          token.value = await TokenServices(
-                  'https://webapps.rsbhayangkaranganjuk.com/api-rsbnganjuk/api/v1/token',
-                  'yudo',
-                  'qwerty123')
-              .getToken();
-          await box.write('token', token.value);
-          Get.back();
-          fetchDokter();
-        }
-      } on TimeoutException catch (e) {
-        print('Timeout Error: $e');
-        PopUpDialog.dialogWidget('Waktu Koneksi Habis');
+      if (response.statusCode == 200) {
+        var data = jadwalPraktekFromJson(response.body).data;
+        jadwalDokter.value = data;
         Get.back();
-      } on SocketException catch (e) {
-        print('Socket Error: $e');
-
-        PopUpDialog.dialogWidget('Tidak Dapat Terhubung Internet');
+      } else if (response.statusCode == 404) {
         Get.back();
-      } on Error catch (e) {
-        print('General Error: $e');
+        PopUpDialog.dialogWidget('Data Kosong');
+      } else if (response.statusCode == 401) {
+        token.value = await TokenServices(
+                selectedApi.value + 'token', username.value, password.value)
+            .getToken();
+        await box.write('token', token.value);
         Get.back();
-        // PopUpDialog.dialogWidget('Terjadi Kesalahan');
+        fetchDokter();
       }
-    } else {
-      hasil.value = "notavailable";
+    } on TimeoutException catch (e) {
+      print('Timeout Error: $e');
+      PopUpDialog.dialogWidget('Waktu Koneksi Habis');
+      Get.back();
+    } on SocketException catch (e) {
+      print('Socket Error: $e');
+
+      PopUpDialog.dialogWidget('Tidak Dapat Terhubung Internet');
+      Get.back();
+    } on Error catch (e) {
+      print('General Error: $e');
+      Get.back();
+      // PopUpDialog.dialogWidget('Terjadi Kesalahan');
     }
+    // } else {
+    //   hasil.value = "notavailable";
+    // }
   }
 
   Future<List<DataApi>> fetchapi() async {

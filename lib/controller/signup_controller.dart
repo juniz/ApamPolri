@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:intl/intl.dart';
 import 'package:apam/services/preference.dart';
 import 'package:apam/services/token_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -19,6 +19,8 @@ class SignUpController extends GetxController {
   TextEditingController emailController;
   TextEditingController hpController;
   TextEditingController jkController;
+  TextEditingController alamatController;
+  TextEditingController rumkitController;
   GetStorage box = GetStorage();
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   var nama = "".obs;
@@ -28,6 +30,7 @@ class SignUpController extends GetxController {
   var res = "".obs;
   var param = Map<String, dynamic>().obs;
   var otp = "".obs;
+  var tgl = DateTime.now().obs;
 
   List<JK> listJK = [JK('P', 'Perempuan'), JK('L', "Laki-Laki")];
   var selectedJK = "".obs;
@@ -41,6 +44,8 @@ class SignUpController extends GetxController {
     emailController = TextEditingController();
     jkController = TextEditingController();
     hpController = TextEditingController();
+    alamatController = TextEditingController();
+    rumkitController = TextEditingController();
     // token.value = await box.read('token');
     // otp = OTP.generateHOTPCodeString("BHAYANGKARA", 5);
     super.onInit();
@@ -84,11 +89,13 @@ class SignUpController extends GetxController {
     param.value = {
       'nrp': nrpController.text,
       'ktp': ktpController.text,
-      'nama': namaController.text,
+      'nama': namaController.text.toUpperCase(),
       'jk': selectedJK.value,
       'email': emailController.text,
       'telp': hpController.text,
-      'satuan': satuanController.text
+      'satuan': satuanController.text.toUpperCase(),
+      'tgl_lahir': DateFormat('yyyy-MM-dd').format(tgl.value),
+      'alamat': alamatController.text.toUpperCase()
     };
     print(param.value);
     Get.back();
@@ -172,7 +179,7 @@ class SignUpController extends GetxController {
         encoding: Encoding.getByName("utf-8"),
       );
       var data = jsonDecode(response.body);
-      print(data["data"]['nrp']);
+      // print(data["data"]['nrp']);
       if (response.statusCode == 200) {
         hasil.value = '200';
         LocalData.savePref('no_rkm_medis', data["data"]['nrp']);
@@ -202,13 +209,13 @@ class SignUpController extends GetxController {
     }
   }
 
-  void clear() {
-    nrpController.text = '';
-    ktpController.text = '';
-    namaController.text = '';
-    satuanController.text = '';
-    emailController.text = '';
-  }
+  // void clear() {
+  //   nrpController.text = '';
+  //   ktpController.text = '';
+  //   namaController.text = '';
+  //   satuanController.text = '';
+  //   emailController.text = '';
+  // }
 }
 
 class JK {
