@@ -29,7 +29,7 @@ class PendaftaranController extends GetxController {
   var kdDokter = "".obs;
   var nrp = "".obs;
   var selectedApi = "".obs;
-  var isLoading = true.obs;
+  var isLoading = false.obs;
   final tanggal = Tanggal(date: DateTime.now()).obs;
   final kdPoli = PoliklinikList(kdPoli: "").obs;
   var bookList = List<BookingList>().obs;
@@ -42,6 +42,8 @@ class PendaftaranController extends GetxController {
   var password = "".obs;
   var url = "".obs;
   var blog = "".obs;
+  var poliShow = false.obs;
+  var dokterShow = false.obs;
   DateTime picked;
 
   @override
@@ -52,57 +54,61 @@ class PendaftaranController extends GetxController {
     dokter = TextEditingController();
     api = TextEditingController();
     await getData();
-    await fetchBooking();
+    // await fetchBooking();
     super.onInit();
   }
 
   Future getData() async {
     rumkit.value = await LocalData.getPref('rumkit');
-    url.value = await LocalData.getPref('url');
-    blog.value = await LocalData.getPref('urlBlog');
-    username.value = await LocalData.getPref('username');
-    password.value = await LocalData.getPref('password');
+    // url.value = await LocalData.getPref('url');
+    // blog.value = await LocalData.getPref('urlBlog');
+    // username.value = await LocalData.getPref('username');
+    // password.value = await LocalData.getPref('password');
     token.value = await LocalData.getPref('token');
     nrp.value = await LocalData.getPref('no_rkm_medis');
   }
 
   // ignore: missing_return
   Future fetchPoli() async {
-    Future.delayed(
-        Duration.zero,
-        () => Get.dialog(Center(child: CircularProgressIndicator()),
-            barrierDismissible: false));
-    try {
-      // var year = DateFormat('yyyy').format(tanggal.value.date);
-      // var month = DateFormat('MM').format(tanggal.value.date);
-      // var day = DateFormat('dd').format(tanggal.value.date);
-      var date = DateTime.parse(tanggal.value.date.toString());
-      http.Response response = await http.get(
-        url.value + 'jadwalklinik/${date.year}/${date.month}/${date.day}',
-        headers: {
-          "Accept": "application/json",
-          "Content-Type": "application/x-www-form-urlencoded",
-          "Authorization": "Bearer " + token.value
-        },
-      );
-      if (response.statusCode == 200) {
-        poliList.value = poliklinikFromJson(response.body).data;
+    if (api.text.isNotEmpty) {
+      try {
+        Future.delayed(
+            Duration.zero,
+            () => Get.dialog(Center(child: CircularProgressIndicator()),
+                barrierDismissible: false));
+        // var year = DateFormat('yyyy').format(tanggal.value.date);
+        // var month = DateFormat('MM').format(tanggal.value.date);
+        // var day = DateFormat('dd').format(tanggal.value.date);
+        var date = DateTime.parse(tanggal.value.date.toString());
+        http.Response response = await http.get(
+          url.value + 'jadwalklinik/${date.year}/${date.month}/${date.day}',
+          headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Authorization": "Bearer " + token.value
+          },
+        );
+        if (response.statusCode == 200) {
+          poliList.value = poliklinikFromJson(response.body).data;
+          Get.back();
+        } else if (response.statusCode == 401) {
+          token.value = await TokenServices(
+                  url.value + 'token', username.value, password.value)
+              .getToken();
+          await box.write('token', token.value);
+          Get.back();
+          fetchPoli();
+        } else if (response.statusCode == 404) {
+          Get.back();
+          PopUpDialog.dialogWidget(
+              'Data Dokter Tidak Ditemukan Pilih Tanggal Lainnya');
+        }
+      } on Exception catch (e) {
         Get.back();
-      } else if (response.statusCode == 401) {
-        token.value = await TokenServices(
-                url.value + 'token', username.value, password.value)
-            .getToken();
-        await box.write('token', token.value);
-        Get.back();
-        fetchPoli();
-      } else if (response.statusCode == 404) {
-        Get.back();
-        PopUpDialog.dialogWidget(
-            'Data Dokter Tidak Ditemukan Pilih Tanggal Lainnya');
+        PopUpDialog.dialogWidget('Pastikan Anda Terhubung Internet');
       }
-    } on Exception catch (e) {
-      Get.back();
-      PopUpDialog.dialogWidget('Pastikan Anda Terhubung Internet');
+    } else {
+      PopUpDialog.dialogWidget('Rumah Sakit Masih Kosong');
     }
   }
 
@@ -275,6 +281,13 @@ class PendaftaranController extends GetxController {
       isLoading(false);
       PopUpDialog.dialogWidget('Tidak Dapat Terhubung Dengan Jaringan');
     }
+  }
+
+  Future selectedRumkit(String rumkit, String urlApi, String urlBlog,
+      String name, String pass, String telp, String hc) async {
+    url.value = urlApi;
+    username.value = name;
+    password.value = pass;
   }
 
   void clearInput() {

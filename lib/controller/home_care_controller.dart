@@ -39,6 +39,9 @@ class HomeCareController extends GetxController {
   TextEditingController api;
   var token = "".obs;
   var error = "".obs;
+  var username = "".obs;
+  var password = "".obs;
+  var url = "".obs;
 
   DateTime picked;
 
@@ -68,7 +71,7 @@ class HomeCareController extends GetxController {
       // var day = DateFormat('dd').format(tanggal.value.date);
       var date = DateTime.parse(tanggal.value.date.toString());
       http.Response response = await http.get(
-        'https://webapps.rsbhayangkaranganjuk.com/api-rsbnganjuk/api/v1/jadwalklinik/${date.year}/${date.month}/${date.day}',
+        url.value + 'jadwalklinik/${date.year}/${date.month}/${date.day}',
         headers: {
           "Accept": "application/json",
           "Content-Type": "application/x-www-form-urlencoded",
@@ -80,9 +83,7 @@ class HomeCareController extends GetxController {
         Get.back();
       } else if (response.statusCode == 401) {
         token.value = await TokenServices(
-                'https://webapps.rsbhayangkaranganjuk.com/api-rsbnganjuk/api/v1/token',
-                'yudo',
-                'qwerty123')
+                url.value + 'token', username.value, password.value)
             .getToken();
         await box.write('token', token.value);
         Get.back();
@@ -113,7 +114,7 @@ class HomeCareController extends GetxController {
       );
       var date = DateTime.parse(tanggal.value.date.toString());
       var response = await http.get(
-        'https://webapps.rsbhayangkaranganjuk.com/api-rsbnganjuk/api/v1/jadwaldokter/${date.year}/${date.month}/${date.day}/U000',
+        url.value + 'jadwaldokter/${date.year}/${date.month}/${date.day}/U000',
         headers: {
           "Accept": "application/json",
           "Content-Type": "application/x-www-form-urlencoded",
@@ -127,9 +128,7 @@ class HomeCareController extends GetxController {
         Get.back();
       } else if (response.statusCode == 401) {
         token.value = await TokenServices(
-                'https://webapps.rsbhayangkaranganjuk.com/api-rsbnganjuk/api/v1/token',
-                'yudo',
-                'qwerty123')
+                url.value + 'token', username.value, password.value)
             .getToken();
         await box.write('token', token.value);
         Get.back();
@@ -173,7 +172,7 @@ class HomeCareController extends GetxController {
 
         var response = await http
             .post(
-              'https://webapps.rsbhayangkaranganjuk.com/api-rsbnganjuk/api/v1/homevisit',
+              url.value + 'homevisit',
               body: {
                 'nrp': nrp.value.toString(),
                 'poli': 'U000',
@@ -208,9 +207,7 @@ class HomeCareController extends GetxController {
           }
         } else if (response.statusCode == 401) {
           token.value = await TokenServices(
-                  'https://webapps.rsbhayangkaranganjuk.com/api-rsbnganjuk/api/v1/token',
-                  'yudo',
-                  'qwerty123')
+                  url.value + 'token', username.value, password.value)
               .getToken();
           await box.write('token', token.value);
           Get.back();
@@ -233,7 +230,7 @@ class HomeCareController extends GetxController {
     try {
       isLoading(true);
       var response = await http.get(
-        'https://webapps.rsbhayangkaranganjuk.com/api-rsbnganjuk/api/v1/homevisit/${nrp.value}',
+        url.value + 'homevisit/${nrp.value}',
         headers: {
           "Accept": "application/json",
           "Content-Type": "application/x-www-form-urlencoded",
@@ -246,9 +243,7 @@ class HomeCareController extends GetxController {
         isLoading(false);
       } else if (response.statusCode == 401) {
         token.value = await TokenServices(
-                'https://webapps.rsbhayangkaranganjuk.com/api-rsbnganjuk/api/v1/token',
-                'yudo',
-                'qwerty123')
+                url.value + 'token', username.value, password.value)
             .getToken();
         await box.write('token', token.value);
         fetchHomecare();
@@ -260,6 +255,13 @@ class HomeCareController extends GetxController {
       print(e);
       isLoading(false);
     }
+  }
+
+  Future selectedRumkit(String rumkit, String urlApi, String urlBlog,
+      String name, String pass, String telp, String hc) async {
+    url.value = urlApi;
+    username.value = name;
+    password.value = pass;
   }
 
   void clearInput() {

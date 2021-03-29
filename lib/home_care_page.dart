@@ -8,6 +8,8 @@ import 'package:intl/intl.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:apam/widget/awesome_dialog_screen.dart';
 
+import 'controller/login_controller.dart';
+
 class HomeCarePage extends StatefulWidget {
   @override
   _HomeCarePageState createState() => _HomeCarePageState();
@@ -16,6 +18,7 @@ class HomeCarePage extends StatefulWidget {
 class _HomeCarePageState extends State<HomeCarePage> {
   //final LoginController _loginController = Get.find();
   final HomeCareController _homecareController = Get.put(HomeCareController());
+  final LoginController _loginController = Get.put(LoginController());
   FocusNode myFocusNode1 = new FocusNode();
 
   @override
@@ -51,7 +54,7 @@ class _HomeCarePageState extends State<HomeCarePage> {
               //   color: Colors.green,
               // ),
               Expanded(
-                flex: 4,
+                flex: 6,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   mainAxisSize: MainAxisSize.max,
@@ -76,35 +79,35 @@ class _HomeCarePageState extends State<HomeCarePage> {
                         ),
                       ),
                     ),
-                    // Expanded(
-                    //   child: Container(
-                    //     margin: EdgeInsets.all(20),
-                    //     child: TextField(
-                    //       controller: _homecareController.api,
-                    //       readOnly: true,
-                    //       decoration: InputDecoration(
-                    //         labelText: "Pilih Rumah Sakit",
-                    //         border: OutlineInputBorder(),
-                    //         prefixIcon: Icon(Icons.home),
-                    //         suffixIcon: Icon(Icons.arrow_drop_down),
-                    //         labelStyle: TextStyle(
-                    //             color: myFocusNode1.hasFocus
-                    //                 ? Colors.green
-                    //                 : Colors.black),
-                    //         focusedBorder: OutlineInputBorder(
-                    //           borderSide: BorderSide(color: Colors.green),
-                    //         ),
-                    //         enabledBorder: OutlineInputBorder(
-                    //           borderSide: BorderSide(color: Colors.black),
-                    //         ),
-                    //       ),
-                    //       onTap: () async {
-                    //         modalApi();
-                    //         _homecareController.dokter.text = "";
-                    //       },
-                    //     ),
-                    //   ),
-                    // ),
+                    Expanded(
+                      child: Container(
+                        margin: EdgeInsets.all(20),
+                        child: TextField(
+                          controller: _homecareController.api,
+                          readOnly: true,
+                          decoration: InputDecoration(
+                            labelText: "Pilih Rumah Sakit",
+                            border: OutlineInputBorder(),
+                            prefixIcon: Icon(Icons.home),
+                            suffixIcon: Icon(Icons.arrow_drop_down),
+                            labelStyle: TextStyle(
+                                color: myFocusNode1.hasFocus
+                                    ? Colors.green
+                                    : Colors.black),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.green),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.black),
+                            ),
+                          ),
+                          onTap: () async {
+                            modalApi();
+                            _homecareController.dokter.text = "";
+                          },
+                        ),
+                      ),
+                    ),
                     Expanded(
                       child: Container(
                         margin: EdgeInsets.all(20),
@@ -454,7 +457,7 @@ class _HomeCarePageState extends State<HomeCarePage> {
   }
 
   modalApi() async {
-    //await _homecareController.fetchapi();
+    await _loginController.apiRumkit();
     return Get.bottomSheet(
       Container(
         color: Colors.white,
@@ -464,19 +467,26 @@ class _HomeCarePageState extends State<HomeCarePage> {
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: ListView.separated(
-                  itemCount: DataDummy.dummy.length,
+                  itemCount: _loginController.rumkit.length,
                   itemBuilder: (context, index) {
                     return ListTile(
-                      leading: Icon(Icons.person),
+                      leading: Icon(Icons.home_sharp),
                       title: Text(
-                        DataDummy.dummy[index].nama,
+                        _loginController.rumkit[index].rumkit,
                         style: TextStyle(color: Colors.black),
                       ),
                       onTap: () async {
-                        _homecareController.selectedApi.value =
-                            DataDummy.dummy[index].api;
                         _homecareController.api.text =
-                            DataDummy.dummy[index].nama;
+                            _loginController.rumkit[index].rumkit;
+                        await _homecareController.selectedRumkit(
+                            _loginController.rumkit[index].rumkit,
+                            _loginController.rumkit[index].urlBase,
+                            _loginController.rumkit[index].urlBlog,
+                            _loginController.rumkit[index].username,
+                            _loginController.rumkit[index].password,
+                            _loginController.rumkit[index].telp,
+                            _loginController.rumkit[index].hc);
+
                         Get.back();
                       },
                     );
@@ -492,6 +502,46 @@ class _HomeCarePageState extends State<HomeCarePage> {
       ),
     );
   }
+
+  // modalApi() async {
+  //   //await _homecareController.fetchapi();
+  //   return Get.bottomSheet(
+  //     Container(
+  //       color: Colors.white,
+  //       child: Column(
+  //         children: <Widget>[
+  //           Expanded(
+  //             child: Padding(
+  //               padding: const EdgeInsets.all(8.0),
+  //               child: ListView.separated(
+  //                 itemCount: DataDummy.dummy.length,
+  //                 itemBuilder: (context, index) {
+  //                   return ListTile(
+  //                     leading: Icon(Icons.person),
+  //                     title: Text(
+  //                       DataDummy.dummy[index].nama,
+  //                       style: TextStyle(color: Colors.black),
+  //                     ),
+  //                     onTap: () async {
+  //                       _homecareController.selectedApi.value =
+  //                           DataDummy.dummy[index].api;
+  //                       _homecareController.api.text =
+  //                           DataDummy.dummy[index].nama;
+  //                       Get.back();
+  //                     },
+  //                   );
+  //                 },
+  //                 separatorBuilder: (BuildContext context, int index) {
+  //                   return Divider();
+  //                 },
+  //               ),
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 
   modalDokter() async {
     // if (_homecareController.api.text.contains('Nganjuk')) {

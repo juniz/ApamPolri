@@ -21,7 +21,7 @@ void main() async {
   runApp(
     GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'AKPOL',
+      title: 'Si-kenaRI',
       //home:SplashScreenPage(),
       getPages: RouterPage.route,
       theme: ThemeData(

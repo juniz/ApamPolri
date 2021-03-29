@@ -220,6 +220,9 @@ class MenuPage extends StatelessWidget {
                 scrollDirection: Axis.vertical,
                 child: Column(
                   children: <Widget>[
+                    SizedBox(
+                      height: 20,
+                    ),
                     Obx(() => ListView.builder(
                           shrinkWrap: true,
                           physics: BouncingScrollPhysics(),
@@ -231,7 +234,10 @@ class MenuPage extends StatelessWidget {
                               );
                             } else {
                               return Container(
-                                margin: EdgeInsets.only(right: 20, left: 20),
+                                margin: EdgeInsets.only(
+                                  right: 20,
+                                  left: 20,
+                                ),
                                 child: InkWell(
                                   child: Container(
                                     margin: EdgeInsets.only(bottom: 15),
