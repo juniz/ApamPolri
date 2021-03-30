@@ -242,98 +242,124 @@ class _HomeCarePageState extends State<HomeCarePage> {
               )
             ],
           ),
-          Container(
-            width: 350,
-            height: Get.height / 2.8,
-            padding: const EdgeInsets.all(4.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(4),
-                  child: Text(
-                    "Booking Home Care",
-                    textAlign: TextAlign.left,
-                    style: TextStyle(fontSize: 20),
+          Scaffold(
+            body: Container(
+              width: Get.width,
+              height: Get.height,
+              padding: const EdgeInsets.all(4.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(4),
+                    child: Text(
+                      "Booking Home Care",
+                      textAlign: TextAlign.left,
+                      style: TextStyle(fontSize: 20),
+                    ),
                   ),
-                ),
-                Divider(
-                  thickness: 1.5,
-                ),
-                Flexible(
-                  child: Obx(
-                    () {
-                      if (_homecareController.isLoading.value)
-                        return Center(child: CircularProgressIndicator());
-                      else
-                        return RefreshIndicator(
-                          onRefresh: () async {
-                            _homecareController.fetchHomecare();
-                          },
-                          child: ListView.separated(
-                              shrinkWrap: true,
-                              physics: const BouncingScrollPhysics(
-                                  parent: AlwaysScrollableScrollPhysics()),
-                              itemBuilder: (context, index) {
-                                return ListTile(
-                                  trailing: Icon(Icons.arrow_drop_down),
-                                  title: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      Text(
-                                        '${DateFormat('dd-MM-yyyy').format(_homecareController.homecareList[index].tanggalPeriksa)} / ${_homecareController.homecareList[index].status}',
-                                        style: TextStyle(
-                                            color: Colors.black, fontSize: 14),
-                                      ),
-                                      // Text(
-                                      //   '${_homecareController.homecareList[index].tanggalBooking}',
-                                      //   style: TextStyle(
-                                      //       color: Colors.black, fontSize: 15),
-                                      // ),
-                                      Text(
-                                        '${_homecareController.homecareList[index].nmDokter}',
-                                        style: TextStyle(
-                                            color: Colors.black, fontSize: 15),
-                                      ),
-                                    ],
-                                  ),
-                                  onTap: () {
-                                    modalDetailBooking(_homecareController
-                                        .homecareList[index]);
-                                  },
-                                );
-                              },
-                              separatorBuilder: (context, index) {
-                                return Padding(
-                                  padding: const EdgeInsets.only(left: 12.0),
-                                  child: Divider(
-                                    thickness: 1.5,
-                                  ),
-                                );
-                              },
-                              itemCount:
-                                  _homecareController.homecareList.length),
-                        );
-                    },
+                  Divider(
+                    thickness: 1.5,
                   ),
-                ),
-              ],
-            ),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.all(
-                Radius.circular(10),
+                  Flexible(
+                    child: Obx(
+                      () {
+                        if (_homecareController.url.value == "") {
+                          return Center(
+                            child: Text('Pilih Rumkit Terlebih Dahulu'),
+                          );
+                        } else if (_homecareController.isLoading.value)
+                          return Center(child: CircularProgressIndicator());
+                        else
+                          return RefreshIndicator(
+                            onRefresh: () async {
+                              _homecareController.fetchHomecare();
+                            },
+                            child: ListView.separated(
+                                shrinkWrap: true,
+                                physics: const BouncingScrollPhysics(
+                                    parent: AlwaysScrollableScrollPhysics()),
+                                itemBuilder: (context, index) {
+                                  return ListTile(
+                                    trailing: Icon(Icons.arrow_drop_down),
+                                    title: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: <Widget>[
+                                        Text(
+                                          '${DateFormat('dd-MM-yyyy').format(_homecareController.homecareList[index].tanggalPeriksa)} / ${_homecareController.homecareList[index].status}',
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 14),
+                                        ),
+                                        // Text(
+                                        //   '${_homecareController.homecareList[index].tanggalBooking}',
+                                        //   style: TextStyle(
+                                        //       color: Colors.black, fontSize: 15),
+                                        // ),
+                                        Text(
+                                          '${_homecareController.homecareList[index].nmDokter}',
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 15),
+                                        ),
+                                      ],
+                                    ),
+                                    onTap: () {
+                                      modalDetailBooking(_homecareController
+                                          .homecareList[index]);
+                                    },
+                                  );
+                                },
+                                separatorBuilder: (context, index) {
+                                  return Padding(
+                                    padding: const EdgeInsets.only(left: 12.0),
+                                    child: Divider(
+                                      thickness: 1.5,
+                                    ),
+                                  );
+                                },
+                                itemCount:
+                                    _homecareController.homecareList.length),
+                          );
+                      },
+                    ),
+                  ),
+                ],
               ),
-              boxShadow: [
-                BoxShadow(
-                  blurRadius: 5,
-                  offset: Offset(2, 3),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.all(
+                  Radius.circular(10),
                 ),
-              ],
+                boxShadow: [
+                  BoxShadow(
+                    blurRadius: 5,
+                    offset: Offset(2, 3),
+                  ),
+                ],
+              ),
             ),
+            bottomNavigationBar: Container(
+                height: 45.0,
+                color: Colors.green,
+                child: FlatButton.icon(
+                  onPressed: () async {
+                    await modalApi();
+                    await _homecareController.fetchHomecare();
+                  },
+                  icon: Icon(
+                    Icons.home,
+                    color: Colors.white,
+                  ),
+                  label: Text(
+                    "Pilih Rumah Sakit",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                )),
           ),
         ]),
       ),

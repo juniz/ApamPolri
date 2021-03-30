@@ -42,6 +42,7 @@ class HomeCareController extends GetxController {
   var username = "".obs;
   var password = "".obs;
   var url = "".obs;
+  var kdHc = "".obs;
 
   DateTime picked;
 
@@ -52,7 +53,7 @@ class HomeCareController extends GetxController {
     poliklinik = TextEditingController();
     dokter = TextEditingController();
     api = TextEditingController();
-    fetchHomecare();
+    // fetchHomecare();
     super.onInit();
   }
 
@@ -262,6 +263,7 @@ class HomeCareController extends GetxController {
     url.value = urlApi;
     username.value = name;
     password.value = pass;
+    kdHc.value = hc;
   }
 
   void clearInput() {
