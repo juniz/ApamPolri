@@ -1,4 +1,5 @@
 import 'package:apam/carousel_page.dart';
+import 'package:apam/models/webcontent_model.dart';
 import 'package:get/state_manager.dart';
 import 'package:http/http.dart' as http;
 import 'package:apam/models/photo_model.dart';
@@ -8,7 +9,7 @@ import 'dart:convert';
 class CarouselPageController extends GetxController {
   final current = 0.obs;
   List<Photo> photoList = List<Photo>().obs;
-  List<ArticleElement> articleList = List<ArticleElement>().obs;
+  var articleList = List<WebContent>().obs;
   RxList url = [].obs;
   var isLoading = true.obs;
   @override
@@ -25,10 +26,11 @@ class CarouselPageController extends GetxController {
     try {
       isLoading(true);
       var request = await http.get(
-          'https://newsapi.org/v2/top-headlines?country=id&category=health&apiKey=199bdb149a8641e5b36d7153b2d68f0a&pageSize=5');
+          'https://rsbhayangkaranganjuk.com/wp-json/wp/v2/posts?per_page=5');
       if (request.statusCode == 200) {
-        var data = articleFromJson(request.body).articles;
-        articleList = data;
+        var data = webContentFromJson(request.body);
+        print(request.body);
+        articleList.value = data;
       } else {
         return null;
       }

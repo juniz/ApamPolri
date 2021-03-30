@@ -73,7 +73,7 @@ class _CarouselPageState extends State<CarouselPage> {
         Obx(() {
           if (_carouselController.isLoading.value == false) {
             return new CarouselSlider(
-              items: _carouselController.articleList
+              items: _carouselController.articleList.value
                   .map(
                     (item) => Container(
                       width: Get.width,
@@ -84,8 +84,14 @@ class _CarouselPageState extends State<CarouselPage> {
                           borderRadius: BorderRadius.all(Radius.circular(5.0)),
                           child: Stack(
                             children: <Widget>[
-                              new Image.network(item.urlToImage,
-                                  fit: BoxFit.cover, width: 1000.0),
+                              new Image.network(
+                                  item
+                                      .betterFeaturedImage
+                                      .mediaDetails
+                                      .sizes['university-zone-welcome-thumb']
+                                      .sourceUrl,
+                                  fit: BoxFit.cover,
+                                  width: 1000.0),
                               Positioned(
                                 bottom: 0.0,
                                 left: 0.0,
@@ -104,10 +110,10 @@ class _CarouselPageState extends State<CarouselPage> {
                                   padding: EdgeInsets.symmetric(
                                       vertical: 10.0, horizontal: 20.0),
                                   child: Text(
-                                    item.title,
+                                    item.title.rendered,
                                     style: TextStyle(
                                       color: Colors.white,
-                                      fontSize: 16.0,
+                                      fontSize: 15.0,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -121,7 +127,7 @@ class _CarouselPageState extends State<CarouselPage> {
                   )
                   .toList(),
               options: CarouselOptions(
-                  viewportFraction: 0.9,
+                  viewportFraction: 1,
                   autoPlay: true,
                   enlargeCenterPage: true,
                   aspectRatio: 2.5,
@@ -144,9 +150,10 @@ class _CarouselPageState extends State<CarouselPage> {
           if (_carouselController.isLoading.value == false) {
             return Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: _carouselController.articleList.map(
+              children: _carouselController.articleList.value.map(
                 (url) {
-                  int index = _carouselController.articleList.indexOf(url);
+                  int index =
+                      _carouselController.articleList.value.indexOf(url);
                   return Container(
                     width: 8.0,
                     height: 8.0,
